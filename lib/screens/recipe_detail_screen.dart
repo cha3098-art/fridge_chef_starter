@@ -6,11 +6,13 @@ import '../theme/app_theme.dart';
 class RecipeDetailScreen extends StatelessWidget {
   final Recipe recipe;
   final Set<String> fridgeIngredientNames;
+  final int servings;
 
   const RecipeDetailScreen({
     super.key,
     required this.recipe,
     required this.fridgeIngredientNames,
+    this.servings = 1,
   });
 
   @override
@@ -33,6 +35,7 @@ class RecipeDetailScreen extends StatelessWidget {
             spacing: 6,
             runSpacing: 6,
             children: [
+              _InfoChip(label: '$servings인분'),
               _InfoChip(label: recipe.cuisineType),
               _InfoChip(label: '난이도 ${recipe.difficulty}'),
               _InfoChip(label: '${recipe.cookTimeMin}분'),
@@ -46,7 +49,7 @@ class RecipeDetailScreen extends StatelessWidget {
           const SizedBox(height: 10),
           _NutritionGrid(recipe: recipe),
           const SizedBox(height: 20),
-          const _SectionTitle('재료'),
+          _SectionTitle('재료 ($servings인분 기준)'),
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
@@ -60,6 +63,7 @@ class RecipeDetailScreen extends StatelessWidget {
                   .map((ingredient) => _IngredientRow(
                         ingredient: ingredient,
                         owned: fridgeIngredientNames.contains(ingredient.name),
+                        servings: servings,
                       ))
                   .toList(),
             ),
@@ -196,8 +200,9 @@ class _NutritionGrid extends StatelessWidget {
 class _IngredientRow extends StatelessWidget {
   final RecipeIngredient ingredient;
   final bool owned;
+  final int servings;
 
-  const _IngredientRow({required this.ingredient, required this.owned});
+  const _IngredientRow({required this.ingredient, required this.owned, required this.servings});
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +237,10 @@ class _IngredientRow extends StatelessWidget {
               ],
             ),
           ),
-          Text(ingredient.quantityLabel, style: const TextStyle(fontSize: 12, color: AppColors.inkSoft)),
+          Text(
+            ingredient.quantityLabelForServings(servings),
+            style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
+          ),
         ],
       ),
     );

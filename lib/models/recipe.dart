@@ -14,9 +14,13 @@ class RecipeIngredient {
     this.isOptional = false,
   });
 
-  String get quantityLabel {
-    final isWhole = quantity == quantity.roundToDouble();
-    final q = isWhole ? quantity.toInt().toString() : quantity.toString();
+  String get quantityLabel => quantityLabelForServings(1);
+
+  /// 재료 수량은 1인분 기준으로 저장되어 있으므로 선택한 인분수만큼 스케일링한다
+  String quantityLabelForServings(int servings) {
+    final scaled = quantity * servings;
+    final isWhole = scaled == scaled.roundToDouble();
+    final q = isWhole ? scaled.toInt().toString() : scaled.toString();
     return '$q$unit';
   }
 }

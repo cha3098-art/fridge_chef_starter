@@ -8,12 +8,14 @@ import 'share_screen.dart';
 const _cookTimeOptions = ['전체', '15분 이내', '30분 이내', '60분 이내'];
 const _difficultyOptions = ['전체', '하', '중', '상'];
 const _cuisineOptions = ['전체', '한식', '중식', '양식', '분식'];
+const _servingsOptions = ['1인분', '2인분', '3인분', '4인분'];
 
 typedef RecommendationFilter = ({
   bool onlyFullMatch,
   String cookTime,
   String difficulty,
   String cuisine,
+  int servings,
 });
 
 const _defaultFilter = (
@@ -21,6 +23,7 @@ const _defaultFilter = (
   cookTime: '전체',
   difficulty: '전체',
   cuisine: '전체',
+  servings: 1,
 );
 
 /// "추천" 탭 — 내 냉장고 재료와 매칭되는 레시피를 보여주는 화면
@@ -67,6 +70,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     if (_filter.cookTime != '전체') count++;
     if (_filter.difficulty != '전체') count++;
     if (_filter.cuisine != '전체') count++;
+    if (_filter.servings != 1) count++;
     return count;
   }
 
@@ -151,6 +155,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                             builder: (_) => RecipeDetailScreen(
                               recipe: recipe,
                               fridgeIngredientNames: widget.fridgeIngredientNames,
+                              servings: _filter.servings,
                             ),
                           ),
                         ),
@@ -326,6 +331,20 @@ class _FilterSheetState extends State<_FilterSheet> {
                   cookTime: _draft.cookTime,
                   difficulty: _draft.difficulty,
                   cuisine: _draft.cuisine,
+                  servings: _draft.servings,
+                )),
+          ),
+          const SizedBox(height: 12),
+          _FilterSection(
+            label: '만드는 양',
+            options: _servingsOptions,
+            selected: '${_draft.servings}인분',
+            onSelected: (v) => setState(() => _draft = (
+                  onlyFullMatch: _draft.onlyFullMatch,
+                  cookTime: _draft.cookTime,
+                  difficulty: _draft.difficulty,
+                  cuisine: _draft.cuisine,
+                  servings: int.parse(v.replaceAll(RegExp(r'[^0-9]'), '')),
                 )),
           ),
           const SizedBox(height: 12),
@@ -338,6 +357,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   cookTime: v,
                   difficulty: _draft.difficulty,
                   cuisine: _draft.cuisine,
+                  servings: _draft.servings,
                 )),
           ),
           const SizedBox(height: 12),
@@ -350,6 +370,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   cookTime: _draft.cookTime,
                   difficulty: v,
                   cuisine: _draft.cuisine,
+                  servings: _draft.servings,
                 )),
           ),
           const SizedBox(height: 12),
@@ -362,6 +383,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   cookTime: _draft.cookTime,
                   difficulty: _draft.difficulty,
                   cuisine: v,
+                  servings: _draft.servings,
                 )),
           ),
           const SizedBox(height: 20),
