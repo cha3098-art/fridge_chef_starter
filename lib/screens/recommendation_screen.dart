@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/recipe_catalog.dart';
 import '../models/recipe.dart';
 import '../theme/app_theme.dart';
+import 'recipe_detail_screen.dart';
 
 const _cookTimeOptions = ['전체', '15분 이내', '30분 이내', '60분 이내'];
 const _difficultyOptions = ['전체', '하', '중', '상'];
@@ -144,7 +145,14 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                       return _RecipeCard(
                         recipe: recipe,
                         fridgeIngredientNames: widget.fridgeIngredientNames,
-                        onTap: () => _showComingSoon('레시피 상세는 준비 중이에요'),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => RecipeDetailScreen(
+                              recipe: recipe,
+                              fridgeIngredientNames: widget.fridgeIngredientNames,
+                            ),
+                          ),
+                        ),
                       );
                     },
                   ),
