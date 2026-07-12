@@ -3,6 +3,7 @@ import '../models/fridge_item.dart';
 import '../theme/app_theme.dart';
 import 'add_ingredient_screen.dart';
 import 'recommendation_screen.dart';
+import 'share_screen.dart';
 
 /// UI디자인_v2/v3의 "01 · 내 냉장고" 화면을 Flutter 위젯으로 구현한 시작 코드
 /// 실제 데이터는 Supabase의 user_ingredients 테이블에서 불러오도록 연결 예정
@@ -146,6 +147,16 @@ class _FridgeScreenState extends State<FridgeScreen> {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => RecommendationScreen(
+                  fridgeIngredientNames: _items.map((i) => i.name).toSet(),
+                ),
+              ),
+            );
+            return;
+          }
+          if (index == 2) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ShareScreen(
                   fridgeIngredientNames: _items.map((i) => i.name).toSet(),
                 ),
               ),

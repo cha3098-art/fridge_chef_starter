@@ -3,6 +3,7 @@ import '../data/recipe_catalog.dart';
 import '../models/recipe.dart';
 import '../theme/app_theme.dart';
 import 'recipe_detail_screen.dart';
+import 'share_screen.dart';
 
 const _cookTimeOptions = ['전체', '15분 이내', '30분 이내', '60분 이내'];
 const _difficultyOptions = ['전체', '하', '중', '상'];
@@ -169,6 +170,16 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
           if (index == 1) return;
           if (index == 0) {
             Navigator.of(context).pop();
+            return;
+          }
+          if (index == 2) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ShareScreen(
+                  fridgeIngredientNames: widget.fridgeIngredientNames,
+                ),
+              ),
+            );
             return;
           }
           _showComingSoon('준비 중인 화면이에요');
