@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// UI디자인_v3.html에서 정의한 디자인 토큰을 Flutter로 옮긴 테마 파일
+/// 배달의민족류 앱처럼 흰 바탕 위에 포인트 컬러만 쓰는 디자인 토큰
 class AppColors {
-  static const paper = Color(0xFFF6F2E8);
-  static const paperDeep = Color(0xFFEFE9DA);
-  static const line = Color(0xFFDCD2B8);
-  static const ink = Color(0xFF23241F);
-  static const inkSoft = Color(0xFF6E6656);
+  static const paper = Color(0xFFFFFFFF);
+  static const paperDeep = Color(0xFFF1F1F1);
+  static const line = Color(0xFFE7E7E7);
+  static const ink = Color(0xFF222222);
+  static const inkSoft = Color(0xFF767676);
   static const green = Color(0xFF3C7A4B);
   static const greenSoft = Color(0xFFE3EEDF);
   static const gold = Color(0xFFD9922C);
@@ -46,7 +46,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.ink,
-          foregroundColor: const Color(0xFFFBF8F1),
+          foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           textStyle: bodyFont.copyWith(fontWeight: FontWeight.w600, fontSize: 13),

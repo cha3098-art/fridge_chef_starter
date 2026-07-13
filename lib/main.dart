@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
+import 'services/locale_store.dart';
 import 'screens/fridge_screen.dart';
 
 // Supabase 연동 시 아래 주석 해제 후 URL/anon key 입력
@@ -22,11 +23,14 @@ class FridgeChefApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '냉장고 셰프',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
-      home: const FridgeScreen(),
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) => MaterialApp(
+        title: '냉장고 셰프',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light(),
+        home: const FridgeScreen(),
+      ),
     );
   }
 }

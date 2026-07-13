@@ -59,6 +59,15 @@ class Recipe {
   final List<RecipeIngredient> ingredients;
   final List<RecipeStep> steps;
 
+  /// 실제 사진(image_url)이 준비되기 전까지 카드 화면에 쓰는 대표 이모지
+  final String emoji;
+
+  /// 상세 화면에서 저작권 걱정 없는 실제 음식 사진을 찾을 때 쓰는 영문 키워드
+  final String photoQuery;
+
+  /// K-Food 만들기 메뉴 소속 여부 — K-Food 포인트 트랙에 반영된다
+  final bool isKFood;
+
   const Recipe({
     required this.title,
     required this.cookTimeMin,
@@ -71,6 +80,9 @@ class Recipe {
     required this.sodiumMg,
     required this.ingredients,
     required this.steps,
+    required this.emoji,
+    required this.photoQuery,
+    this.isKFood = false,
   });
 
   /// 필수(비선택) 재료 이름만 — 매칭 계산 대상
