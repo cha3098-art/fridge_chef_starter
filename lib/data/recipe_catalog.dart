@@ -7,7 +7,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '계란볶음밥',
     emoji: '🍳',
-    photoQuery: 'egg,friedrice',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Bokkeum-bap.jpg/960px-Bokkeum-bap.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '한식',
@@ -43,7 +43,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '두부김치찌개',
     emoji: '🍲',
-    photoQuery: 'kimchi,stew',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg/960px-Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -78,7 +78,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '애호박전',
     emoji: '🥘',
-    photoQuery: 'zucchini,pancake',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Hobak-jeon.jpg/960px-Hobak-jeon.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '한식',
@@ -109,7 +109,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '시금치나물무침',
     emoji: '🥬',
-    photoQuery: 'spinach,salad',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Sigeumchi-namul.jpg',
     cookTimeMin: 10,
     difficulty: '하',
     cuisineType: '한식',
@@ -141,7 +141,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '감자조림',
     emoji: '🥔',
-    photoQuery: 'potato,braised',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Gamja_jorim_%EA%B0%90%EC%9E%90%EC%A1%B0%EB%A6%BC1.jpg/960px-Gamja_jorim_%EA%B0%90%EC%9E%90%EC%A1%B0%EB%A6%BC1.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -178,7 +178,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '소고기 등심 스테이크',
     emoji: '🥩',
-    photoQuery: 'beef,steak',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Beef_fillet_steak_with_mushrooms.jpg/960px-Beef_fillet_steak_with_mushrooms.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '양식',
@@ -209,7 +209,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '닭가슴살 샐러드',
     emoji: '🥗',
-    photoQuery: 'chicken,salad',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Chicken_salad_with_eggs.jpg/960px-Chicken_salad_with_eggs.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '양식',
@@ -240,7 +240,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '삼겹살 구이',
     emoji: '🥓',
-    photoQuery: 'porkbelly,grill',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Korean.cuisine-Samgyeopsal-01.jpg/960px-Korean.cuisine-Samgyeopsal-01.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '한식',
@@ -264,7 +264,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '고등어 조림',
     emoji: '🐟',
-    photoQuery: 'mackerel,fish',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Korean.cuisine-Godeungeo.jorim-01.jpg/960px-Korean.cuisine-Godeungeo.jorim-01.jpg',
     cookTimeMin: 35,
     difficulty: '상',
     cuisineType: '한식',
@@ -302,7 +302,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '새우볶음밥',
     emoji: '🍤',
-    photoQuery: 'shrimp,friedrice',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Shrimp_Fried_Rice_%28Taiwan%29.jpg/960px-Shrimp_Fried_Rice_%28Taiwan%29.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '중식',
@@ -337,7 +337,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '치즈오믈렛',
     emoji: '🧀',
-    photoQuery: 'cheese,omelette',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Fried_cheese_omelet.jpg/960px-Fried_cheese_omelet.jpg',
     cookTimeMin: 10,
     difficulty: '하',
     cuisineType: '양식',
@@ -370,7 +370,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '감자 크림스튜',
     emoji: '🍲',
-    photoQuery: 'potato,stew',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Cream_Stew_001.jpg/960px-Cream_Stew_001.jpg',
     cookTimeMin: 30,
     difficulty: '중',
     cuisineType: '양식',
@@ -409,7 +409,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '김치볶음밥',
     emoji: '🍚',
-    photoQuery: 'kimchi,friedrice',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Kimchi-bokkeum-bap.jpg/960px-Kimchi-bokkeum-bap.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '한식',
@@ -440,7 +440,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '김달걀말이',
     emoji: '🍙',
-    photoQuery: 'egg,roll',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Gyeran-mari.jpg/960px-Gyeran-mari.jpg',
     cookTimeMin: 10,
     difficulty: '하',
     cuisineType: '한식',
@@ -468,7 +468,7 @@ const recipeCatalog = <Recipe>[
   Recipe(
     title: '치즈떡볶이',
     emoji: '🌶️',
-    photoQuery: 'tteokbokki,cheese',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Tteokbokki.JPG/960px-Tteokbokki.JPG',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '분식',

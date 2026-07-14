@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../l10n/tr.dart';
 import '../models/user_profile.dart';
+import '../services/auth_service.dart';
+import '../services/locale_store.dart';
 import '../services/profile_store.dart';
 import '../theme/app_theme.dart';
 import '../widgets/language_toggle.dart';
@@ -27,6 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _nationalityController = TextEditingController(text: '대한민국');
   final _cityController = TextEditingController();
   final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _bioController = TextEditingController();
 
   String _gender = _genderOptions.first;
@@ -35,6 +38,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   bool? _idAvailable; // null = 미확인
   bool? _nicknameAvailable;
+  bool _checkingId = false;
+  bool _checkingNickname = false;
+  bool _submitting = false;
 
   bool _hideGender = false;
   bool _hidePhoto = false;
@@ -49,26 +55,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _nationalityController.dispose();
     _cityController.dispose();
     _emailController.dispose();
+    _passwordController.dispose();
     _bioController.dispose();
     super.dispose();
   }
 
-  void _checkId() {
+  Future<void> _checkId() async {
     final id = _idController.text.trim();
     if (id.isEmpty) return;
-    setState(() => _idAvailable = !ProfileStore.instance.isIdTaken(id));
+    setState(() => _checkingId = true);
+    final taken = await ProfileStore.instance.isUsernameTaken(id);
+    if (!mounted) return;
+    setState(() {
+      _checkingId = false;
+      _idAvailable = !taken;
+    });
   }
 
-  void _checkNickname() {
+  Future<void> _checkNickname() async {
     final nickname = _nicknameController.text.trim();
     if (nickname.isEmpty) return;
-    setState(() => _nicknameAvailable = !ProfileStore.instance.isNicknameTaken(nickname));
+    setState(() => _checkingNickname = true);
+    final taken = await ProfileStore.instance.isNicknameTaken(nickname);
+    if (!mounted) return;
+    setState(() {
+      _checkingNickname = false;
+      _nicknameAvailable = !taken;
+    });
   }
 
   Future<void> _pickPhoto() async {
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -119,35 +138,75 @@ class _SignUpScreenState extends State<SignUpScreen> {
       _idController.text.trim().isNotEmpty &&
       _idAvailable == true &&
       _nicknameController.text.trim().isNotEmpty &&
-      _nicknameAvailable == true;
+      _nicknameAvailable == true &&
+      _emailController.text.trim().isNotEmpty &&
+      _passwordController.text.length >= 6 &&
+      !_submitting;
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_canSubmit) return;
-    final profile = UserProfile(
-      id: _idController.text.trim(),
-      nickname: _nicknameController.text.trim(),
-      gender: _gender,
-      nationality: _nationalityController.text.trim().isEmpty ? tr('미입력', 'Not entered') : _nationalityController.text.trim(),
-      city: _cityController.text.trim().isEmpty ? tr('미입력', 'Not entered') : _cityController.text.trim(),
-      email: _emailController.text.trim(),
-      bio: _bioController.text.trim(),
-      photoPath: _photo?.path,
-      hideGender: _hideGender,
-      hidePhoto: _hidePhoto,
-      hideNationality: _hideNationality,
-      hideCity: _hideCity,
-      hideEmail: _hideEmail,
-    );
-    ProfileStore.instance.register(profile);
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(tr('가입을 완료했어요! 환영해요 🎉', 'Sign-up complete! Welcome 🎉'))),
-    );
+    setState(() => _submitting = true);
+    try {
+      final authResponse = await AuthService.instance.signUp(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+      final userId = authResponse.user?.id;
+      if (userId == null) {
+        throw Exception(tr('가입 처리 중 문제가 발생했어요', 'Something went wrong while signing up'));
+      }
+      final profile = UserProfile(
+        id: userId,
+        username: _idController.text.trim(),
+        nickname: _nicknameController.text.trim(),
+        gender: _gender,
+        nationality: _nationalityController.text.trim().isEmpty ? tr('미입력', 'Not entered') : _nationalityController.text.trim(),
+        city: _cityController.text.trim().isEmpty ? tr('미입력', 'Not entered') : _cityController.text.trim(),
+        email: _emailController.text.trim(),
+        bio: _bioController.text.trim(),
+        // TODO: Supabase Storage 연동 시 _photo를 업로드하고 반환된 URL을 photoPath로 저장
+        hideGender: _hideGender,
+        hidePhoto: _hidePhoto,
+        hideNationality: _hideNationality,
+        hideCity: _hideCity,
+        hideEmail: _hideEmail,
+      );
+      if (authResponse.session != null) {
+        // 이메일 인증이 꺼져 있어 가입과 동시에 로그인 세션이 생긴 경우 — 바로 저장
+        await ProfileStore.instance.register(profile);
+      } else {
+        // 이메일 인증이 필요해 세션이 아직 없는 경우 — 인증 후 첫 로그인 때 자동으로 저장하도록 보관
+        ProfileStore.instance.stagePendingProfile(profile);
+      }
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            authResponse.session != null
+                ? tr('가입을 완료했어요! 환영해요 🎉', 'Sign-up complete! Welcome 🎉')
+                : tr(
+                    '가입 신청 완료! 이메일의 인증 링크를 클릭한 후 로그인해주세요.',
+                    'Signed up! Please confirm your email, then log in.',
+                  ),
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('가입에 실패했어요: $e', 'Sign-up failed: $e'))),
+      );
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) => Scaffold(
       backgroundColor: AppColors.paper,
       appBar: AppBar(
         backgroundColor: AppColors.paper,
@@ -158,7 +217,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
         children: [
           Center(
             child: Column(
@@ -191,7 +250,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.lg),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: cardDecoration(),
+            child: Column(
+              children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -205,7 +269,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(width: 8),
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: OutlinedButton(onPressed: _checkId, child: Text(tr('중복확인', 'Check'))),
+                child: OutlinedButton(
+                  onPressed: _checkingId ? null : _checkId,
+                  child: Text(tr('중복확인', 'Check')),
+                ),
               ),
             ],
           ),
@@ -231,7 +298,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(width: 8),
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: OutlinedButton(onPressed: _checkNickname, child: Text(tr('중복확인', 'Check'))),
+                child: OutlinedButton(
+                  onPressed: _checkingNickname ? null : _checkNickname,
+                  child: Text(tr('중복확인', 'Check')),
+                ),
               ),
             ],
           ),
@@ -291,19 +361,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           const SizedBox(height: 12),
           TextField(
+            controller: _passwordController,
+            obscureText: true,
+            onChanged: (_) => setState(() {}),
+            decoration: InputDecoration(
+              labelText: tr('비밀번호', 'Password'),
+              helperText: tr('6자 이상', 'At least 6 characters'),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
             controller: _bioController,
             maxLines: 3,
             decoration: InputDecoration(labelText: tr('자기소개', 'Bio')),
           ),
-          const SizedBox(height: 24),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: _canSubmit ? _submit : null,
-              child: Text(tr('가입하기', 'Sign Up')),
+              child: _submitting
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : Text(tr('가입하기', 'Sign Up')),
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -25,6 +25,7 @@ class ChefBadge extends StatelessWidget {
   final bool isKFoodMaster;
   final bool showLabel;
   final double medalSize;
+  final Color labelColor;
 
   const ChefBadge({
     super.key,
@@ -32,6 +33,7 @@ class ChefBadge extends StatelessWidget {
     required this.isKFoodMaster,
     this.showLabel = true,
     this.medalSize = 22,
+    this.labelColor = AppColors.inkSoft,
   });
 
   @override
@@ -50,7 +52,7 @@ class ChefBadge extends StatelessWidget {
               if (showLabel)
                 Text(
                   trTag(generalTier!),
-                  style: const TextStyle(fontSize: 9, color: AppColors.inkSoft, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 9, color: labelColor, fontWeight: FontWeight.w600),
                 ),
             ],
           ),
@@ -61,9 +63,9 @@ class ChefBadge extends StatelessWidget {
             children: [
               Text('🇰🇷', style: TextStyle(fontSize: medalSize)),
               if (showLabel)
-                const Text(
+                Text(
                   'K-FOOD Master',
-                  style: TextStyle(fontSize: 9, color: AppColors.inkSoft, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 9, color: labelColor, fontWeight: FontWeight.w600),
                 ),
             ],
           ),

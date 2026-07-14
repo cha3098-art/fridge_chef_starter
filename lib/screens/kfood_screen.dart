@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/kfood_catalog.dart';
 import '../l10n/tr.dart';
 import '../models/recipe.dart';
+import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/chef_tier_badge.dart';
@@ -18,49 +19,59 @@ class KFoodScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.paper,
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) => Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC), // Slate 50
       appBar: AppBar(
-        backgroundColor: AppColors.paper,
+        backgroundColor: const Color(0xFFF8FAFC),
         elevation: 0,
-        title: Text(tr('K-Food 만들기', 'Make K-Food')),
+        scrolledUnderElevation: 0,
+        title: Text(
+          tr('K-Food 만들기', 'Make K-Food'),
+          style: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
+        ),
         actions: const [
           Padding(padding: EdgeInsets.only(right: 8), child: LanguageToggle()),
           Padding(padding: EdgeInsets.only(right: 12), child: ChefTierBadge()),
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, 96),
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFFC23A3A), Color(0xFF1B3A6B)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+              boxShadow: AppColors.cardShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tr('🇰🇷 대한민국 대표 요리', '🇰🇷 Iconic Korean Dishes'), style: const TextStyle(fontSize: 12, color: Colors.white70, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 6),
+                Text(
+                  tr('🇰🇷 대한민국 대표 요리', '🇰🇷 Iconic Korean Dishes'),
+                  style: const TextStyle(fontSize: 12, color: Colors.white70, fontWeight: FontWeight.w600, letterSpacing: 0.2),
+                ),
+                const SizedBox(height: 8),
                 Text(
                   tr('집에서 만드는 K-Food', 'Make K-Food at Home'),
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.3, height: 1.2),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Text(
                   tr('완성하고 자랑하면 K-Food 포인트가 쌓여요 · 초대장은 2배!', 'Finish and brag to earn K-Food points · invites earn double!'),
-                  style: const TextStyle(fontSize: 12, color: Colors.white, height: 1.4),
+                  style: const TextStyle(fontSize: 12, color: Colors.white, height: 1.5, letterSpacing: 0.1),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -85,6 +96,7 @@ class KFoodScreen extends StatelessWidget {
         currentIndex: 6,
         fridgeIngredientNames: fridgeIngredientNames,
       ),
+      ),
     );
   }
 }
@@ -99,9 +111,10 @@ class _KFoodCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final matched = recipe.matchedCount(fridgeIngredientNames);
     final total = recipe.requiredIngredients.length;
+    final isFullMatch = matched >= total;
 
     return InkWell(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(16),
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => RecipeDetailScreen(
@@ -112,13 +125,14 @@ class _KFoodCard extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFFFFFFF),
-          borderRadius: BorderRadius.circular(14),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
           boxShadow: [
             BoxShadow(
-              color: AppColors.ink.withValues(alpha: 0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
+              color: const Color(0xFF1E293B).withValues(alpha: 0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -126,34 +140,54 @@ class _KFoodCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            RecipePhoto(
-              photoQuery: recipe.photoQuery,
-              emoji: recipe.emoji,
-              cuisineType: recipe.cuisineType,
-              width: double.infinity,
-              height: 96,
-              emojiSize: 32,
+            Stack(
+              children: [
+                RecipePhoto(
+                  photoUrl: recipe.photoUrl,
+                  emoji: recipe.emoji,
+                  cuisineType: recipe.cuisineType,
+                  width: double.infinity,
+                  height: 96,
+                  emojiSize: 32,
+                ),
+                if (isFullMatch)
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.green,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        tr('완성', 'Ready'),
+                        style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     recipe.title,
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, letterSpacing: -0.2),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 5),
                   Text(
                     '${tr('난이도', 'Level')} ${trTag(recipe.difficulty)} · ${recipe.cookTimeMin}${tr('분', 'min')}',
-                    style: const TextStyle(fontSize: 10, color: AppColors.inkSoft),
+                    style: const TextStyle(fontSize: 10.5, color: AppColors.inkSoft, height: 1.4),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 5),
                   Text(
                     tr('재료 $matched/$total', '$matched/$total items'),
-                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.green),
+                    style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: AppColors.green),
                   ),
                 ],
               ),

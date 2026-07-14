@@ -28,7 +28,7 @@ class MainBottomNav extends StatelessWidget {
       currentIndex: currentIndex,
       selectedItemColor: AppColors.green,
       unselectedItemColor: AppColors.inkSoft,
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.card,
       type: BottomNavigationBarType.fixed,
       iconSize: 20,
       selectedFontSize: 9,

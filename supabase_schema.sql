@@ -9,9 +9,20 @@ create extension if not exists "uuid-ossp";
 -- 1. users (Supabase Auth의 auth.users와 1:1 연결되는 프로필 테이블)
 create table public.users (
   id uuid primary key references auth.users(id) on delete cascade,
+  username text not null unique,
   email text,
   social_provider text check (social_provider in ('kakao','google',null)),
-  nickname text not null default '냉장고 셰프',
+  nickname text not null unique default '냉장고 셰프',
+  gender text,
+  nationality text,
+  city text,
+  bio text,
+  photo_url text,
+  hide_gender boolean not null default false,
+  hide_photo boolean not null default false,
+  hide_nationality boolean not null default false,
+  hide_city boolean not null default false,
+  hide_email boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -135,6 +146,101 @@ create table public.meal_invites (
   created_at timestamptz not null default now()
 );
 
+-- 12. board_posts / board_post_likes (게시판)
+create table public.board_posts (
+  id uuid primary key default uuid_generate_v4(),
+  category text check (category in ('showoff','challenge')) not null,
+  author_id uuid not null references public.users(id) on delete cascade,
+  title text not null,
+  content text not null,
+  photo_url text,
+  points_awarded integer not null default 0,
+  created_at timestamptz not null default now()
+);
+create index idx_board_posts_category on public.board_posts(category);
+
+create table public.board_post_likes (
+  post_id uuid not null references public.board_posts(id) on delete cascade,
+  user_id uuid not null references public.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (post_id, user_id)
+);
+
+-- 게시글 댓글 — 작성자 닉네임/등급은 작성 시점 값을 그대로 저장한다(비정규화, board_posts와 동일한 방식)
+-- author_id에 public.users FK를 걸어 데이터 정합성을 보장한다 (참조 무결성)
+create table public.board_comments (
+  id uuid default uuid_generate_v4() primary key,
+  post_id uuid not null references public.board_posts(id) on delete cascade,
+  author_id uuid not null references public.users(id) on delete cascade,
+  author_nickname text not null,
+  author_username text not null,
+  author_tier text,
+  author_is_kfood_master boolean not null default false,
+  content text not null,
+  created_at timestamptz not null default now()
+);
+create index board_comments_post_id_idx on public.board_comments(post_id);
+
+-- 13. chef_point_events (요리 포인트 적립 내역 — 마이 화면의 "최근 포인트 내역" 원본)
+create table public.chef_point_events (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid not null references public.users(id) on delete cascade,
+  reason text not null,
+  amount integer not null,
+  is_kfood_track boolean not null default false,
+  label_ko text not null,
+  label_en text not null,
+  -- 냉장고 첫 재료 등록 같은 1회성 보너스의 중복 지급을 막기 위한 키 (예: 'first_ingredient', 'first_try:김치찌개')
+  dedupe_key text,
+  created_at timestamptz not null default now()
+);
+create index idx_chef_point_events_user on public.chef_point_events(user_id);
+create unique index idx_chef_point_events_dedupe on public.chef_point_events(user_id, dedupe_key) where dedupe_key is not null;
+
+-- 좋아요 10개마다 게시글 작성자에게 +1점을 자동 지급하는 트리거.
+-- 좋아요를 누르는 사람과 포인트를 받는 작성자가 다르므로 SECURITY DEFINER로 RLS를 우회해 작성자 대신 적립한다.
+create or replace function public.handle_board_like_change()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  target_post_id uuid;
+  like_total integer;
+  new_points integer;
+  delta integer;
+  post_row public.board_posts;
+begin
+  target_post_id := coalesce(new.post_id, old.post_id);
+  select count(*) into like_total from public.board_post_likes where post_id = target_post_id;
+  new_points := like_total / 10;
+
+  select * into post_row from public.board_posts where id = target_post_id;
+  delta := new_points - post_row.points_awarded;
+
+  update public.board_posts set points_awarded = new_points where id = target_post_id;
+
+  if delta > 0 then
+    insert into public.chef_point_events (user_id, reason, amount, is_kfood_track, label_ko, label_en)
+    values (
+      post_row.author_id,
+      'boardLikes',
+      delta,
+      false,
+      '"' || post_row.title || '" 게시글 좋아요 보너스',
+      '"' || post_row.title || '" post like bonus'
+    );
+  end if;
+
+  return null;
+end;
+$$;
+
+create trigger on_board_like_change
+after insert or delete on public.board_post_likes
+for each row execute function public.handle_board_like_change();
+
 -- ============================================================
 -- Row Level Security (RLS) — 각 사용자가 자기 데이터만 접근 가능하도록 설정
 -- ============================================================
@@ -146,8 +252,19 @@ alter table public.receipt_items enable row level security;
 alter table public.user_recipe_history enable row level security;
 alter table public.meal_invites enable row level security;
 
-create policy "본인 프로필만 조회/수정" on public.users
-  for all using (auth.uid() = id);
+-- users는 랭킹/게시판 화면에서 다른 사람의 닉네임·등급도 보여줘야 하므로 조회는 전체 공개하고,
+-- 쓰기(등록/수정/삭제)만 본인으로 제한한다. 비공개 처리가 필요한 필드는 클라이언트에서 UserProfile.toPublicView()로 가린다.
+create policy "전체 공개 조회" on public.users
+  for select using (true);
+
+create policy "본인 프로필만 생성" on public.users
+  for insert with check (auth.uid() = id);
+
+create policy "본인 프로필만 수정" on public.users
+  for update using (auth.uid() = id);
+
+create policy "본인 프로필만 삭제" on public.users
+  for delete using (auth.uid() = id);
 
 create policy "본인 냉장고만 접근" on public.user_ingredients
   for all using (auth.uid() = user_id);
@@ -161,6 +278,45 @@ create policy "본인 요리기록만 접근" on public.user_recipe_history
 create policy "본인 초대만 접근" on public.meal_invites
   for all using (auth.uid() = host_user_id);
 
+-- 게시판/포인트는 랭킹·배지 표시를 위해 조회는 전체 공개하고 쓰기만 본인으로 제한한다
+alter table public.board_posts enable row level security;
+alter table public.board_post_likes enable row level security;
+alter table public.board_comments enable row level security;
+alter table public.chef_point_events enable row level security;
+
+create policy "게시글 전체 공개 조회" on public.board_posts for select using (true);
+create policy "본인 글만 작성" on public.board_posts for insert with check (auth.uid() = author_id);
+
+create policy "좋아요 전체 공개 조회" on public.board_post_likes for select using (true);
+create policy "본인 좋아요만 추가" on public.board_post_likes for insert with check (auth.uid() = user_id);
+create policy "본인 좋아요만 삭제" on public.board_post_likes for delete using (auth.uid() = user_id);
+
+create policy "댓글 전체 공개 조회" on public.board_comments for select using (true);
+create policy "로그인한 사용자만 댓글 작성" on public.board_comments for insert with check (auth.uid() = author_id);
+
+create policy "포인트 내역 전체 공개 조회" on public.chef_point_events for select using (true);
+create policy "본인 포인트 내역만 추가" on public.chef_point_events for insert with check (auth.uid() = user_id);
+
+-- ============================================================
+-- Storage: board-photos 버킷 (뽐내기/챌린지 게시글 사진)
+-- board_posts.photo_url이 게시글 전체 공개 조회이므로, 실제 이미지 파일도 같은 정책으로 공개한다.
+-- ============================================================
+insert into storage.buckets (id, name, public)
+values ('board-photos', 'board-photos', true)
+on conflict (id) do nothing;
+
+create policy "게시판 사진 전체 공개 조회"
+  on storage.objects for select
+  using (bucket_id = 'board-photos');
+
+create policy "로그인한 사용자만 게시판 사진 업로드"
+  on storage.objects for insert
+  with check (bucket_id = 'board-photos' and auth.role() = 'authenticated');
+
+create policy "본인이 올린 게시판 사진만 삭제"
+  on storage.objects for delete
+  using (bucket_id = 'board-photos' and auth.uid() = owner);
+
 -- ingredients, recipes, recipe_ingredients, recipe_steps는 공용 참조 데이터라 전체 공개 조회 허용
 alter table public.ingredients enable row level security;
 alter table public.recipes enable row level security;
@@ -171,3 +327,28 @@ create policy "전체 공개 조회" on public.ingredients for select using (tru
 create policy "전체 공개 조회" on public.recipes for select using (true);
 create policy "전체 공개 조회" on public.recipe_ingredients for select using (true);
 create policy "전체 공개 조회" on public.recipe_steps for select using (true);
+
+-- ============================================================
+-- 재료 마스터 시드 데이터 — lib/data/ingredient_catalog.dart 와 동일하게 유지
+-- ============================================================
+insert into public.ingredients (name, category, unit_default, default_shelf_life_days) values
+  ('대파', '채소', '단', 10),
+  ('양파', '채소', '개', 30),
+  ('애호박', '채소', '개', 7),
+  ('시금치', '채소', '단', 5),
+  ('마늘', '채소', 'g', 30),
+  ('감자', '채소', '개', 21),
+  ('돼지고기 앞다리살', '육류', 'g', 4),
+  ('소고기 등심', '육류', 'g', 4),
+  ('닭가슴살', '육류', 'g', 3),
+  ('삼겹살', '육류', 'g', 4),
+  ('계란', '유제품', '개', 21),
+  ('우유', '유제품', 'ml', 7),
+  ('슬라이스치즈', '유제품', '장', 30),
+  ('버터', '유제품', 'g', 60),
+  ('고등어', '수산', '마리', 2),
+  ('새우', '수산', 'g', 2),
+  ('두부', '기타', '모', 5),
+  ('김치', '기타', 'g', 60),
+  ('김', '기타', '봉', 90)
+on conflict (name) do nothing;

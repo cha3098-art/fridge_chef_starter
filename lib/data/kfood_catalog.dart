@@ -6,7 +6,7 @@ const kfoodCatalog = <Recipe>[
   Recipe(
     title: '김치찌개',
     emoji: '🍲',
-    photoQuery: 'kimchi,jjigae',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg/960px-Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -40,7 +40,7 @@ const kfoodCatalog = <Recipe>[
   Recipe(
     title: '불고기',
     emoji: '🥩',
-    photoQuery: 'bulgogi,beef',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Bulgogi_2.jpg/960px-Bulgogi_2.jpg',
     cookTimeMin: 30,
     difficulty: '중',
     cuisineType: '한식',
@@ -70,7 +70,7 @@ const kfoodCatalog = <Recipe>[
   Recipe(
     title: '비빔밥',
     emoji: '🍚',
-    photoQuery: 'bibimbap,korean',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Bibimbap_7.jpg/960px-Bibimbap_7.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -106,7 +106,7 @@ const kfoodCatalog = <Recipe>[
   Recipe(
     title: '잡채',
     emoji: '🍜',
-    photoQuery: 'japchae,noodles',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Japchae_2.jpg/960px-Japchae_2.jpg',
     cookTimeMin: 30,
     difficulty: '상',
     cuisineType: '한식',
@@ -140,7 +140,7 @@ const kfoodCatalog = <Recipe>[
   Recipe(
     title: '김밥',
     emoji: '🍙',
-    photoQuery: 'gimbap,kimbap',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Gimbap_8.jpg/960px-Gimbap_8.jpg',
     cookTimeMin: 30,
     difficulty: '하',
     cuisineType: '한식',
@@ -171,7 +171,7 @@ const kfoodCatalog = <Recipe>[
   Recipe(
     title: '닭갈비',
     emoji: '🍗',
-    photoQuery: 'dakgalbi,chicken',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Cooking_Dak-galbi_in_Seoul_Korea.jpg/960px-Cooking_Dak-galbi_in_Seoul_Korea.jpg',
     cookTimeMin: 30,
     difficulty: '중',
     cuisineType: '한식',
@@ -201,7 +201,7 @@ const kfoodCatalog = <Recipe>[
   Recipe(
     title: '떡볶이',
     emoji: '🍥',
-    photoQuery: 'tteokbokki,street',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Tteokbokki.JPG/960px-Tteokbokki.JPG',
     cookTimeMin: 25,
     difficulty: '하',
     cuisineType: '분식',
@@ -233,7 +233,7 @@ const kfoodCatalog = <Recipe>[
   Recipe(
     title: '짜파구리',
     emoji: '🍜',
-    photoQuery: 'ramen,noodles',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Chapaguri_1.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '분식',

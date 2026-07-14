@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../l10n/tr.dart';
 import '../models/recipe.dart';
+import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/chef_tier_badge.dart';
@@ -26,8 +27,10 @@ class RecipeDetailScreen extends StatelessWidget {
     final missing = recipe.missingIngredients(fridgeIngredientNames);
     final gradient = cuisineGradient(recipe.cuisineType);
 
-    return Scaffold(
-      backgroundColor: AppColors.paper,
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) => Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC), // Slate 50
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -50,7 +53,7 @@ class RecipeDetailScreen extends StatelessWidget {
                 ),
               ),
               background: RecipePhoto(
-                photoQuery: recipe.photoQuery,
+                photoUrl: recipe.photoUrl,
                 emoji: recipe.emoji,
                 cuisineType: recipe.cuisineType,
                 width: double.infinity,
@@ -60,7 +63,7 @@ class RecipeDetailScreen extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.lg),
             sliver: SliverList.list(
               children: [
                 Wrap(
@@ -85,11 +88,18 @@ class RecipeDetailScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFFFFF),
-                    border: Border.all(color: AppColors.line),
-                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF1E293B).withValues(alpha: 0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                   child: Column(
                     children: recipe.ingredients
                         .map((ingredient) => _IngredientRow(
@@ -111,6 +121,7 @@ class RecipeDetailScreen extends StatelessWidget {
           ),
         ],
       ),
+      ),
     );
   }
 }
@@ -121,7 +132,10 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink));
+    return Text(
+      text,
+      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink, letterSpacing: -0.2),
+    );
   }
 }
 
@@ -134,13 +148,12 @@ class _InfoChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.paperDeep,
+        color: const Color(0xFFF1F5F9), // Slate 100
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.line),
       ),
       child: Text(
         label,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.inkSoft),
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.inkSoft, letterSpacing: 0.1),
       ),
     );
   }
@@ -156,13 +169,13 @@ class _MatchBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isFull = missing.isEmpty;
-    final bg = isFull ? AppColors.greenSoft : AppColors.goldSoft;
+    final bg = isFull ? const Color(0xFFDCFCE7) : const Color(0xFFFEF3C7);
     final fg = isFull ? AppColors.green : const Color(0xFF9C6A15);
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(10)),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -214,17 +227,30 @@ class _NutritionGrid extends StatelessWidget {
           Expanded(
             child: Container(
               margin: EdgeInsets.only(right: i == entries.length - 1 ? 0 : 8),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFFFFF),
-                border: Border.all(color: AppColors.line),
-                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF1E293B).withValues(alpha: 0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
-                  Text(entries[i].$2, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                  const SizedBox(height: 2),
-                  Text(entries[i].$1, style: const TextStyle(fontSize: 11, color: AppColors.inkSoft)),
+                  Text(
+                    entries[i].$2,
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, letterSpacing: -0.1),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    entries[i].$1,
+                    style: const TextStyle(fontSize: 11, color: AppColors.inkSoft, height: 1.4),
+                  ),
                 ],
               ),
             ),
@@ -244,9 +270,9 @@ class _IngredientRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 13),
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.line, width: 0.6)),
+        border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,7 +288,10 @@ class _IngredientRow extends StatelessWidget {
               Expanded(
                 child: Row(
                   children: [
-                    Text(ingredient.name, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                    Text(
+                      ingredient.name,
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: -0.1),
+                    ),
                     if (ingredient.isOptional) ...[
                       const SizedBox(width: 6),
                       Container(
@@ -284,7 +313,7 @@ class _IngredientRow extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 24, top: 2),
+            padding: const EdgeInsets.only(left: 24, top: 4),
             child: _ServingsBreakdown(ingredient: ingredient, selectedServings: servings),
           ),
         ],
@@ -339,10 +368,10 @@ class _StepTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 22,
-            height: 22,
+            width: 24,
+            height: 24,
             alignment: Alignment.center,
-            decoration: const BoxDecoration(color: AppColors.ink, shape: BoxShape.circle),
+            decoration: const BoxDecoration(color: Color(0xFF22C55E), shape: BoxShape.circle),
             child: Text(
               '${step.order}',
               style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFFFFFFFF)),
@@ -353,7 +382,7 @@ class _StepTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(step.description, style: const TextStyle(fontSize: 13, height: 1.4)),
+                Text(step.description, style: const TextStyle(fontSize: 13, height: 1.5, letterSpacing: 0.1)),
                 if (step.timerLabel != null) ...[
                   const SizedBox(height: 4),
                   Row(

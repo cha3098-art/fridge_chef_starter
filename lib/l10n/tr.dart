@@ -19,6 +19,7 @@ const _tagDictionary = {
   '채소': 'Veggies',
   '육류': 'Meat',
   '유제품': 'Dairy',
+  '수산': 'Seafood',
   '기타': 'Other',
   '1인분': '1 serving',
   '2인분': '2 servings',

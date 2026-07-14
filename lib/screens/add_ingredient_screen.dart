@@ -6,8 +6,10 @@ import 'package:image_picker/image_picker.dart';
 import '../data/ingredient_catalog.dart';
 import '../l10n/tr.dart';
 import '../models/fridge_item.dart';
+import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
+import '../widgets/fridge_mascot.dart';
 import '../widgets/language_toggle.dart';
 
 /// "재료 등록" 화면 — 검색 / 사진인식 / 영수증스캔 / 냉장고 전체촬영 네 가지 방법을 탭으로 제공
@@ -30,7 +32,9 @@ class _AddIngredientScreenState extends State<AddIngredientScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) => DefaultTabController(
       length: 4,
       child: Scaffold(
         backgroundColor: AppColors.paper,
@@ -90,6 +94,7 @@ class _AddIngredientScreenState extends State<AddIngredientScreen> {
                 ),
               ),
       ),
+      ),
     );
   }
 }
@@ -116,7 +121,7 @@ class _SearchTabState extends State<_SearchTab> {
   Future<void> _openQuantitySheet(IngredientCatalogEntry entry) async {
     final result = await showModalBottomSheet<FridgeItem>(
       context: context,
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.card,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -131,17 +136,11 @@ class _SearchTabState extends State<_SearchTab> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.md),
           child: TextField(
             decoration: InputDecoration(
               hintText: tr('재료 이름으로 검색', 'Search by ingredient name'),
               prefixIcon: const Icon(Icons.search, color: AppColors.inkSoft),
-              filled: true,
-              fillColor: const Color(0xFFFFFFFF),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: AppColors.line),
-              ),
             ),
             onChanged: (v) => setState(() => _query = v.trim()),
           ),
@@ -172,7 +171,14 @@ class _SearchTabState extends State<_SearchTab> {
         Expanded(
           child: _filtered.isEmpty
               ? Center(
-                  child: Text(tr('검색 결과가 없어요', 'No results'), style: const TextStyle(color: AppColors.inkSoft)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const FridgeMascot(size: 84),
+                      const SizedBox(height: AppSpacing.md),
+                      Text(tr('검색 결과가 없어요', 'No results'), style: const TextStyle(color: AppColors.inkSoft)),
+                    ],
+                  ),
                 )
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -326,7 +332,7 @@ class _FridgeScanTabState extends State<_FridgeScanTab> {
   Future<void> _openPhotoSourceSheet() async {
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),

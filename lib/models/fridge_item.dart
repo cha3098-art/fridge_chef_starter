@@ -2,6 +2,9 @@ enum DdayLevel { ok, warn, bad }
 
 /// user_ingredients 테이블에 대응하는 냉장고 재료 모델
 class FridgeItem {
+  /// user_ingredients.id — DB에서 불러온 항목만 값이 있고, 등록 화면에서
+  /// 갓 만든(아직 insert 전) 항목은 null이다
+  final String? id;
   final String name;
   final double quantity;
   final String unit;
@@ -9,6 +12,7 @@ class FridgeItem {
   final String category;
 
   const FridgeItem({
+    this.id,
     required this.name,
     required this.quantity,
     required this.unit,

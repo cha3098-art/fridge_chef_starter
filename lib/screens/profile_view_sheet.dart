@@ -11,13 +11,13 @@ Future<void> showProfileView(BuildContext context, UserProfile profile) {
   final view = profile.toPublicView();
   return showModalBottomSheet(
     context: context,
-    backgroundColor: const Color(0xFFFFFFFF),
+    backgroundColor: AppColors.card,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusLg)),
     ),
     builder: (_) => Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xl),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +39,7 @@ Future<void> showProfileView(BuildContext context, UserProfile profile) {
             child: Text(view.nickname, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17)),
           ),
           Center(
-            child: Text('@${view.id}', style: const TextStyle(fontSize: 12, color: AppColors.inkSoft)),
+            child: Text('@${view.username}', style: const TextStyle(fontSize: 12, color: AppColors.inkSoft)),
           ),
           const SizedBox(height: 16),
           _ProfileRow(label: tr('성별', 'Gender'), value: view.gender),

@@ -1,22 +1,23 @@
 import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/tr.dart';
 import '../models/chef_points.dart';
 
-/// 앱 전체에서 공유하는 요리 포인트 상태 (싱글턴, 메모리에만 보관)
-/// TODO: Supabase 연동 시 user_recipe_history/meal_invites 기반으로 서버 집계하도록 교체
+/// 앱 전체에서 공유하는 요리 포인트 상태 (싱글턴). chef_point_events 테이블과 동기화한다.
+/// 게시판 좋아요 보너스는 DB 트리거(handle_board_like_change)가 서버에서 대신 적립해준다.
 class ChefPointsStore extends ChangeNotifier {
   ChefPointsStore._();
   static final ChefPointsStore instance = ChefPointsStore._();
 
-  final List<PointEvent> _events = [];
-  final List<DateTime> _cookTimestamps = [];
-  final List<DateTime> _inviteTimestamps = [];
-  final Set<String> _triedRecipeTitles = {};
-  bool _firstIngredientAwarded = false;
+  SupabaseClient get _client => Supabase.instance.client;
+
+  List<PointEvent> _events = [];
+  bool _loaded = false;
   DateTime? _lastWeeklyMissionAt;
 
   List<PointEvent> get events => List.unmodifiable(_events.reversed);
+  bool get isLoaded => _loaded;
 
   int get generalPoints =>
       _events.where((e) => !e.isKFoodTrack).fold(0, (sum, e) => sum + e.amount);
@@ -50,45 +51,109 @@ class ChefPointsStore extends ChangeNotifier {
 
   int get cooksThisWeek {
     final weekAgo = DateTime.now().subtract(const Duration(days: 7));
-    return _cookTimestamps.where((t) => t.isAfter(weekAgo)).length;
+    return _events.where((e) => e.reason == PointReason.cook && e.timestamp.isAfter(weekAgo)).length;
   }
 
   bool get invitedThisWeek {
     final weekAgo = DateTime.now().subtract(const Duration(days: 7));
-    return _inviteTimestamps.any((t) => t.isAfter(weekAgo));
+    return _events.any((e) => e.reason == PointReason.kfoodInviteBonus && e.timestamp.isAfter(weekAgo));
   }
 
-  void _add(PointReason reason, int amount, bool isKFoodTrack, String labelKo, String labelEn) {
-    if (amount <= 0) return;
-    _events.add(PointEvent(
-      reason: reason,
-      amount: amount,
-      isKFoodTrack: isKFoodTrack,
-      labelKo: labelKo,
-      labelEn: labelEn,
-      timestamp: DateTime.now(),
-    ));
+  /// 로그아웃 시 캐시를 비운다
+  void clear() {
+    _events = [];
+    _loaded = false;
+    _lastWeeklyMissionAt = null;
     notifyListeners();
   }
 
+  Future<void> loadEvents() async {
+    final uid = _client.auth.currentUser?.id;
+    if (uid == null) {
+      _events = [];
+      _loaded = true;
+      notifyListeners();
+      return;
+    }
+    final rows = await _client
+        .from('chef_point_events')
+        .select()
+        .eq('user_id', uid)
+        .order('created_at');
+    _events = (rows as List).map<PointEvent>((row) => PointEvent(
+          reason: PointReason.values.byName(row['reason'] as String),
+          amount: row['amount'] as int,
+          isKFoodTrack: row['is_kfood_track'] as bool,
+          labelKo: row['label_ko'] as String,
+          labelEn: row['label_en'] as String,
+          timestamp: DateTime.parse(row['created_at'] as String),
+        )).toList();
+    _lastWeeklyMissionAt = _events
+        .where((e) => e.reason == PointReason.weeklyMission)
+        .map((e) => e.timestamp)
+        .fold<DateTime?>(null, (latest, t) => latest == null || t.isAfter(latest) ? t : latest);
+    _loaded = true;
+    notifyListeners();
+  }
+
+  Future<void> _add(
+    PointReason reason,
+    int amount,
+    bool isKFoodTrack,
+    String labelKo,
+    String labelEn, {
+    String? dedupeKey,
+  }) async {
+    if (amount <= 0) return;
+    final uid = _client.auth.currentUser?.id;
+    if (uid == null) return;
+    final row = {
+      'user_id': uid,
+      'reason': reason.name,
+      'amount': amount,
+      'is_kfood_track': isKFoodTrack,
+      'label_ko': labelKo,
+      'label_en': labelEn,
+      'dedupe_key': dedupeKey,
+    };
+    try {
+      if (dedupeKey != null) {
+        await _client.from('chef_point_events').upsert(
+              row,
+              onConflict: 'user_id,dedupe_key',
+              ignoreDuplicates: true,
+            );
+      } else {
+        await _client.from('chef_point_events').insert(row);
+      }
+      await loadEvents();
+    } catch (_) {
+      // 게이미피케이션 보너스라 실패해도 조용히 무시한다 (재시도 없음)
+    }
+  }
+
   /// 냉장고에 재료를 처음 등록했을 때 1회 한정 보너스
-  void recordFirstIngredientIfNeeded() {
-    if (_firstIngredientAwarded) return;
-    _firstIngredientAwarded = true;
-    _add(PointReason.firstIngredient, 1, false, '냉장고에 첫 재료 등록', 'First fridge item added');
+  Future<void> recordFirstIngredientIfNeeded() {
+    return _add(
+      PointReason.firstIngredient,
+      1,
+      false,
+      '냉장고에 첫 재료 등록',
+      'First fridge item added',
+      dedupeKey: 'first_ingredient',
+    );
   }
 
   /// 요리 완성(자랑하기) 시 호출 — 난이도 가중치 + 보너스들을 한 번에 계산한다
-  void recordCook({
+  Future<void> recordCook({
     required String recipeTitle,
     required String difficulty,
     required bool isKFood,
     required bool isFullFridgeMatch,
-  }) {
+  }) async {
     final weight = difficultyWeight(difficulty);
     final difficultyEn = trTag(difficulty);
-    _cookTimestamps.add(DateTime.now());
-    _add(
+    await _add(
       PointReason.cook,
       weight,
       false,
@@ -97,7 +162,7 @@ class ChefPointsStore extends ChangeNotifier {
     );
 
     if (isKFood) {
-      _add(
+      await _add(
         PointReason.kfoodCook,
         weight,
         true,
@@ -106,32 +171,24 @@ class ChefPointsStore extends ChangeNotifier {
       );
     }
     if (isFullFridgeMatch) {
-      _add(PointReason.fullMatchCook, 1, false, '냉장고 재료만으로 완성 보너스', 'Fridge-only completion bonus');
+      await _add(PointReason.fullMatchCook, 1, false, '냉장고 재료만으로 완성 보너스', 'Fridge-only completion bonus');
     }
-    if (!_triedRecipeTitles.contains(recipeTitle)) {
-      _triedRecipeTitles.add(recipeTitle);
-      _add(PointReason.firstTry, 1, false, '$recipeTitle 첫 도전 보너스', '$recipeTitle first-try bonus');
-    }
-    _maybeAwardWeeklyMission();
-  }
-
-  /// 게시판 글이 좋아요 10개를 새로 넘길 때마다 호출 — amount는 새로 넘긴 만큼의 점수
-  void recordBoardLikeBonus(int amount, String postTitle) {
-    _add(
-      PointReason.boardLikes,
-      amount,
+    await _add(
+      PointReason.firstTry,
+      1,
       false,
-      '"$postTitle" 게시글 좋아요 보너스',
-      '"$postTitle" post like bonus',
+      '$recipeTitle 첫 도전 보너스',
+      '$recipeTitle first-try bonus',
+      dedupeKey: 'first_try:$recipeTitle',
     );
+    await _maybeAwardWeeklyMission();
   }
 
   /// 초대장 발송 시 호출 — K-Food 레시피면 난이도 가중치의 2배 보너스
-  void recordInvite({required String recipeTitle, required String difficulty, required bool isKFood}) {
-    _inviteTimestamps.add(DateTime.now());
+  Future<void> recordInvite({required String recipeTitle, required String difficulty, required bool isKFood}) async {
     if (isKFood) {
       final weight = difficultyWeight(difficulty) * 2;
-      _add(
+      await _add(
         PointReason.kfoodInviteBonus,
         weight,
         true,
@@ -139,17 +196,17 @@ class ChefPointsStore extends ChangeNotifier {
         '$recipeTitle K-Food invite bonus 2x (+$weight)',
       );
     }
-    _maybeAwardWeeklyMission();
+    await _maybeAwardWeeklyMission();
   }
 
-  void _maybeAwardWeeklyMission() {
+  Future<void> _maybeAwardWeeklyMission() async {
     final now = DateTime.now();
     if (_lastWeeklyMissionAt != null && now.difference(_lastWeeklyMissionAt!) < const Duration(days: 7)) {
       return;
     }
     if (cooksThisWeek >= 3 && invitedThisWeek) {
       _lastWeeklyMissionAt = now;
-      _add(
+      await _add(
         PointReason.weeklyMission,
         1,
         false,
@@ -157,5 +214,22 @@ class ChefPointsStore extends ChangeNotifier {
         'Weekly mission complete (3 cooks + Inbox use in 7 days)',
       );
     }
+  }
+
+  /// 랭킹/게시판에서 다른 사용자의 등급·배지를 보여주기 위한 전체 포인트 배치 조회
+  /// (일반 포인트, K-Food 포인트를 user_id별로 합산해서 반환)
+  static Future<Map<String, ({int general, int kfood})>> fetchAllUserPoints() async {
+    final rows = await Supabase.instance.client
+        .from('chef_point_events')
+        .select('user_id, amount, is_kfood_track');
+    final totals = <String, (int, int)>{};
+    for (final row in rows as List) {
+      final userId = row['user_id'] as String;
+      final amount = row['amount'] as int;
+      final isKFood = row['is_kfood_track'] as bool;
+      final current = totals[userId] ?? (0, 0);
+      totals[userId] = isKFood ? (current.$1, current.$2 + amount) : (current.$1 + amount, current.$2);
+    }
+    return totals.map((userId, t) => MapEntry(userId, (general: t.$1, kfood: t.$2)));
   }
 }

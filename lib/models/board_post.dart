@@ -13,22 +13,22 @@ class BoardPost {
   final String id;
   final BoardCategory category;
   final String authorId;
+  final String authorUsername;
   final String authorNickname;
   final String? authorTier;
   final bool authorIsKFoodMaster;
   final String title;
   final String content;
+  /// board_posts.photo_url — Supabase Storage(또는 외부 CDN)의 이미지 URL. 로컬 파일 경로가 아니다.
   final String? photoPath;
   final DateTime createdAt;
   final Set<String> likedByUserIds;
-
-  /// 지금까지 좋아요 보너스로 실제 지급된 포인트 (좋아요÷10) — 중복 지급 방지용
-  int pointsAwarded;
 
   BoardPost({
     required this.id,
     required this.category,
     required this.authorId,
+    required this.authorUsername,
     required this.authorNickname,
     required this.authorTier,
     required this.authorIsKFoodMaster,
@@ -37,7 +37,6 @@ class BoardPost {
     required this.createdAt,
     this.photoPath,
     Set<String>? likedByUserIds,
-    this.pointsAwarded = 0,
   }) : likedByUserIds = likedByUserIds ?? <String>{};
 
   int get likeCount => likedByUserIds.length;

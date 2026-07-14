@@ -1,85 +1,79 @@
 import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/user_profile.dart';
 
-/// 회원가입/프로필 상태 (싱글턴, 메모리에만 보관)
-/// 실제 서버가 없으므로 아이디/닉네임 중복확인은 이 안에 미리 심어둔 목업 사용자 +
-/// 현재 세션에서 가입한 프로필을 기준으로 동작한다.
-/// TODO: Supabase 연동 시 auth.users + public.users 기반 실제 중복확인으로 교체
+/// 회원가입/프로필 상태 (싱글턴). public.users 테이블을 통해 Supabase와 동기화한다.
 class ProfileStore extends ChangeNotifier {
   ProfileStore._();
   static final ProfileStore instance = ProfileStore._();
 
+  SupabaseClient get _client => Supabase.instance.client;
+
   UserProfile? currentProfile;
 
-  /// 랭킹/게시판을 채우기 위한 목업 사용자 — 실제 서버 데이터가 아님을 명확히 한다
-  static const mockProfiles = <UserProfile>[
-    UserProfile(
-      id: 'chef_kim',
-      nickname: '집밥킴',
-      gender: '여성',
-      nationality: '대한민국',
-      city: '서울',
-      email: 'chef_kim@example.com',
-      bio: '매일 냉장고를 털어 요리해요!',
-    ),
-    UserProfile(
-      id: 'foodlover88',
-      nickname: '맛잘알',
-      gender: '남성',
-      nationality: '대한민국',
-      city: '부산',
-      email: 'foodlover88@example.com',
-      bio: 'K-Food 챌린지 중입니다.',
-      hideEmail: true,
-      hideCity: true,
-    ),
-    UserProfile(
-      id: 'jenny_cook',
-      nickname: '제니쿡',
-      gender: '여성',
-      nationality: '미국',
-      city: 'LA',
-      email: 'jenny@example.com',
-      bio: 'Korean food fan from LA!',
-      hideNationality: true,
-      hideGender: true,
-    ),
-    UserProfile(
-      id: 'minsu_chef',
-      nickname: '민수요리',
-      gender: '남성',
-      nationality: '대한민국',
-      city: '대전',
-      email: 'minsu@example.com',
-      bio: '떡볶이가 제일 좋아요.',
-    ),
-  ];
+  /// 이메일 인증이 필요해 가입 직후 세션이 없을 때 임시로 들고 있다가,
+  /// 인증 후 첫 로그인에서 세션이 생기면 그때 public.users에 저장한다.
+  /// (앱을 재시작하면 사라지므로, 그 경우 로그인은 되지만 프로필은 없는 상태가 될 수 있다 — 알려진 한계)
+  UserProfile? _pendingProfile;
 
-  Set<String> get _takenIds => {
-        ...mockProfiles.map((p) => p.id),
-        if (currentProfile != null) currentProfile!.id,
-      };
+  void stagePendingProfile(UserProfile profile) {
+    _pendingProfile = profile;
+  }
 
-  Set<String> get _takenNicknames => {
-        ...mockProfiles.map((p) => p.nickname),
-        if (currentProfile != null) currentProfile!.nickname,
-      };
+  /// 로그인 세션의 uuid로 public.users에서 내 프로필을 불러온다
+  Future<void> loadCurrentProfile() async {
+    final uid = _client.auth.currentUser?.id;
+    if (uid == null) {
+      currentProfile = null;
+      notifyListeners();
+      return;
+    }
+    final row = await _client.from('users').select().eq('id', uid).maybeSingle();
+    final pending = _pendingProfile;
+    if (row == null && pending != null && pending.id == uid) {
+      await _client.from('users').insert(pending.toInsertRow());
+      currentProfile = pending;
+      _pendingProfile = null;
+    } else {
+      currentProfile = row == null ? null : UserProfile.fromRow(row);
+    }
+    notifyListeners();
+  }
 
-  bool isIdTaken(String id) => _takenIds.contains(id);
+  /// 로그아웃 시 로컬 프로필 캐시를 비운다
+  void clear() {
+    currentProfile = null;
+    notifyListeners();
+  }
 
-  bool isNicknameTaken(String nickname) => _takenNicknames.contains(nickname);
+  Future<bool> isUsernameTaken(String username) async {
+    final row = await _client.from('users').select('id').eq('username', username).maybeSingle();
+    return row != null;
+  }
 
-  void register(UserProfile profile) {
+  Future<bool> isNicknameTaken(String nickname) async {
+    final row = await _client.from('users').select('id').eq('nickname', nickname).maybeSingle();
+    return row != null;
+  }
+
+  /// auth.signUp 이후 호출 — public.users에 프로필 행을 만든다
+  Future<void> register(UserProfile profile) async {
+    await _client.from('users').insert(profile.toInsertRow());
     currentProfile = profile;
     notifyListeners();
   }
 
-  UserProfile? findById(String id) {
+  /// 게시판/랭킹에서 다른 사용자의 프로필을 볼 때 사용 — public.users는 전체 공개 조회라 누구든 조회 가능
+  Future<UserProfile?> fetchById(String id) async {
     if (currentProfile?.id == id) return currentProfile;
-    for (final p in mockProfiles) {
-      if (p.id == id) return p;
-    }
-    return null;
+    final row = await _client.from('users').select().eq('id', id).maybeSingle();
+    return row == null ? null : UserProfile.fromRow(row);
+  }
+
+  /// 랭킹 화면에서 전체 사용자 목록을 보여줄 때 사용
+  Future<List<UserProfile>> fetchAll() async {
+    final rows = await _client.from('users').select();
+    return (rows as List).map((row) => UserProfile.fromRow(row)).toList();
   }
 }

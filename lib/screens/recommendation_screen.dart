@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import '../data/recipe_catalog.dart';
 import '../l10n/tr.dart';
 import '../models/recipe.dart';
+import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/chef_tier_badge.dart';
+import '../widgets/fridge_mascot.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import 'recipe_detail_screen.dart';
@@ -13,6 +15,14 @@ const _cookTimeOptions = ['전체', '15분 이내', '30분 이내', '60분 이�
 const _difficultyOptions = ['전체', '하', '중', '상'];
 const _cuisineOptions = ['전체', '한식', '중식', '양식', '분식'];
 const _servingsOptions = ['1인분', '2인분', '3인분', '4인분'];
+
+const _cuisineEmoji = {
+  '전체': '🍽️',
+  '한식': '🍚',
+  '중식': '🥡',
+  '양식': '🍝',
+  '분식': '🍢',
+};
 
 typedef RecommendationFilter = ({
   bool onlyFullMatch,
@@ -89,7 +99,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
   Future<void> _openFilterSheet() async {
     final result = await showModalBottomSheet<RecommendationFilter>(
       context: context,
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.card,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -105,7 +115,9 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     final recipes = result.recipes;
     final isFallback = result.isFallback;
 
-    return Scaffold(
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) => Scaffold(
       backgroundColor: AppColors.paper,
       appBar: AppBar(
         backgroundColor: AppColors.paper,
@@ -179,6 +191,29 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            height: 88,
+            child: ListView.separated(
+              padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
+              scrollDirection: Axis.horizontal,
+              itemCount: _cuisineOptions.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 14),
+              itemBuilder: (context, index) {
+                final cuisine = _cuisineOptions[index];
+                return _CuisineIcon(
+                  cuisine: cuisine,
+                  active: _filter.cuisine == cuisine,
+                  onTap: () => setState(() => _filter = (
+                        onlyFullMatch: _filter.onlyFullMatch,
+                        cookTime: _filter.cookTime,
+                        difficulty: _filter.difficulty,
+                        cuisine: cuisine,
+                        servings: _filter.servings,
+                      )),
+                );
+              },
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
             child: Text(
@@ -191,10 +226,10 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(AppSpacing.sm),
                 decoration: BoxDecoration(
                   color: AppColors.goldSoft,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,12 +252,19 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
           Expanded(
             child: recipes.isEmpty
                 ? Center(
-                    child: Text(tr('조건에 맞는 레시피가 없어요', 'No recipes match these filters'), style: const TextStyle(color: AppColors.inkSoft)),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const FridgeMascot(size: 84),
+                        const SizedBox(height: AppSpacing.md),
+                        Text(tr('조건에 맞는 레시피가 없어요', 'No recipes match these filters'), style: const TextStyle(color: AppColors.inkSoft)),
+                      ],
+                    ),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
                     itemCount: recipes.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
                     itemBuilder: (context, index) {
                       final recipe = recipes[index];
                       return _RecipeCard(
@@ -246,6 +288,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
       bottomNavigationBar: MainBottomNav(
         currentIndex: 1,
         fridgeIngredientNames: widget.fridgeIngredientNames,
+      ),
       ),
     );
   }
@@ -291,81 +334,93 @@ class _RecipeCard extends StatelessWidget {
     final level = recipe.matchLevel(fridgeIngredientNames);
     final missing = recipe.missingIngredients(fridgeIngredientNames);
     final gradient = cuisineGradient(recipe.cuisineType);
+    final percent = total == 0 ? 1.0 : matched / total;
+    final percentLabel = (percent * 100).round();
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFFFFF),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.ink.withValues(alpha: 0.08),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        decoration: cardDecoration(),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 76,
-              height: 76,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: gradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            // 재료 매칭률을 카드 상단에 프로그레스 바 + 퍼센트로 바로 보여준다
+            Row(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      value: percent,
+                      minHeight: 6,
+                      backgroundColor: AppColors.paperDeep,
+                      valueColor: AlwaysStoppedAnimation(_matchFg(level)),
+                    ),
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(recipe.emoji, style: const TextStyle(fontSize: 34)),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: _matchBg(level),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    level == RecipeMatchLevel.full ? tr('완성 가능', 'Ready') : '$percentLabel%',
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: _matchFg(level)),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            const SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 76,
+                  height: 76,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: gradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                  ),
+                  child: Text(recipe.emoji, style: const TextStyle(fontSize: 34)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          recipe.title,
-                          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
-                        ),
+                      Text(
+                        recipe.title,
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: _matchBg(level),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          tr('재료 $matched/$total', '$matched/$total items'),
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: _matchFg(level)),
-                        ),
+                      const SizedBox(height: 6),
+                      Text(
+                        '${trTag(recipe.cuisineType)} · ${tr('난이도', 'Level')} ${trTag(recipe.difficulty)} · ${recipe.cookTimeMin}${tr('분', 'min')} · ${recipe.caloriesPerServing}kcal',
+                        style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
                       ),
+                      Text(
+                        tr('재료 $matched/$total개 보유', '$matched/$total items on hand'),
+                        style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
+                      ),
+                      if (missing.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          '${tr('부족한 재료', 'Missing')}: ${missing.join(', ')}',
+                          style: const TextStyle(fontSize: 11, color: AppColors.red),
+                        ),
+                      ],
                     ],
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '${trTag(recipe.cuisineType)} · ${tr('난이도', 'Level')} ${trTag(recipe.difficulty)} · ${recipe.cookTimeMin}${tr('분', 'min')} · ${recipe.caloriesPerServing}kcal',
-                    style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
-                  ),
-                  if (missing.isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      '${tr('부족한 재료', 'Missing')}: ${missing.join(', ')}',
-                      style: const TextStyle(fontSize: 11, color: AppColors.red),
-                    ),
-                  ],
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
@@ -530,6 +585,61 @@ class _FilterSection extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+/// 배달앱 홈 화면 카테고리 아이콘을 벤치마킹한 요리종류 원형 퀵필터
+class _CuisineIcon extends StatelessWidget {
+  final String cuisine;
+  final bool active;
+  final VoidCallback onTap;
+
+  const _CuisineIcon({required this.cuisine, required this.active, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      onTap: onTap,
+      child: SizedBox(
+        width: 56,
+        child: Column(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: cuisine == '전체'
+                      ? (active ? [AppColors.green, AppColors.greenDeep] : [AppColors.paperDeep, AppColors.paperDeep])
+                      : cuisineGradient(cuisine),
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                border: active
+                    ? Border.all(color: AppColors.green, width: 2.5)
+                    : Border.all(color: Colors.transparent, width: 2.5),
+                boxShadow: active ? AppColors.cardShadow : null,
+              ),
+              child: Text(_cuisineEmoji[cuisine] ?? '🍽️', style: const TextStyle(fontSize: 22)),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              trTag(cuisine),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: active ? FontWeight.w800 : FontWeight.w600,
+                color: active ? AppColors.green : AppColors.inkSoft,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

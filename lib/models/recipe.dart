@@ -18,10 +18,18 @@ class RecipeIngredient {
 
   /// 재료 수량은 1인분 기준으로 저장되어 있으므로 선택한 인분수만큼 스케일링한다
   String quantityLabelForServings(int servings) {
-    final scaled = quantity * servings;
-    final isWhole = scaled == scaled.roundToDouble();
-    final q = isWhole ? scaled.toInt().toString() : scaled.toString();
-    return '$q$unit';
+    return '${_formatAmount(quantity * servings)}$unit';
+  }
+
+  /// 부동소수점 곱셈 오차(예: 0.3 * 3 == 0.8999999999999999)를 소수 둘째 자리에서
+  /// 반올림해 정리하고, 뒤에 붙는 불필요한 0과 소수점은 잘라낸다 (1.50 -> 1.5, 2.00 -> 2)
+  static String _formatAmount(double value) {
+    var text = value.toStringAsFixed(2);
+    if (text.contains('.')) {
+      text = text.replaceFirst(RegExp(r'0+$'), '');
+      text = text.replaceFirst(RegExp(r'\.$'), '');
+    }
+    return text;
   }
 }
 
@@ -59,11 +67,11 @@ class Recipe {
   final List<RecipeIngredient> ingredients;
   final List<RecipeStep> steps;
 
-  /// 실제 사진(image_url)이 준비되기 전까지 카드 화면에 쓰는 대표 이모지
+  /// 사진 로딩 실패 시 대신 보여주는 대표 이모지
   final String emoji;
 
-  /// 상세 화면에서 저작권 걱정 없는 실제 음식 사진을 찾을 때 쓰는 영문 키워드
-  final String photoQuery;
+  /// 위키미디어 커먼즈에서 요리명으로 직접 검증한 실제 음식 사진 URL (CC 라이선스)
+  final String photoUrl;
 
   /// K-Food 만들기 메뉴 소속 여부 — K-Food 포인트 트랙에 반영된다
   final bool isKFood;
@@ -81,7 +89,7 @@ class Recipe {
     required this.ingredients,
     required this.steps,
     required this.emoji,
-    required this.photoQuery,
+    required this.photoUrl,
     this.isKFood = false,
   });
 
