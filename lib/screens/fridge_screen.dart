@@ -286,7 +286,15 @@ class _FridgeScreenState extends State<FridgeScreen> {
                     ),
                     child: const Icon(Icons.delete_outline_rounded, color: AppColors.red),
                   ),
-                  onDismissed: (_) => FridgeStore.instance.deleteItem(id),
+                  onDismissed: (_) {
+                    FridgeStore.instance.deleteItem(id);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(tr('${item.name}이(가) 삭제됐어요', '${item.name} deleted')),
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  },
                   child: _ModernFridgeItemCard(item: item),
                 );
               },

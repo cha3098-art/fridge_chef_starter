@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import '../services/board_store.dart';
 import '../services/locale_store.dart';
 import '../services/profile_store.dart';
 import '../theme/app_theme.dart';
+import '../utils/image_compressor.dart';
 import '../widgets/chef_badge.dart';
 import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
@@ -439,13 +441,18 @@ class _CreatePostSheetState extends State<_CreatePostSheet> {
     try {
       final picked = await ImagePicker().pickImage(source: source, maxWidth: 1600, imageQuality: 88);
       if (picked == null || !mounted) return;
-      final bytes = await picked.readAsBytes();
+      // 업로드 용량/대기 시간을 줄이기 위해 서버로 보내기 전에 한 번 더 압축한다
+      final originalSize = await File(picked.path).length();
+      final compressedFile = await ImageCompressor.compressImage(File(picked.path));
+      final bytes = await compressedFile.readAsBytes();
+      debugPrint('[compress] original: ${(originalSize / 1024).toStringAsFixed(0)}KB -> compressed: ${(bytes.length / 1024).toStringAsFixed(0)}KB');
+      if (!mounted) return;
       setState(() {
         _previewBytes = bytes;
         _uploadedUrl = null;
         _uploading = true;
       });
-      final ext = picked.path.contains('.') ? picked.path.split('.').last.toLowerCase() : 'jpg';
+      final ext = compressedFile.path.contains('.') ? compressedFile.path.split('.').last.toLowerCase() : 'jpg';
       final url = await BoardStore.instance.uploadPhoto(bytes, fileExt: ext);
       if (!mounted) return;
       setState(() {
