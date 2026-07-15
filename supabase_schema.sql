@@ -241,6 +241,53 @@ create trigger on_board_like_change
 after insert or delete on public.board_post_likes
 for each row execute function public.handle_board_like_change();
 
+-- 14. notifications (댓글/유통기한 등 인앱 알림 내역)
+create table public.notifications (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid not null references public.users(id) on delete cascade,
+  title text not null,
+  body text not null,
+  type text not null, -- 'comment', 'expiration' 등
+  related_id text,     -- 이동할 게시글 ID 등 관련 메타데이터
+  is_read boolean not null default false,
+  created_at timestamptz not null default now()
+);
+create index idx_notifications_user on public.notifications(user_id);
+
+-- 댓글이 달리면 게시글 작성자에게 알림을 적립한다.
+-- 댓글 작성자와 알림을 받을 작성자가 다르므로 SECURITY DEFINER로 RLS를 우회해 작성자 대신 적립한다
+-- (board_comments의 insert 정책은 auth.uid() = author_id만 허용하므로, 클라이언트가 직접
+-- 다른 사람의 user_id로 notifications를 insert할 수는 없다 — 이 트리거가 유일한 통로다)
+create or replace function public.handle_new_board_comment()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  post_row public.board_posts;
+begin
+  select * into post_row from public.board_posts where id = new.post_id;
+
+  if post_row.author_id is not null and post_row.author_id <> new.author_id then
+    insert into public.notifications (user_id, title, body, type, related_id)
+    values (
+      post_row.author_id,
+      '새 댓글이 달렸어요',
+      new.author_nickname || '님: ' || left(new.content, 40),
+      'comment',
+      new.post_id
+    );
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger on_board_comment_created
+after insert on public.board_comments
+for each row execute function public.handle_new_board_comment();
+
 -- ============================================================
 -- Row Level Security (RLS) — 각 사용자가 자기 데이터만 접근 가능하도록 설정
 -- ============================================================
@@ -283,6 +330,15 @@ alter table public.board_posts enable row level security;
 alter table public.board_post_likes enable row level security;
 alter table public.board_comments enable row level security;
 alter table public.chef_point_events enable row level security;
+alter table public.notifications enable row level security;
+
+-- notifications는 본인 것만 읽고 읽음 처리할 수 있다. insert는 클라이언트에서 직접 하지 않고
+-- handle_new_board_comment 트리거(SECURITY DEFINER)를 통해서만 이루어진다.
+create policy "본인 알림만 조회" on public.notifications
+  for select using (auth.uid() = user_id);
+
+create policy "본인 알림만 읽음 처리" on public.notifications
+  for update using (auth.uid() = user_id);
 
 create policy "게시글 전체 공개 조회" on public.board_posts for select using (true);
 create policy "본인 글만 작성" on public.board_posts for insert with check (auth.uid() = author_id);

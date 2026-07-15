@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/fridge_item.dart';
+import 'notification_service.dart';
 
 /// 내 냉장고 상태 (싱글턴). Supabase의 ingredients/user_ingredients 테이블과 동기화한다.
 class FridgeStore extends ChangeNotifier {
@@ -14,6 +15,9 @@ class FridgeStore extends ChangeNotifier {
   bool _loaded = false;
   String? _error;
 
+  /// 이번 세션에서 이미 유통기한 임박 알림을 보낸 재료 id (중복 알림 방지, clear()에서 리셋)
+  final Set<String> _expiryNotifiedItemIds = {};
+
   List<FridgeItem> get items => List.unmodifiable(_items);
   bool get isLoaded => _loaded;
 
@@ -25,6 +29,7 @@ class FridgeStore extends ChangeNotifier {
     _items = [];
     _loaded = false;
     _error = null;
+    _expiryNotifiedItemIds.clear();
     notifyListeners();
   }
 
@@ -56,11 +61,27 @@ class FridgeStore extends ChangeNotifier {
         );
       }).toList();
       _error = null;
+      _notifyExpiringItems();
     } catch (e) {
       _error = _describeError(e);
     }
     _loaded = true;
     notifyListeners();
+  }
+
+  /// 유통기한이 임박(D-3 이내)하거나 지난 재료를 이번 세션에서 처음 발견했을 때 로컬 알림을 띄운다
+  void _notifyExpiringItems() {
+    for (final item in _items) {
+      final id = item.id;
+      if (id == null) continue;
+      if (item.ddayLevel == DdayLevel.ok) continue;
+      if (!_expiryNotifiedItemIds.add(id)) continue; // 이미 알림을 보낸 재료면 스킵
+      NotificationService.instance.showNotification(
+        id: id.hashCode,
+        title: '유통기한이 얼마 안 남았어요',
+        body: '${item.name} · ${item.ddayLabel}',
+      );
+    }
   }
 
   /// 재료 등록 화면에서 담아온 항목들을 user_ingredients에 추가하고 목록을 새로고침한다

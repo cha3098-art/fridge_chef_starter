@@ -5,6 +5,7 @@ import '../services/auth_service.dart';
 import '../services/chef_points_store.dart';
 import '../services/fridge_store.dart';
 import '../services/profile_store.dart';
+import '../services/realtime_notification_manager.dart';
 import '../theme/app_theme.dart';
 import 'fridge_screen.dart';
 import 'sign_in_screen.dart';
@@ -46,8 +47,10 @@ class _AuthGateState extends State<AuthGate> {
           ProfileStore.instance.clear();
           FridgeStore.instance.clear();
           ChefPointsStore.instance.clear();
+          RealtimeNotificationManager.instance.stopListening();
           return const SignInScreen();
         }
+        RealtimeNotificationManager.instance.startListening();
         return FutureBuilder<void>(
           future: _ensureProfileLoaded(session.user.id),
           builder: (context, profileSnapshot) {
