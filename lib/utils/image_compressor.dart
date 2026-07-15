@@ -8,24 +8,28 @@ class ImageCompressor {
   /// 원본 이미지 파일을 받아 압축된 새 임시 파일로 반환한다.
   /// 가로/세로 최대 1080px, 품질 80%로 압축해 업로드 용량과 대기 시간을 줄인다.
   static Future<File> compressImage(File file) async {
-    final tempDir = await path_provider.getTemporaryDirectory();
-    final targetPath = p.join(
-      tempDir.path,
-      'compressed_${DateTime.now().millisecondsSinceEpoch}${p.extension(file.path)}',
-    );
+    try {
+      final tempDir = await path_provider.getTemporaryDirectory();
+      final targetPath = p.join(
+        tempDir.path,
+        'compressed_${DateTime.now().millisecondsSinceEpoch}${p.extension(file.path)}',
+      );
 
-    final compressedXFile = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
-      targetPath,
-      quality: 80,
-      minWidth: 1080,
-      minHeight: 1080,
-    );
+      final compressedXFile = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        targetPath,
+        quality: 80,
+        minWidth: 1080,
+        minHeight: 1080,
+      );
 
-    if (compressedXFile == null) {
-      return file; // 압축 실패 시 원본 반환 (예외 방지 안전장치)
+      if (compressedXFile == null) {
+        return file; // 압축 실패 시 원본 반환 (예외 방지 안전장치)
+      }
+
+      return File(compressedXFile.path);
+    } catch (e) {
+      return file; // 압축 도중 예외가 나도 업로드 자체는 막지 않도록 원본 반환
     }
-
-    return File(compressedXFile.path);
   }
 }
