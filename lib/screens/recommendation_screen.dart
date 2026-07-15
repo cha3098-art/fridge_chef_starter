@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/recipe_catalog.dart';
 import '../l10n/tr.dart';
 import '../models/recipe.dart';
+import '../services/fridge_store.dart';
 import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
@@ -56,9 +57,29 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
 
   static const _fallbackCount = 5;
 
+  /// 재료 이름 -> 유통기한까지 남은 일수. FridgeStore를 직접 조회하므로 별도 파라미터 전달 없이
+  /// "곧 상할 재료를 쓰는 레시피"를 위로 끌어올리는 데 쓴다.
+  Map<String, int> get _daysLeftByName {
+    final map = <String, int>{};
+    for (final item in FridgeStore.instance.items) {
+      final days = item.daysLeft;
+      if (days != null) map[item.name] = days;
+    }
+    return map;
+  }
+
+  /// 매칭도(%) + 유통기한 긴급도 점수를 합산한 종합 점수 — 높을수록 먼저 보여준다
+  double _totalScore(Recipe r, Map<String, int> daysLeftByName) {
+    final total = r.requiredIngredients.length;
+    final matched = r.matchedCount(widget.fridgeIngredientNames);
+    final matchRate = total == 0 ? 0.0 : (matched / total) * 100;
+    return matchRate + r.expiryUrgencyScore(daysLeftByName);
+  }
+
   /// onlyFullMatch 조건에서 완전히 일치하는 레시피가 하나도 없으면
   /// 가장 가까운 상위 [_fallbackCount]개를 대신 보여준다 (isFallback = true)
   ({List<Recipe> recipes, bool isFallback}) _computeRecipes() {
+    final daysLeftByName = _daysLeftByName;
     final base = recipeCatalog.where((r) {
       if (_filter.cookTime != '전체') {
         final maxMin = int.parse(_filter.cookTime.replaceAll(RegExp(r'[^0-9]'), ''));
@@ -70,9 +91,9 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     }).toList();
 
     base.sort((a, b) {
-      final matchedA = a.matchedCount(widget.fridgeIngredientNames);
-      final matchedB = b.matchedCount(widget.fridgeIngredientNames);
-      if (matchedA != matchedB) return matchedB.compareTo(matchedA);
+      final scoreA = _totalScore(a, daysLeftByName);
+      final scoreB = _totalScore(b, daysLeftByName);
+      if (scoreA != scoreB) return scoreB.compareTo(scoreA);
       return a.requiredIngredients.length.compareTo(b.requiredIngredients.length);
     });
 
@@ -270,6 +291,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                       return _RecipeCard(
                         recipe: recipe,
                         fridgeIngredientNames: widget.fridgeIngredientNames,
+                        isUrgent: recipe.expiryUrgencyScore(_daysLeftByName) > 0,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => RecipeDetailScreen(
@@ -297,11 +319,13 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
 class _RecipeCard extends StatelessWidget {
   final Recipe recipe;
   final Set<String> fridgeIngredientNames;
+  final bool isUrgent;
   final VoidCallback onTap;
 
   const _RecipeCard({
     required this.recipe,
     required this.fridgeIngredientNames,
+    required this.isUrgent,
     required this.onTap,
   });
 
@@ -346,6 +370,21 @@ class _RecipeCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 유통기한 임박 재료를 쓰는 레시피는 눈에 띄는 배지로 먼저 알린다
+            if (isUrgent) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.redSoft,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  tr('🔥 임박 재료 구출', '🔥 Use it up'),
+                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: AppColors.red),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
             // 재료 매칭률을 카드 상단에 프로그레스 바 + 퍼센트로 바로 보여준다
             Row(
               children: [

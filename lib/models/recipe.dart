@@ -110,4 +110,21 @@ class Recipe {
     if (matched * 2 >= total) return RecipeMatchLevel.partial;
     return RecipeMatchLevel.low;
   }
+
+  /// 이 레시피가 유통기한 임박 재료를 얼마나 "구출"해주는지 점수화한다.
+  /// daysLeftByName은 재료 이름 -> 남은 일수 맵 (냉장고에 없는 재료는 키가 없음).
+  /// 오늘 만료(0일 이하) 재료를 쓰면 +100, 3일 이내면 +50 — 여러 개 겹치면 누적된다.
+  int expiryUrgencyScore(Map<String, int> daysLeftByName) {
+    var score = 0;
+    for (final name in requiredIngredients) {
+      final daysLeft = daysLeftByName[name];
+      if (daysLeft == null) continue;
+      if (daysLeft <= 0) {
+        score += 100;
+      } else if (daysLeft <= 3) {
+        score += 50;
+      }
+    }
+    return score;
+  }
 }
