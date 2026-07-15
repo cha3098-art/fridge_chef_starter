@@ -62,6 +62,7 @@ class FridgeStore extends ChangeNotifier {
       }).toList();
       _error = null;
       _notifyExpiringItems();
+      _scheduleExpiryReminders();
     } catch (e) {
       _error = _describeError(e);
     }
@@ -69,7 +70,7 @@ class FridgeStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 유통기한이 임박(D-3 이내)하거나 지난 재료를 이번 세션에서 처음 발견했을 때 로컬 알림을 띄운다
+  /// 유통기한이 임박(D-3 이내)하거나 지난 재료를 이번 세션에서 처음 발견했을 때 즉시 로컬 알림을 띄운다
   void _notifyExpiringItems() {
     for (final item in _items) {
       final id = item.id;
@@ -83,6 +84,32 @@ class FridgeStore extends ChangeNotifier {
       );
     }
   }
+
+  /// 유통기한 3일 전 / 당일 오전 9시에 울리는 예약 알림을 각 재료마다 걸어둔다.
+  /// 앱이 완전히 꺼져 있어도 기기 자체 스케줄러가 알림을 띄운다.
+  /// 같은 id로 다시 걸면 기존 예약을 덮어쓰므로, 목록을 새로고침할 때마다 불러도 중복되지 않는다.
+  void _scheduleExpiryReminders() {
+    for (final item in _items) {
+      final id = item.id;
+      final expiry = item.expiryDate;
+      if (id == null || expiry == null) continue;
+      NotificationService.instance.scheduleExpirationNotification(
+        id: expiryScheduleId(id, 3),
+        ingredientName: item.name,
+        expirationDate: expiry,
+        daysBefore: 3,
+      );
+      NotificationService.instance.scheduleExpirationNotification(
+        id: expiryScheduleId(id, 0),
+        ingredientName: item.name,
+        expirationDate: expiry,
+        daysBefore: 0,
+      );
+    }
+  }
+
+  /// 재료 id + daysBefore 조합으로 결정적인 예약 알림 id를 만든다 (scheduleExpirationNotification/cancelNotification 공용)
+  static int expiryScheduleId(String itemId, int daysBefore) => '${itemId}_$daysBefore'.hashCode;
 
   /// 재료 등록 화면에서 담아온 항목들을 user_ingredients에 추가하고 목록을 새로고침한다
   Future<void> addItems(List<FridgeItem> newItems) async {
@@ -115,6 +142,9 @@ class FridgeStore extends ChangeNotifier {
     final previous = _items;
     _items = _items.where((i) => i.id != id).toList();
     notifyListeners();
+    // 재료가 사라졌으니 걸어뒀던 예약 알림도 함께 취소한다 (삭제 실패해도 다음 로드 때 다시 걸리므로 무해)
+    NotificationService.instance.cancelNotification(expiryScheduleId(id, 3));
+    NotificationService.instance.cancelNotification(expiryScheduleId(id, 0));
     try {
       await _client.from('user_ingredients').delete().eq('id', id);
       _error = null;
