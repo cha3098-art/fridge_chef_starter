@@ -23,9 +23,11 @@ class AppColors {
   static const carrot = Color(0xFFFB923C);
   static const carrotSoft = Color(0xFFFFEDD5);
 
-  static const cardShadow = [
-    BoxShadow(color: Color(0x14111827), blurRadius: 16, offset: Offset(0, 4)),
-  ];
+  // 흰 카드를 옅은 배경과 구분할 때 쓰는 아주 얇은 테두리선 (그림자 대신)
+  static const cardBorder = Color(0xFFF1F5F9);
+
+  // 그라데이션 배너류는 자체 색으로 배경과 구분되므로 그림자를 걷어내 플랫하게 유지한다
+  static const cardShadow = <BoxShadow>[];
 }
 
 /// 여백/모서리 반경을 화면마다 다시 정하지 않도록 모아둔 간격 토큰
@@ -41,18 +43,19 @@ class AppSpacing {
   static const radiusLg = 24.0;
 }
 
-/// 카드형 컨테이너에 공통으로 쓰는 장식 — 얇은 회색 테두리 대신 부드러운 그림자로 입체감을 준다
+/// 카드형 컨테이너에 공통으로 쓰는 장식 — 그림자 대신 아주 얇은 테두리선으로 입체감 없이 구분한다
 BoxDecoration cardDecoration({double radius = AppSpacing.radiusMd, Color color = AppColors.card}) {
   return BoxDecoration(
     color: color,
     borderRadius: BorderRadius.circular(radius),
-    boxShadow: AppColors.cardShadow,
+    border: Border.all(color: AppColors.cardBorder, width: 1),
   );
 }
 
 class AppTheme {
   static ThemeData light() {
-    final bodyFont = GoogleFonts.notoSansKr(); // Pretendard 미배포 시 대체 폰트
+    // Pretendard는 Google Fonts에 없는 별도 배포 폰트라 assets/fonts에 번들해서 쓴다
+    const bodyFont = TextStyle(fontFamily: 'Pretendard');
     final monoFont = GoogleFonts.ibmPlexMono();
 
     return ThemeData(
@@ -84,8 +87,22 @@ class AppTheme {
         labelStyle: bodyFont.copyWith(color: AppColors.inkSoft, fontSize: 13),
       ),
       textTheme: TextTheme(
-        bodyMedium: bodyFont.copyWith(color: AppColors.ink, fontSize: 14, height: 1.5, letterSpacing: 0.1),
-        bodySmall: bodyFont.copyWith(color: AppColors.inkSoft, fontSize: 12, height: 1.4, letterSpacing: 0.15),
+        // 제목(titleLarge/titleMedium)은 w800, 본문(bodyMedium/bodySmall)은 w400으로
+        // 굵기 대비를 뚜렷하게 줘서 위계를 명확히 한다
+        bodyMedium: bodyFont.copyWith(
+          color: AppColors.ink,
+          fontWeight: FontWeight.w400,
+          fontSize: 14,
+          height: 1.5,
+          letterSpacing: 0.1,
+        ),
+        bodySmall: bodyFont.copyWith(
+          color: AppColors.inkSoft,
+          fontWeight: FontWeight.w400,
+          fontSize: 12,
+          height: 1.4,
+          letterSpacing: 0.15,
+        ),
         titleLarge: bodyFont.copyWith(
           color: AppColors.ink,
           fontWeight: FontWeight.w800,
@@ -95,7 +112,7 @@ class AppTheme {
         ),
         titleMedium: bodyFont.copyWith(
           color: AppColors.ink,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w800,
           fontSize: 16,
           height: 1.3,
           letterSpacing: -0.1,
@@ -118,7 +135,10 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: AppColors.card,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: AppColors.cardBorder, width: 1),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        ),
       ),
       useMaterial3: true,
     );

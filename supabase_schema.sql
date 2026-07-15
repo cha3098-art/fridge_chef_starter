@@ -254,6 +254,10 @@ create table public.notifications (
 );
 create index idx_notifications_user on public.notifications(user_id);
 
+-- RealtimeNotificationManager가 .stream()으로 구독하려면 이 테이블이 realtime publication에
+-- 포함되어 있어야 한다 (테이블을 새로 만들면 기본적으로 포함되지 않는다)
+alter publication supabase_realtime add table public.notifications;
+
 -- 댓글이 달리면 게시글 작성자에게 알림을 적립한다.
 -- 댓글 작성자와 알림을 받을 작성자가 다르므로 SECURITY DEFINER로 RLS를 우회해 작성자 대신 적립한다
 -- (board_comments의 insert 정책은 auth.uid() = author_id만 허용하므로, 클라이언트가 직접
