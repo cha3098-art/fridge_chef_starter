@@ -388,7 +388,8 @@ class _RecipeCard extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                    // 라운딩을 더 크게 줘서 화이트스페이스가 넓은 트렌디한 카드 룩에 맞춘다
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                   ),
                   child: Text(recipe.emoji, style: const TextStyle(fontSize: 34)),
                 ),
@@ -412,9 +413,17 @@ class _RecipeCard extends StatelessWidget {
                       ),
                       if (missing.isNotEmpty) ...[
                         const SizedBox(height: 6),
-                        Text(
-                          '${tr('부족한 재료', 'Missing')}: ${missing.join(', ')}',
-                          style: const TextStyle(fontSize: 11, color: AppColors.red),
+                        // 채도 강한 빨간 텍스트 대신 연한 오렌지 박스로 부드럽게 감싼다
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.carrotSoft,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            '${tr('부족한 재료', 'Missing')}: ${missing.join(', ')}',
+                            style: const TextStyle(fontSize: 11, color: AppColors.carrot, fontWeight: FontWeight.w700),
+                          ),
                         ),
                       ],
                     ],

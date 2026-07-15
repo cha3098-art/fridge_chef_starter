@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// 트렌디한 미니멀 대시보드 톤 — 순백 대신 미세한 쿨그레이 배경 위에
-/// 카드는 얇은 선 대신 은은한 그림자로 구분하는 디자인 토큰
+/// 배달의민족/요기요 스타일의 트렌디 푸드테크 톤 — 쨍한 원색 대신 차분한 민트 포인트와
+/// 넓은 화이트 스페이스, 얇은 테두리선으로 구분하는 디자인 토큰
 class AppColors {
-  // 미세한 회색빛이 도는 깔끔한 배경 (Tailwind gray-50/100)
-  static const paper = Color(0xFFF9FAFB);
+  // 차분한 연그레이 배경 (UX 가이드 Background 값)
+  static const paper = Color(0xFFF8FAFC);
   static const paperDeep = Color(0xFFF3F4F6);
   static const card = Color(0xFFFFFFFF);
   static const line = Color(0xFFE5E7EB);
   static const ink = Color(0xFF111827);
   static const inkSoft = Color(0xFF6B7280);
-  // 신선함을 주는 소프트 그린 포인트 컬러 (텍스트/아이콘 대비를 위해 green-500 기준)
-  static const green = Color(0xFF22C55E);
-  static const greenSoft = Color(0xFFDCFCE7);
-  static const greenDeep = Color(0xFF15803D);
+  // 배민 민트톤을 참고한 시그니처 포인트 컬러 (채도를 낮춘 파스텔 & 뉴트럴 톤)
+  static const green = Color(0xFF2AC1BC);
+  static const greenSoft = Color(0xFFE0F7F6);
+  static const greenDeep = Color(0xFF1C9994);
   static const gold = Color(0xFFF59E0B);
   static const goldSoft = Color(0xFFFEF3C7);
-  static const red = Color(0xFFDC2626);
-  static const redSoft = Color(0xFFFEE2E2);
-  // 배너/마스코트에 쓰는 따뜻한 오렌지 포인트 색
-  static const carrot = Color(0xFFFB923C);
-  static const carrotSoft = Color(0xFFFFEDD5);
+  // 소프트 레드 (UX 가이드 Danger 값)
+  static const red = Color(0xFFF43F5E);
+  static const redSoft = Color(0xFFFFE1E6);
+  // 식욕을 자극하는 오렌지 포인트 색 (UX 가이드 Accent 값)
+  static const carrot = Color(0xFFFF5B1F);
+  static const carrotSoft = Color(0xFFFFE2D6);
 
   // 흰 카드를 옅은 배경과 구분할 때 쓰는 아주 얇은 테두리선 (그림자 대신)
   static const cardBorder = Color(0xFFF1F5F9);

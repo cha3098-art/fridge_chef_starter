@@ -271,13 +271,6 @@ class _PostCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF1E293B).withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,7 +349,7 @@ class _PostCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                 decoration: BoxDecoration(
-                  color: liked ? const Color(0xFFFEE2E2) : const Color(0xFFF1F5F9),
+                  color: liked ? const Color(0xFFFFE1E6) : const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -755,7 +748,7 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
                         decoration: BoxDecoration(
-                          color: liked ? const Color(0xFFFEE2E2) : const Color(0xFFF1F5F9),
+                          color: liked ? const Color(0xFFFFE1E6) : const Color(0xFFF1F5F9),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -812,13 +805,6 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF1E293B).withValues(alpha: 0.04),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
                                 ),
                                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                                 child: Column(

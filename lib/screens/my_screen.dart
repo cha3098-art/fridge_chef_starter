@@ -103,7 +103,7 @@ class _MyScreenState extends State<MyScreen> {
                 points: store.generalPoints,
                 pointsToNext: store.pointsToNextTier,
                 nextLabel: _nextGeneralTierLabel(store.generalPoints),
-                gradient: const [Color(0xFF1E293B), Color(0xFF334155)],
+                accent: AppColors.green,
               ),
               const SizedBox(height: 12),
               _TierCard(
@@ -114,7 +114,7 @@ class _MyScreenState extends State<MyScreen> {
                     ? null
                     : ChefPointsStore.kfoodMasterThreshold - store.kfoodPoints,
                 nextLabel: trTag('K-FOOD 마스터'),
-                gradient: const [Color(0xFF0F172A), Color(0xFF1E3A8A)],
+                accent: AppColors.carrot,
               ),
               const SizedBox(height: 20),
               _SectionTitle(tr('이번 주 미션', 'This Week\'s Mission')),
@@ -140,13 +140,6 @@ class _MyScreenState extends State<MyScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF1E293B).withValues(alpha: 0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                   child: Column(
@@ -183,13 +176,6 @@ class _ProfileHeader extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF1E293B).withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -218,31 +204,23 @@ class _ProfileHeader extends StatelessWidget {
     }
 
     final p = profile!;
+    // 그라데이션 카드 대신 깨끗한 화이트 배경 + 큰 볼드체 닉네임으로 (요즘 푸드테크 앱 스타일)
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.green, AppColors.greenDeep],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        boxShadow: AppColors.cardShadow,
-      ),
+      decoration: cardDecoration(radius: AppSpacing.radiusLg),
       child: Row(
         children: [
           ClipOval(
             child: Container(
               width: 60,
               height: 60,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.25),
-                border: Border.all(color: Colors.white, width: 2),
+              decoration: const BoxDecoration(
+                color: AppColors.greenSoft,
                 shape: BoxShape.circle,
               ),
               child: p.photoPath == null
-                  ? const Icon(Icons.person, color: Colors.white)
+                  ? const Icon(Icons.person, color: AppColors.green)
                   : Image.file(File(p.photoPath!), fit: BoxFit.cover, width: 60, height: 60),
             ),
           ),
@@ -251,9 +229,9 @@ class _ProfileHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(p.nickname, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: Colors.white)),
+                Text(p.nickname, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 19, color: AppColors.ink)),
                 const SizedBox(height: 2),
-                Text('@${p.username}', style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                Text('@${p.username}', style: const TextStyle(fontSize: 12, color: AppColors.inkSoft)),
               ],
             ),
           ),
@@ -262,7 +240,7 @@ class _ProfileHeader extends StatelessWidget {
             builder: (context, _) => ChefBadge(
               generalTier: ChefPointsStore.instance.generalTier,
               isKFoodMaster: ChefPointsStore.instance.isKFoodMaster,
-              labelColor: Colors.white,
+              labelColor: AppColors.ink,
             ),
           ),
         ],
@@ -289,13 +267,6 @@ class _MenuButton extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF1E293B).withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
           children: [
@@ -331,7 +302,7 @@ class _TierCard extends StatelessWidget {
   final int points;
   final int? pointsToNext;
   final String? nextLabel;
-  final List<Color> gradient;
+  final Color accent;
 
   const _TierCard({
     required this.icon,
@@ -339,19 +310,16 @@ class _TierCard extends StatelessWidget {
     required this.points,
     required this.pointsToNext,
     required this.nextLabel,
-    required this.gradient,
+    required this.accent,
   });
 
   @override
   Widget build(BuildContext context) {
+    // 어두운 그라데이션 카드 대신 화이트 배경 + 얇은 테두리로, 포인트 값만 카드 고유 색으로 살짝 강조한다
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: gradient, begin: Alignment.topLeft, end: Alignment.bottomRight),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppColors.cardShadow,
-      ),
+      decoration: cardDecoration(radius: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -362,12 +330,19 @@ class _TierCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18, letterSpacing: -0.2),
+                  style: const TextStyle(color: AppColors.ink, fontWeight: FontWeight.w800, fontSize: 18, letterSpacing: -0.2),
                 ),
               ),
-              Text(
-                tr('$points점', '$points pts'),
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  tr('$points점', '$points pts'),
+                  style: TextStyle(color: accent, fontWeight: FontWeight.w800, fontSize: 14),
+                ),
               ),
             ],
           ),
@@ -375,7 +350,7 @@ class _TierCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               tr('$nextLabel까지 $pointsToNext점 남았어요', '$pointsToNext pts to $nextLabel'),
-              style: const TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
+              style: const TextStyle(color: AppColors.inkSoft, fontSize: 12, height: 1.4),
             ),
           ],
         ],
@@ -401,13 +376,6 @@ class _WeeklyMissionCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF1E293B).withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -471,13 +439,6 @@ class _HowToEarnList extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF1E293B).withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Column(
@@ -545,10 +506,10 @@ class _PointEventRow extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: const Color(0xFFDCFCE7), borderRadius: BorderRadius.circular(999)),
+            decoration: BoxDecoration(color: const Color(0xFFE0F7F6), borderRadius: BorderRadius.circular(999)),
             child: Text(
               '+${event.amount}',
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF15803D)),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF1C9994)),
             ),
           ),
         ],

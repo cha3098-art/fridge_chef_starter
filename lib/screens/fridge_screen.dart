@@ -114,13 +114,6 @@ class _FridgeScreenState extends State<FridgeScreen> {
             margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF0F172A).withValues(alpha: 0.06),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                )
-              ],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
@@ -211,7 +204,7 @@ class _FridgeScreenState extends State<FridgeScreen> {
                 decoration: BoxDecoration(
                   color: const Color(0xFFFEF2F2),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFFEE2E2)),
+                  border: Border.all(color: const Color(0xFFFFE1E6)),
                 ),
                 child: Row(
                   children: [
@@ -281,7 +274,7 @@ class _FridgeScreenState extends State<FridgeScreen> {
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFEE2E2),
+                      color: const Color(0xFFFFE1E6),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(Icons.delete_outline_rounded, color: AppColors.red),
@@ -308,7 +301,7 @@ class _FridgeScreenState extends State<FridgeScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFFEF2F2), // 부드러운 파스텔 레드 배경
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFFEE2E2)),
+                border: Border.all(color: const Color(0xFFFFE1E6)),
               ),
               child: Row(
                 children: [
@@ -345,8 +338,9 @@ class _FridgeScreenState extends State<FridgeScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppColors.green,
-        elevation: 4,
+        // 포인트 민트색 대신 완전한 블랙으로 — 화면 전체의 시선을 뺏지 않으면서도 명확한 CTA로 보이게 한다
+        backgroundColor: const Color(0xFF1E1E1E),
+        elevation: 0,
         highlightElevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         onPressed: _openAddIngredient,
@@ -368,15 +362,15 @@ class _ModernFridgeItemCard extends StatelessWidget {
 
   Color _ddayBg() {
     switch (item.ddayLevel) {
-      case DdayLevel.ok: return const Color(0xFFDCFCE7); // 소프트 그린
+      case DdayLevel.ok: return const Color(0xFFE0F7F6); // 소프트 그린
       case DdayLevel.warn: return const Color(0xFFFEF9C3); // 소프트 옐로
-      case DdayLevel.bad: return const Color(0xFFFEE2E2); // 소프트 레드
+      case DdayLevel.bad: return const Color(0xFFFFE1E6); // 소프트 레드
     }
   }
 
   Color _ddayText() {
     switch (item.ddayLevel) {
-      case DdayLevel.ok: return const Color(0xFF15803D);
+      case DdayLevel.ok: return const Color(0xFF1C9994);
       case DdayLevel.warn: return const Color(0xFF854D0E);
       case DdayLevel.bad: return const Color(0xFFB91C1C);
     }
@@ -389,13 +383,6 @@ class _ModernFridgeItemCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF1E293B).withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
       ),
       child: Row(
@@ -454,25 +441,16 @@ class _CategoryTabChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 활성/비활성 모두 같은 부드러운 캡슐 배경을 쓰고, 활성 탭만 포인트 민트색 글씨로 구분한다
+    // (꽉 찬 색 블록 대신 텍스트 컬러만으로 대비를 주는 트렌디 푸드테크 스타일)
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: active ? AppColors.green : Colors.white,
+          color: AppColors.cardBorder,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: active ? Colors.transparent : const Color(0xFFE2E8F0),
-            width: 1,
-          ),
-          boxShadow: active ? [
-            BoxShadow(
-              color: AppColors.green.withValues(alpha: 0.25),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            )
-          ] : null,
         ),
         child: Row(
           children: [
@@ -485,8 +463,8 @@ class _CategoryTabChip extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 13,
-                fontWeight: active ? FontWeight.bold : FontWeight.w600,
-                color: active ? Colors.white : const Color(0xFF64748B),
+                fontWeight: active ? FontWeight.w800 : FontWeight.w600,
+                color: active ? AppColors.green : const Color(0xFF64748B),
               ),
             ),
             const SizedBox(width: 4),
@@ -495,7 +473,7 @@ class _CategoryTabChip extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: active ? Colors.white.withValues(alpha: 0.8) : const Color(0xFF94A3B8),
+                color: active ? AppColors.green.withValues(alpha: 0.7) : const Color(0xFF94A3B8),
               ),
             ),
           ],

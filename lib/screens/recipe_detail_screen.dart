@@ -91,13 +91,6 @@ class RecipeDetailScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF1E293B).withValues(alpha: 0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                   child: Column(
@@ -169,7 +162,7 @@ class _MatchBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isFull = missing.isEmpty;
-    final bg = isFull ? const Color(0xFFDCFCE7) : const Color(0xFFFEF3C7);
+    final bg = isFull ? const Color(0xFFE0F7F6) : const Color(0xFFFEF3C7);
     final fg = isFull ? AppColors.green : const Color(0xFF9C6A15);
 
     return Container(
@@ -232,13 +225,6 @@ class _NutritionGrid extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF1E293B).withValues(alpha: 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
               child: Column(
                 children: [
@@ -371,7 +357,7 @@ class _StepTile extends StatelessWidget {
             width: 24,
             height: 24,
             alignment: Alignment.center,
-            decoration: const BoxDecoration(color: Color(0xFF22C55E), shape: BoxShape.circle),
+            decoration: const BoxDecoration(color: Color(0xFF2AC1BC), shape: BoxShape.circle),
             child: Text(
               '${step.order}',
               style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFFFFFFFF)),
