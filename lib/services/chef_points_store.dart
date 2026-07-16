@@ -127,7 +127,8 @@ class ChefPointsStore extends ChangeNotifier {
         await _client.from('chef_point_events').insert(row);
       }
       await loadEvents();
-    } catch (_) {
+    } catch (e) {
+      debugPrint('ChefPointsStore._add failed (reason=${reason.name}): $e');
       // 게이미피케이션 보너스라 실패해도 조용히 무시한다 (재시도 없음)
     }
   }
@@ -180,6 +181,20 @@ class ChefPointsStore extends ChangeNotifier {
       '$recipeTitle 첫 도전 보너스',
       '$recipeTitle first-try bonus',
       dedupeKey: 'first_try:$recipeTitle',
+    );
+    await _maybeAwardWeeklyMission();
+  }
+
+  /// 챌린지 게시판에 요리 완성 인증을 올렸을 때 호출 — 게시글당 1회, 고정 포인트
+  /// (challenge_post:$postId로 중복 적립을 막는다)
+  Future<void> recordChallengePost({required String postId, required String title}) async {
+    await _add(
+      PointReason.challengePost,
+      2,
+      false,
+      '"$title" 챌린지 인증 완료 (+2)',
+      '"$title" challenge verified (+2)',
+      dedupeKey: 'challenge_post:$postId',
     );
     await _maybeAwardWeeklyMission();
   }

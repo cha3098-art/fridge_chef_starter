@@ -198,7 +198,11 @@ create table public.chef_point_events (
   created_at timestamptz not null default now()
 );
 create index idx_chef_point_events_user on public.chef_point_events(user_id);
-create unique index idx_chef_point_events_dedupe on public.chef_point_events(user_id, dedupe_key) where dedupe_key is not null;
+-- 일반(부분) 유니크 인덱스로 둔다: dedupe_key가 NULL인 행은 서로 다른 값으로 취급되어 몇 개든 허용되고,
+-- 값이 있는 경우만 (user_id, dedupe_key) 조합으로 유일함이 강제된다.
+-- 이전에 "where dedupe_key is not null" 부분 인덱스로 만들었더니 upsert의 ON CONFLICT(user_id,dedupe_key)가
+-- 부분 인덱스를 타겟팅하지 못해 42P10 에러로 모든 dedupe 적립(첫 재료 등록, 첫 도전 보너스 등)이 조용히 실패했다.
+create unique index idx_chef_point_events_dedupe on public.chef_point_events(user_id, dedupe_key);
 
 -- 좋아요 10개마다 게시글 작성자에게 +1점을 자동 지급하는 트리거.
 -- 좋아요를 누르는 사람과 포인트를 받는 작성자가 다르므로 SECURITY DEFINER로 RLS를 우회해 작성자 대신 적립한다.

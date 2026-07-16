@@ -86,23 +86,29 @@ class BoardStore extends ChangeNotifier {
     return _client.storage.from('board-photos').getPublicUrl(path);
   }
 
-  /// 게시글 작성 — photoPath는 Supabase Storage에 이미 업로드된 이미지의 URL이어야 한다
-  Future<void> addPost({
+  /// 게시글 작성 — photoPath는 Supabase Storage에 이미 업로드된 이미지의 URL이어야 한다.
+  /// 생성된 게시글의 id를 반환한다 (챌린지 포인트 적립의 dedupe 키로 쓰기 위함).
+  Future<String?> addPost({
     required BoardCategory category,
     required String title,
     required String content,
     String? photoPath,
   }) async {
     final uid = _client.auth.currentUser?.id;
-    if (uid == null) return;
-    await _client.from('board_posts').insert({
-      'category': category.name,
-      'author_id': uid,
-      'title': title,
-      'content': content,
-      if (photoPath != null) 'photo_url': photoPath,
-    });
+    if (uid == null) return null;
+    final row = await _client
+        .from('board_posts')
+        .insert({
+          'category': category.name,
+          'author_id': uid,
+          'title': title,
+          'content': content,
+          if (photoPath != null) 'photo_url': photoPath,
+        })
+        .select('id')
+        .single();
     await loadPosts();
+    return row['id'] as String;
   }
 
   /// 게시글 하나에 달린 댓글을 오래된 순으로 불러온다

@@ -8,6 +8,7 @@ enum PointReason {
   fullMatchCook,
   firstTry,
   boardLikes,
+  challengePost,
 }
 
 /// 포인트 적립 한 건. isKFoodTrack이 true면 K-Food 누적 점수에도 더해진다.

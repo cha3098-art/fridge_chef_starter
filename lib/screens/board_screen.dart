@@ -8,6 +8,7 @@ import '../l10n/tr.dart';
 import '../models/board_comment.dart';
 import '../models/board_post.dart';
 import '../services/board_store.dart';
+import '../services/chef_points_store.dart';
 import '../services/locale_store.dart';
 import '../services/profile_store.dart';
 import '../theme/app_theme.dart';
@@ -76,12 +77,16 @@ class _BoardScreenState extends State<BoardScreen> {
       builder: (_) => _CreatePostSheet(category: _category),
     );
     if (result != null) {
-      await BoardStore.instance.addPost(
+      final postId = await BoardStore.instance.addPost(
         category: _category,
         title: result.title,
         content: result.content,
         photoPath: result.photoPath,
       );
+      // 챌린지 게시판은 "요리 완성 인증" 성격이라 게시글당 1회 챌린지 포인트를 지급한다
+      if (postId != null && _category == BoardCategory.challenge) {
+        await ChefPointsStore.instance.recordChallengePost(postId: postId, title: result.title);
+      }
     }
   }
 
