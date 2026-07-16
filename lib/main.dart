@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'l10n/tr.dart';
 import 'screens/auth_gate.dart';
+import 'screens/onboarding_screen.dart';
 import 'services/deeplink_manager.dart';
 import 'services/locale_store.dart';
 import 'services/notification_service.dart';
@@ -12,16 +13,20 @@ import 'theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService.instance.init();
+  var showOnboarding = false;
   if (SupabaseConfig.isConfigured) {
     await Supabase.initialize(url: SupabaseConfig.url, publishableKey: SupabaseConfig.anonKey);
     // 초대장 상세 조회가 Supabase에 의존하므로 설정된 경우에만 딥링크 리스너를 켠다
     await DeeplinkManager.instance.init();
+    showOnboarding = !await OnboardingScreen.hasSeen();
   }
-  runApp(const FridgeChefApp());
+  runApp(FridgeChefApp(showOnboarding: showOnboarding));
 }
 
 class FridgeChefApp extends StatelessWidget {
-  const FridgeChefApp({super.key});
+  final bool showOnboarding;
+
+  const FridgeChefApp({super.key, required this.showOnboarding});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,11 @@ class FridgeChefApp extends StatelessWidget {
         title: '냉장고 셰프',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),
-        home: SupabaseConfig.isConfigured ? const AuthGate() : const _SupabaseSetupNeededScreen(),
+        home: !SupabaseConfig.isConfigured
+            ? const _SupabaseSetupNeededScreen()
+            : showOnboarding
+                ? const OnboardingScreen()
+                : const AuthGate(),
       ),
     );
   }
