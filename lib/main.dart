@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'l10n/tr.dart';
 import 'screens/auth_gate.dart';
+import 'services/deeplink_manager.dart';
 import 'services/locale_store.dart';
 import 'services/notification_service.dart';
 import 'supabase_config.dart';
@@ -13,6 +14,8 @@ Future<void> main() async {
   await NotificationService.instance.init();
   if (SupabaseConfig.isConfigured) {
     await Supabase.initialize(url: SupabaseConfig.url, publishableKey: SupabaseConfig.anonKey);
+    // 초대장 상세 조회가 Supabase에 의존하므로 설정된 경우에만 딥링크 리스너를 켠다
+    await DeeplinkManager.instance.init();
   }
   runApp(const FridgeChefApp());
 }
@@ -25,6 +28,7 @@ class FridgeChefApp extends StatelessWidget {
     return ListenableBuilder(
       listenable: LocaleStore.instance,
       builder: (context, _) => MaterialApp(
+        navigatorKey: DeeplinkManager.instance.navigatorKey,
         title: '냉장고 셰프',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),

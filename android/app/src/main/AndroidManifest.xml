@@ -28,6 +28,16 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- fridgechef.app 딥링크 — autoVerify는 걸어뒀지만 이 도메인을 실제로 소유/호스팅하고
+                 있지 않아서 Android의 자동 검증(assetlinks.json)은 통과하지 못한다. 그래서 실기기에서
+                 카카오톡 등으로 링크를 눌러도 앱이 곧바로 뜨는 대신 브라우저/앱 선택 창이 먼저 뜬다.
+                 라우팅 로직 자체는 adb shell am start로 바로 검증할 수 있다. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="fridgechef.app" android:pathPrefix="/invite" />
+            </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

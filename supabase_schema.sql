@@ -145,6 +145,9 @@ create table public.meal_invites (
   message text,
   created_at timestamptz not null default now()
 );
+-- recipes 테이블이 아직 시딩되어 있지 않아 recipe_id로 정적 카탈로그 레시피를 참조할 수 없으므로,
+-- 레시피 제목을 텍스트로 직접 저장한다 (딥링크로 열었을 때 바로 보여주기 위함)
+alter table public.meal_invites add column if not exists recipe_title text;
 
 -- 12. board_posts / board_post_likes (게시판)
 create table public.board_posts (
@@ -326,8 +329,19 @@ create policy "본인 영수증만 접근" on public.receipt_scans
 create policy "본인 요리기록만 접근" on public.user_recipe_history
   for all using (auth.uid() = user_id);
 
-create policy "본인 초대만 접근" on public.meal_invites
-  for all using (auth.uid() = host_user_id);
+-- 초대장은 딥링크로 다른 사람(비로그인 포함)도 열어볼 수 있어야 하므로 조회는 전체 공개하고,
+-- 생성/수정/삭제는 호스트 본인으로 제한한다 (게시판과 동일한 패턴)
+create policy "초대장 전체 공개 조회" on public.meal_invites
+  for select using (true);
+
+create policy "본인 초대만 생성" on public.meal_invites
+  for insert with check (auth.uid() = host_user_id);
+
+create policy "본인 초대만 수정" on public.meal_invites
+  for update using (auth.uid() = host_user_id);
+
+create policy "본인 초대만 삭제" on public.meal_invites
+  for delete using (auth.uid() = host_user_id);
 
 -- 게시판/포인트는 랭킹·배지 표시를 위해 조회는 전체 공개하고 쓰기만 본인으로 제한한다
 alter table public.board_posts enable row level security;

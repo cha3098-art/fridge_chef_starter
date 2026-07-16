@@ -1,4 +1,5 @@
 import '../models/recipe.dart';
+import 'kfood_catalog.dart';
 
 /// recipes + recipe_ingredients + recipe_steps 테이블을 흉내낸 로컬 추천용 카탈로그
 /// 실제로는 Supabase에서 내 냉장고 재료와 매칭되는 레시피를 조회하도록 교체 예정
@@ -497,3 +498,10 @@ const recipeCatalog = <Recipe>[
     ],
   ),
 ];
+
+/// 일반 레시피 + K-Food 레시피를 합친 전체 목록 — 공유/초대장처럼 종류 구분 없이 제목으로
+/// 레시피를 찾아야 하는 화면에서 공용으로 쓴다.
+final allRecipes = <Recipe>[...recipeCatalog, ...kfoodCatalog];
+
+Recipe? findRecipeByTitle(String title) =>
+    allRecipes.cast<Recipe?>().firstWhere((r) => r?.title == title, orElse: () => null);

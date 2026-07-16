@@ -1,11 +1,9 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../data/kfood_catalog.dart';
 import '../data/recipe_catalog.dart';
 import '../l10n/tr.dart';
 import '../models/cooking_brag.dart';
@@ -13,25 +11,13 @@ import '../models/meal_invite.dart';
 import '../models/recipe.dart';
 import '../services/chef_points_store.dart';
 import '../services/locale_store.dart';
+import '../services/meal_invite_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
-
-const _inviteIdChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-
-final _allShareableRecipes = <Recipe>[...recipeCatalog, ...kfoodCatalog];
-
-Recipe? _findRecipeByTitle(String title) => _allShareableRecipes
-    .cast<Recipe?>()
-    .firstWhere((r) => r?.title == title, orElse: () => null);
-
-String _generateInviteId() {
-  final random = Random();
-  return List.generate(6, (_) => _inviteIdChars[random.nextInt(_inviteIdChars.length)]).join();
-}
 
 String _timeAgoLabel(DateTime dateTime) {
   final diff = DateTime.now().difference(dateTime);
@@ -53,14 +39,8 @@ class ShareScreen extends StatefulWidget {
 class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
-  final List<MealInvite> _invites = [
-    MealInvite(
-      recipeTitle: '두부김치찌개',
-      message: '이번 주말에 같이 만들어 먹어요!',
-      inviteLink: 'https://fridgechef.app/invite/${_generateInviteId()}',
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-  ];
+  List<MealInvite> _invites = [];
+  bool _invitesLoaded = false;
 
   final List<CookingBrag> _brags = [
     CookingBrag(
@@ -74,6 +54,21 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this)..addListener(() => setState(() {}));
+    _loadInvites();
+  }
+
+  Future<void> _loadInvites() async {
+    try {
+      final invites = await MealInviteStore.instance.fetchMyInvites();
+      if (!mounted) return;
+      setState(() {
+        _invites = invites;
+        _invitesLoaded = true;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _invitesLoaded = true);
+    }
   }
 
   @override
@@ -83,7 +78,7 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
   }
 
   Future<void> _openCreateInvite() async {
-    final result = await showModalBottomSheet<MealInvite>(
+    final draft = await showModalBottomSheet<({String recipeTitle, String message})>(
       context: context,
       backgroundColor: AppColors.card,
       isScrollControlled: true,
@@ -92,9 +87,24 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
       ),
       builder: (_) => const _CreateInviteSheet(),
     );
-    if (result == null || !mounted) return;
+    if (draft == null || !mounted) return;
+
+    late final MealInvite result;
+    try {
+      result = await MealInviteStore.instance.createInvite(
+        recipeTitle: draft.recipeTitle,
+        message: draft.message,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('초대장 생성에 실패했어요', 'Could not create the invite'))),
+      );
+      return;
+    }
+    if (!mounted) return;
     setState(() => _invites.insert(0, result));
-    final recipe = _findRecipeByTitle(result.recipeTitle);
+    final recipe = findRecipeByTitle(result.recipeTitle);
     if (recipe != null) {
       ChefPointsStore.instance.recordInvite(
         recipeTitle: recipe.title,
@@ -121,7 +131,7 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
     );
     if (result == null || !mounted) return;
     setState(() => _brags.insert(0, result));
-    final recipe = _findRecipeByTitle(result.recipeTitle);
+    final recipe = findRecipeByTitle(result.recipeTitle);
     if (recipe != null) {
       final isFullMatch = recipe.matchLevel(widget.fridgeIngredientNames) == RecipeMatchLevel.full;
       ChefPointsStore.instance.recordCook(
@@ -188,7 +198,7 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
         body: TabBarView(
           controller: _tabController,
           children: [
-            _InviteTab(invites: _invites),
+            _InviteTab(invites: _invites, loaded: _invitesLoaded),
             _BragTab(brags: _brags),
           ],
         ),
@@ -214,10 +224,14 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
 
 class _InviteTab extends StatelessWidget {
   final List<MealInvite> invites;
-  const _InviteTab({required this.invites});
+  final bool loaded;
+  const _InviteTab({required this.invites, required this.loaded});
 
   @override
   Widget build(BuildContext context) {
+    if (!loaded) {
+      return const Center(child: CircularProgressIndicator());
+    }
     if (invites.isEmpty) {
       return Center(
         child: Column(
@@ -239,7 +253,7 @@ class _InviteTab extends StatelessWidget {
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (context, index) {
         final invite = invites[index];
-        final recipe = _findRecipeByTitle(invite.recipeTitle);
+        final recipe = findRecipeByTitle(invite.recipeTitle);
         return Container(
           decoration: cardDecoration(),
           clipBehavior: Clip.antiAlias,
@@ -437,7 +451,7 @@ class _BragThumbnail extends StatelessWidget {
         ),
       );
     }
-    final recipe = _findRecipeByTitle(recipeTitle);
+    final recipe = findRecipeByTitle(recipeTitle);
     final gradient = cuisineGradient(recipe?.cuisineType ?? '');
     return Container(
       width: 64,
@@ -470,7 +484,7 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
   @override
   void initState() {
     super.initState();
-    _selectedRecipe = _allShareableRecipes.first.title;
+    _selectedRecipe = allRecipes.first.title;
     _messageController = TextEditingController(text: '같이 만들어 먹어요!');
   }
 
@@ -484,12 +498,7 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
     final message = _messageController.text.trim();
     Navigator.pop(
       context,
-      MealInvite(
-        recipeTitle: _selectedRecipe,
-        message: message.isEmpty ? '같이 만들어 먹어요!' : message,
-        inviteLink: 'https://fridgechef.app/invite/${_generateInviteId()}',
-        createdAt: DateTime.now(),
-      ),
+      (recipeTitle: _selectedRecipe, message: message.isEmpty ? '같이 만들어 먹어요!' : message),
     );
   }
 
@@ -531,7 +540,7 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
                 borderSide: const BorderSide(color: AppColors.green, width: 1.5),
               ),
             ),
-            items: _allShareableRecipes
+            items: allRecipes
                 .map((r) => DropdownMenuItem(
                       value: r.title,
                       child: Text(r.isKFood ? '🇰🇷 ${r.title}' : r.title),
@@ -594,7 +603,7 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
   @override
   void initState() {
     super.initState();
-    _selectedRecipe = _allShareableRecipes.first.title;
+    _selectedRecipe = allRecipes.first.title;
     _captionController = TextEditingController();
   }
 
@@ -699,7 +708,7 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
                 borderSide: const BorderSide(color: AppColors.green, width: 1.5),
               ),
             ),
-            items: _allShareableRecipes
+            items: allRecipes
                 .map((r) => DropdownMenuItem(
                       value: r.title,
                       child: Text(r.isKFood ? '🇰🇷 ${r.title}' : r.title),
