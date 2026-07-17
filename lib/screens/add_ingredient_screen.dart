@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import '../data/ingredient_catalog.dart';
 import '../l10n/tr.dart';
 import '../models/fridge_item.dart';
+import '../models/fridge_photo_analysis.dart';
+import '../services/fridge_photo_recognition_service.dart';
 import '../services/locale_store.dart';
 import '../services/ocr_parser_service.dart';
 import '../theme/app_theme.dart';
@@ -13,10 +15,11 @@ import '../theme/food_visuals.dart';
 import '../widgets/fridge_mascot.dart';
 import '../widgets/language_toggle.dart';
 
-/// "재료 등록" 화면 — 검색 / 사진인식 / 영수증스캔 / 냉장고 전체촬영 네 가지 방법을 탭으로 제공
-/// 검색 탭과 영수증스캔 탭은 실제로 동작하며, 담은 재료를 냉장고 화면으로 반환한다.
-/// 사진인식·냉장고 전체촬영은 실제 이미지 인식 AI 백엔드가 아직 없어
-/// (냉장고 전체촬영은 사진 촬영/미리보기까지는 실제로 동작하고) 인식 자체는 준비 중으로 안내한다.
+/// "재료 등록" 화면 — 검색 / 사진인식 / 영수증스캔 / 냉장고 전체촬영 네 가지 방법을 탭으로 제공.
+/// 네 탭 모두 실제로 동작하며, 담은 재료를 냉장고 화면으로 반환한다.
+/// 사진인식·냉장고 전체촬영은 GPT-4o-mini Vision(analyze-fridge-photo Edge Function)으로
+/// 실제 이미지 인식을 수행한다 — 카메라로 재료 한두 개를 가까이 찍느냐(사진인식) 냉장고
+/// 문을 연 채로 전체를 찍느냐(전체촬영)의 차이일 뿐 흐름이 같아 _PhotoRecognitionTab을 공유한다.
 ///
 /// 상단 탭은 언더라인 TabBar 대신 카카오톡 스타일의 캡슐형 필터 칩(_CapsuleTabBar)을 쓴다
 /// — 선택된 탭만 진한 배경/흰 글씨로 강하게 도드라진다.
@@ -69,17 +72,27 @@ class _AddIngredientScreenState extends State<AddIngredientScreen> {
             children: [
               _SearchTab(
                   cart: _cart, onAdd: _addToCart, onRemove: _removeFromCart),
-              _ComingSoonTab(
+              _PhotoRecognitionTab(
                 icon: Icons.camera_alt_outlined,
                 title: tr('사진으로 재료 인식', 'Recognize ingredients from a photo'),
                 description: tr(
-                  '냉장고 속 재료 사진을 찍으면\n자동으로 인식해서 등록해줘요.\n(준비 중인 기능이에요)',
-                  'Take a photo of ingredients in your fridge\nand they\'ll be recognized automatically.\n(Coming soon)',
+                  '재료를 가까이서 찍으면\nAI가 자동으로 인식해서 등록해줘요.',
+                  'Take a close-up photo of an ingredient\nand AI will recognize it automatically.',
                 ),
                 buttonLabel: tr('사진 촬영하기', 'Take a photo'),
+                onAdd: _addToCart,
               ),
               _ReceiptScanTab(onAdd: _addToCart),
-              const _FridgeScanTab(),
+              _PhotoRecognitionTab(
+                icon: Icons.kitchen_outlined,
+                title: tr('냉장고 통째로 촬영하기', 'Photograph the whole fridge'),
+                description: tr(
+                  '냉장고 문을 연 채로 한 장 찍으면\nAI가 안에 있는 재료를 한 번에 찾아드려요.',
+                  'Take one photo with the fridge door open\nand AI will find everything inside at once.',
+                ),
+                buttonLabel: tr('냉장고 촬영하기', 'Take a photo'),
+                onAdd: _addToCart,
+              ),
             ],
           ),
           bottomNavigationBar: _cart.isEmpty
@@ -661,19 +674,39 @@ class _ReceiptScanTabState extends State<_ReceiptScanTab> {
   }
 }
 
-/// 냉장고 전체를 한 번에 촬영해서 담긴 재료를 자동으로 구분해주는 탭.
-/// 사진 촬영/미리보기는 실제로 동작하지만, 재료 자동 인식은 이미지 인식 AI(비전 API) 연동이
-/// 필요해 아직 준비 중이다 — 가짜 인식 결과를 보여주는 대신 정직하게 안내한다.
-class _FridgeScanTab extends StatefulWidget {
-  const _FridgeScanTab();
+/// "사진인식"과 "냉장고 전체촬영" 탭이 공유하는 위젯 — 촬영 대상이 재료 한두 개냐
+/// 냉장고 전체냐의 차이일 뿐, 사진 촬영 → analyze-fridge-photo Edge Function(GPT-4o-mini
+/// Vision) 호출 → 카탈로그 매칭 결과 체크박스 → 담기 흐름은 완전히 동일하다.
+///
+/// OCR 영수증 스캔과 같은 원칙: AI가 인식했어도 우리 재료 카탈로그에 없는 이름은 등록할 수
+/// 없으므로(FridgeStore.addItems가 조용히 스킵) matched만 체크박스로 보여주고, 카탈로그
+/// 밖에서 인식된 이름은 "이런 것도 보였지만 아직 등록할 수 없어요"로 정직하게 따로 알린다.
+class _PhotoRecognitionTab extends StatefulWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final String buttonLabel;
+  final ValueChanged<FridgeItem> onAdd;
+
+  const _PhotoRecognitionTab({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.buttonLabel,
+    required this.onAdd,
+  });
 
   @override
-  State<_FridgeScanTab> createState() => _FridgeScanTabState();
+  State<_PhotoRecognitionTab> createState() => _PhotoRecognitionTabState();
 }
 
-class _FridgeScanTabState extends State<_FridgeScanTab> {
-  XFile? _photo;
+class _PhotoRecognitionTabState extends State<_PhotoRecognitionTab> {
+  File? _photo;
   bool _analyzing = false;
+  FridgePhotoAnalysis? _analysis;
+  List<bool> _selected = [];
+  bool _addedToCart = false;
+  String? _errorMessage;
 
   Future<void> _openPhotoSourceSheet() async {
     final source = await showModalBottomSheet<ImageSource>(
@@ -689,7 +722,7 @@ class _FridgeScanTabState extends State<_FridgeScanTab> {
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined,
                   color: AppColors.green),
-              title: Text(tr('카메라로 냉장고 촬영', 'Take a photo of the fridge')),
+              title: Text(tr('카메라로 촬영', 'Take a photo')),
               onTap: () => Navigator.pop(sheetContext, ImageSource.camera),
             ),
             ListTile(
@@ -707,7 +740,17 @@ class _FridgeScanTabState extends State<_FridgeScanTab> {
     try {
       final picked = await ImagePicker()
           .pickImage(source: source, maxWidth: 2000, imageQuality: 90);
-      if (picked != null && mounted) setState(() => _photo = picked);
+      if (picked == null || !mounted) return;
+
+      final file = File(picked.path);
+      setState(() {
+        _photo = file;
+        _analysis = null;
+        _selected = [];
+        _addedToCart = false;
+        _errorMessage = null;
+      });
+      await _analyze(file);
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -717,40 +760,42 @@ class _FridgeScanTabState extends State<_FridgeScanTab> {
     }
   }
 
-  Future<void> _analyze() async {
-    setState(() => _analyzing = true);
-    await Future.delayed(const Duration(milliseconds: 900));
-    if (!mounted) return;
-    setState(() => _analyzing = false);
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(
-            tr('재료 인식은 아직 준비 중이에요', 'Ingredient recognition is coming soon')),
-        content: Text(
-          tr(
-            '사진은 잘 담았어요! 다만 재료를 자동으로 구분하려면\n'
-                '실제 이미지 인식 AI(비전 API) 연동이 필요해서\n'
-                '지금은 검색 탭에서 직접 등록해주셔야 해요.',
-            'Your photo was saved! But automatically sorting ingredients\n'
-                'needs a real image-recognition AI (vision API) integration,\n'
-                'so for now please add items manually in the Search tab.',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(tr('확인', 'OK')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              DefaultTabController.of(context).animateTo(0);
-            },
-            child: Text(tr('검색 탭으로 이동', 'Go to Search tab')),
-          ),
-        ],
-      ),
+  Future<void> _analyze(File file) async {
+    setState(() {
+      _analyzing = true;
+      _errorMessage = null;
+    });
+    try {
+      final result = await FridgePhotoRecognitionService.instance.analyze(file);
+      if (!mounted) return;
+      setState(() {
+        _analysis = result;
+        _selected = List.filled(result.matched.length, true);
+        _analyzing = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _analyzing = false;
+        _errorMessage = e.toString();
+      });
+    }
+  }
+
+  void _addSelectedToCart() {
+    final analysis = _analysis;
+    if (analysis == null) return;
+    var count = 0;
+    for (var i = 0; i < analysis.matched.length; i++) {
+      if (_selected[i]) {
+        widget.onAdd(analysis.matched[i].toFridgeItem());
+        count++;
+      }
+    }
+    if (count == 0) return;
+    setState(() => _addedToCart = true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(tr('$count개 재료를 담았어요', 'Added $count items'))),
     );
   }
 
@@ -768,12 +813,11 @@ class _FridgeScanTabState extends State<_FridgeScanTab> {
                 height: 72,
                 decoration: const BoxDecoration(
                     color: AppColors.paperDeep, shape: BoxShape.circle),
-                child: const Icon(Icons.kitchen_outlined,
-                    size: 32, color: AppColors.inkSoft),
+                child: Icon(widget.icon, size: 32, color: AppColors.inkSoft),
               ),
               const SizedBox(height: 16),
               Text(
-                tr('냉장고 통째로 촬영하기', 'Photograph the whole fridge'),
+                widget.title,
                 style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -782,10 +826,7 @@ class _FridgeScanTabState extends State<_FridgeScanTab> {
               ),
               const SizedBox(height: 8),
               Text(
-                tr(
-                  '냉장고 문을 연 채로 한 장 찍으면\n안에 있는 재료를 한 번에 찾아볼 수 있어요.',
-                  'Take one photo with the fridge door open\nto find everything inside at once.',
-                ),
+                widget.description,
                 style: const TextStyle(
                     fontSize: 12, color: AppColors.inkSoft, height: 1.5),
                 textAlign: TextAlign.center,
@@ -793,7 +834,7 @@ class _FridgeScanTabState extends State<_FridgeScanTab> {
               const SizedBox(height: 20),
               OutlinedButton(
                 onPressed: _openPhotoSourceSheet,
-                child: Text(tr('냉장고 촬영하기', 'Take a photo')),
+                child: Text(widget.buttonLabel),
               ),
             ],
           ),
@@ -801,101 +842,131 @@ class _FridgeScanTabState extends State<_FridgeScanTab> {
       );
     }
 
+    final analysis = _analysis;
+    final unmatchedRaw = analysis == null
+        ? const <String>[]
+        : analysis.recognizedRaw
+            .where((name) => !analysis.matched.any((m) => m.name == name))
+            .toList();
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.file(File(_photo!.path),
-              width: double.infinity, height: 260, fit: BoxFit.cover),
+          child: Image.file(_photo!,
+              width: double.infinity, height: 220, fit: BoxFit.cover),
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: _openPhotoSourceSheet,
-                child: Text(tr('다시 찍기', 'Retake')),
+        if (_analyzing)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 24),
+            child: Center(
+                child: CircularProgressIndicator(color: AppColors.green)),
+          )
+        else if (_errorMessage != null) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Center(
+              child: Text(
+                tr('재료 인식에 실패했어요: $_errorMessage',
+                    'Could not recognize ingredients: $_errorMessage'),
+                style: const TextStyle(
+                    fontSize: 13, color: AppColors.red, height: 1.5),
+                textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: _analyzing ? null : _analyze,
-                child: _analyzing
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : Text(tr('재료 인식하기', 'Recognize ingredients')),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton(
+            onPressed: () => _analyze(_photo!),
+            child: Text(tr('다시 시도', 'Try again')),
+          ),
+        ] else if (analysis != null) ...[
+          if (analysis.matched.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: Text(
+                  tr('일치하는 재료를 찾지 못했어요. 검색 탭에서 직접 등록해주세요.',
+                      "Couldn't find matching items. Please add them manually in the Search tab."),
+                  style: const TextStyle(
+                      fontSize: 13, color: AppColors.inkSoft, height: 1.5),
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _ComingSoonTab extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final String buttonLabel;
-
-  const _ComingSoonTab({
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.buttonLabel,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: const BoxDecoration(
-                  color: AppColors.paperDeep, shape: BoxShape.circle),
-              child: Icon(icon, size: 32, color: AppColors.inkSoft),
-            ),
-            const SizedBox(height: 16),
+            )
+          else ...[
             Text(
-              title,
+              tr('인식된 재료 ${analysis.matched.length}개',
+                  '${analysis.matched.length} items found'),
               style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                   color: AppColors.ink),
-              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(
-                  fontSize: 12, color: AppColors.inkSoft, height: 1.5),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            OutlinedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(tr('빠른 시일 내에 만나볼 수 있어요!', 'Coming soon!'))),
-                );
-              },
-              child: Text(buttonLabel),
+            for (var i = 0; i < analysis.matched.length; i++)
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                activeColor: AppColors.green,
+                secondary: IngredientAvatar(
+                    name: analysis.matched[i].name,
+                    category: analysis.matched[i].category,
+                    size: 36),
+                title: Text(analysis.matched[i].name,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: AppColors.ink)),
+                subtitle: Text(
+                  analysis.matched[i].defaultShelfLifeDays == null
+                      ? tr('유통기한 미설정', 'No expiry set')
+                      : tr(
+                          '예상 보관기한: ${analysis.matched[i].defaultShelfLifeDays}일',
+                          'Est. shelf life: ${analysis.matched[i].defaultShelfLifeDays} days'),
+                  style:
+                      const TextStyle(fontSize: 12, color: AppColors.inkSoft),
+                ),
+                value: _selected[i],
+                onChanged: (v) => setState(() => _selected[i] = v ?? false),
+              ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _addedToCart ? null : _addSelectedToCart,
+                child: Text(_addedToCart
+                    ? tr('담았어요', 'Added')
+                    : tr('선택한 재료 담기', 'Add selected items')),
+              ),
             ),
           ],
-        ),
-      ),
+          if (unmatchedRaw.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.goldSoft,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                tr(
+                  '이런 것도 보였지만 아직 등록할 수 없어요: ${unmatchedRaw.join(', ')}',
+                  "Also spotted, but can't be added yet: ${unmatchedRaw.join(', ')}",
+                ),
+                style: const TextStyle(fontSize: 11, color: AppColors.gold),
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          OutlinedButton(
+            onPressed: _openPhotoSourceSheet,
+            child: Text(tr('다시 찍기', 'Retake photo')),
+          ),
+        ],
+      ],
     );
   }
 }

@@ -1,3 +1,9 @@
+# Local secrets (e.g. API keys used for one-off supabase secrets set --env-file testing)
+.env
+
+# Supabase CLI local cache (project link metadata, not app code)
+supabase/.temp/
+
 # Miscellaneous
 *.class
 *.log

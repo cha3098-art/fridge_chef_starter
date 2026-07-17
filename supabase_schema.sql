@@ -395,6 +395,29 @@ create policy "본인이 올린 게시판 사진만 삭제"
   on storage.objects for delete
   using (bucket_id = 'board-photos' and auth.uid() = owner);
 
+-- ============================================================
+-- Storage: fridge-scans 버킷 (사진인식/냉장고 전체촬영 임시 스캔 사진)
+-- analyze-fridge-photo Edge Function이 OpenAI Vision API에 이 URL을 그대로 전달해야 하므로
+-- board-photos와 동일하게 공개 버킷으로 둔다 (경로에 uid+timestamp가 섞여 있어 실질적으로 추측 불가능).
+-- 이 사진들은 재료 인식 후 화면에 계속 남는 콘텐츠가 아니라 스캔 1회성 입력이므로,
+-- 언젠가 오래된 파일을 정리하는 배치 작업을 붙일 수 있도록 별도 버킷으로 분리했다.
+-- ============================================================
+insert into storage.buckets (id, name, public)
+values ('fridge-scans', 'fridge-scans', true)
+on conflict (id) do nothing;
+
+create policy "냉장고 스캔 사진 전체 공개 조회"
+  on storage.objects for select
+  using (bucket_id = 'fridge-scans');
+
+create policy "로그인한 사용자만 스캔 사진 업로드"
+  on storage.objects for insert
+  with check (bucket_id = 'fridge-scans' and auth.role() = 'authenticated');
+
+create policy "본인이 올린 스캔 사진만 삭제"
+  on storage.objects for delete
+  using (bucket_id = 'fridge-scans' and auth.uid() = owner);
+
 -- ingredients, recipes, recipe_ingredients, recipe_steps는 공용 참조 데이터라 전체 공개 조회 허용
 alter table public.ingredients enable row level security;
 alter table public.recipes enable row level security;
@@ -430,3 +453,69 @@ insert into public.ingredients (name, category, unit_default, default_shelf_life
   ('김치', '기타', 'g', 60),
   ('김', '기타', '봉', 90)
 on conflict (name) do nothing;
+
+-- ============================================================
+-- 15. battles / battle_participants / battle_votes (배틀 모드 — 비동기 초대 링크 대결, Phase 2)
+-- 실시간 매칭(Phase 3)은 아직 없다: 호스트가 배틀을 만들면 meal_invites와 동일하게
+-- invite_link로 상대를 초대하고, 각자 완성 사진을 올린 뒤(submitted_at) 다른 사용자들이 투표한다.
+-- 승자 확정 로직(winner_user_id 갱신)은 아직 화면/서버 로직이 없어 수동 필드로만 남겨둔다.
+-- ============================================================
+create table public.battles (
+  id uuid primary key default uuid_generate_v4(),
+  host_user_id uuid not null references public.users(id) on delete cascade,
+  recipe_id uuid references public.recipes(id),
+  -- recipes가 아직 다 시딩되지 않은 자유 주제 대결도 가능하도록 텍스트 제목을 별도로 둔다 (meal_invites.recipe_title과 동일한 이유)
+  theme_title text,
+  status text check (status in ('waiting_opponent','submitted','voting','completed','cancelled')) not null default 'waiting_opponent',
+  invite_link text,
+  voting_ends_at timestamptz,
+  winner_user_id uuid references public.users(id),
+  created_at timestamptz not null default now()
+);
+create index idx_battles_host on public.battles(host_user_id);
+
+-- 상대가 초대 링크로 들어와 참가하면 host/opponent 각각 한 행씩 생긴다 (지금은 1:1 대결만 지원 — role당 battle에 1명).
+create table public.battle_participants (
+  id uuid primary key default uuid_generate_v4(),
+  battle_id uuid not null references public.battles(id) on delete cascade,
+  user_id uuid not null references public.users(id) on delete cascade,
+  role text check (role in ('host','opponent')) not null,
+  photo_url text,
+  submitted_at timestamptz,
+  joined_at timestamptz not null default now(),
+  unique (battle_id, user_id),
+  unique (battle_id, role)
+);
+create index idx_battle_participants_battle on public.battle_participants(battle_id);
+create index idx_battle_participants_user on public.battle_participants(user_id);
+
+-- 1인 1표. 승자 집계(투표수 비교)는 화면 단계에서 붙일 예정이라 지금은 원본 투표 기록만 저장한다.
+create table public.battle_votes (
+  id uuid primary key default uuid_generate_v4(),
+  battle_id uuid not null references public.battles(id) on delete cascade,
+  voter_id uuid not null references public.users(id) on delete cascade,
+  voted_for_participant_id uuid not null references public.battle_participants(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (battle_id, voter_id)
+);
+create index idx_battle_votes_battle on public.battle_votes(battle_id);
+
+alter table public.battles enable row level security;
+alter table public.battle_participants enable row level security;
+alter table public.battle_votes enable row level security;
+
+-- 초대 링크로 비참가자도 대결 현황을 볼 수 있어야 하므로 조회는 전체 공개하고,
+-- 생성/상태 수정은 meal_invites와 동일하게 호스트 본인으로 제한한다.
+create policy "배틀 전체 공개 조회" on public.battles for select using (true);
+create policy "본인이 호스트인 배틀만 생성" on public.battles for insert with check (auth.uid() = host_user_id);
+create policy "호스트만 배틀 정보 수정" on public.battles for update using (auth.uid() = host_user_id);
+
+-- 참가자 명단/제출 사진도 대결 화면에서 양쪽 다 보여야 하므로 조회는 전체 공개하고,
+-- 등록/제출은 본인 행만 건드릴 수 있다.
+create policy "배틀 참가자 전체 공개 조회" on public.battle_participants for select using (true);
+create policy "본인만 참가자로 등록" on public.battle_participants for insert with check (auth.uid() = user_id);
+create policy "본인 제출물만 수정" on public.battle_participants for update using (auth.uid() = user_id);
+
+create policy "배틀 투표 전체 공개 조회" on public.battle_votes for select using (true);
+create policy "본인 명의로만 투표" on public.battle_votes for insert with check (auth.uid() = voter_id);
+create policy "본인 투표만 취소" on public.battle_votes for delete using (auth.uid() = voter_id);
