@@ -22,9 +22,14 @@ class ChefPointsStore extends ChangeNotifier {
   int get generalPoints =>
       _events.where((e) => !e.isKFoodTrack).fold(0, (sum, e) => sum + e.amount);
 
-  int get kfoodPoints => _events.where((e) => e.isKFoodTrack).fold(0, (sum, e) => sum + e.amount);
+  int get kfoodPoints =>
+      _events.where((e) => e.isKFoodTrack).fold(0, (sum, e) => sum + e.amount);
 
-  static const generalTierThresholds = {30: '초급요리사', 40: '중급요리사', 50: 'Food Master'};
+  static const generalTierThresholds = {
+    30: '초급요리사',
+    40: '중급요리사',
+    50: 'Food Master'
+  };
   static const kfoodMasterThreshold = 50;
 
   String? get generalTier => tierForPoints(generalPoints);
@@ -51,12 +56,17 @@ class ChefPointsStore extends ChangeNotifier {
 
   int get cooksThisWeek {
     final weekAgo = DateTime.now().subtract(const Duration(days: 7));
-    return _events.where((e) => e.reason == PointReason.cook && e.timestamp.isAfter(weekAgo)).length;
+    return _events
+        .where(
+            (e) => e.reason == PointReason.cook && e.timestamp.isAfter(weekAgo))
+        .length;
   }
 
   bool get invitedThisWeek {
     final weekAgo = DateTime.now().subtract(const Duration(days: 7));
-    return _events.any((e) => e.reason == PointReason.kfoodInviteBonus && e.timestamp.isAfter(weekAgo));
+    return _events.any((e) =>
+        e.reason == PointReason.kfoodInviteBonus &&
+        e.timestamp.isAfter(weekAgo));
   }
 
   /// 로그아웃 시 캐시를 비운다
@@ -80,18 +90,21 @@ class ChefPointsStore extends ChangeNotifier {
         .select()
         .eq('user_id', uid)
         .order('created_at');
-    _events = (rows as List).map<PointEvent>((row) => PointEvent(
-          reason: PointReason.values.byName(row['reason'] as String),
-          amount: row['amount'] as int,
-          isKFoodTrack: row['is_kfood_track'] as bool,
-          labelKo: row['label_ko'] as String,
-          labelEn: row['label_en'] as String,
-          timestamp: DateTime.parse(row['created_at'] as String),
-        )).toList();
+    _events = (rows as List)
+        .map<PointEvent>((row) => PointEvent(
+              reason: PointReason.values.byName(row['reason'] as String),
+              amount: row['amount'] as int,
+              isKFoodTrack: row['is_kfood_track'] as bool,
+              labelKo: row['label_ko'] as String,
+              labelEn: row['label_en'] as String,
+              timestamp: DateTime.parse(row['created_at'] as String),
+            ))
+        .toList();
     _lastWeeklyMissionAt = _events
         .where((e) => e.reason == PointReason.weeklyMission)
         .map((e) => e.timestamp)
-        .fold<DateTime?>(null, (latest, t) => latest == null || t.isAfter(latest) ? t : latest);
+        .fold<DateTime?>(null,
+            (latest, t) => latest == null || t.isAfter(latest) ? t : latest);
     _loaded = true;
     notifyListeners();
   }
@@ -172,7 +185,8 @@ class ChefPointsStore extends ChangeNotifier {
       );
     }
     if (isFullFridgeMatch) {
-      await _add(PointReason.fullMatchCook, 1, false, '냉장고 재료만으로 완성 보너스', 'Fridge-only completion bonus');
+      await _add(PointReason.fullMatchCook, 1, false, '냉장고 재료만으로 완성 보너스',
+          'Fridge-only completion bonus');
     }
     await _add(
       PointReason.firstTry,
@@ -187,7 +201,8 @@ class ChefPointsStore extends ChangeNotifier {
 
   /// 챌린지 게시판에 요리 완성 인증을 올렸을 때 호출 — 게시글당 1회, 고정 포인트
   /// (challenge_post:$postId로 중복 적립을 막는다)
-  Future<void> recordChallengePost({required String postId, required String title}) async {
+  Future<void> recordChallengePost(
+      {required String postId, required String title}) async {
     await _add(
       PointReason.challengePost,
       2,
@@ -200,7 +215,10 @@ class ChefPointsStore extends ChangeNotifier {
   }
 
   /// 초대장 발송 시 호출 — K-Food 레시피면 난이도 가중치의 2배 보너스
-  Future<void> recordInvite({required String recipeTitle, required String difficulty, required bool isKFood}) async {
+  Future<void> recordInvite(
+      {required String recipeTitle,
+      required String difficulty,
+      required bool isKFood}) async {
     if (isKFood) {
       final weight = difficultyWeight(difficulty) * 2;
       await _add(
@@ -214,9 +232,23 @@ class ChefPointsStore extends ChangeNotifier {
     await _maybeAwardWeeklyMission();
   }
 
+  /// 배틀 승리 시 호출 — 승자에게만 지급되며, 배틀당 1회로 제한한다
+  Future<void> recordBattleWin(
+      {required String battleId, required String opponentLabel}) async {
+    await _add(
+      PointReason.battleWin,
+      2,
+      false,
+      '$opponentLabel과의 배틀 승리 (+2)',
+      'Won battle vs $opponentLabel (+2)',
+      dedupeKey: 'battle_win:$battleId',
+    );
+  }
+
   Future<void> _maybeAwardWeeklyMission() async {
     final now = DateTime.now();
-    if (_lastWeeklyMissionAt != null && now.difference(_lastWeeklyMissionAt!) < const Duration(days: 7)) {
+    if (_lastWeeklyMissionAt != null &&
+        now.difference(_lastWeeklyMissionAt!) < const Duration(days: 7)) {
       return;
     }
     if (cooksThisWeek >= 3 && invitedThisWeek) {
@@ -233,7 +265,8 @@ class ChefPointsStore extends ChangeNotifier {
 
   /// 랭킹/게시판에서 다른 사용자의 등급·배지를 보여주기 위한 전체 포인트 배치 조회
   /// (일반 포인트, K-Food 포인트를 user_id별로 합산해서 반환)
-  static Future<Map<String, ({int general, int kfood})>> fetchAllUserPoints() async {
+  static Future<Map<String, ({int general, int kfood})>>
+      fetchAllUserPoints() async {
     final rows = await Supabase.instance.client
         .from('chef_point_events')
         .select('user_id, amount, is_kfood_track');
@@ -243,8 +276,11 @@ class ChefPointsStore extends ChangeNotifier {
       final amount = row['amount'] as int;
       final isKFood = row['is_kfood_track'] as bool;
       final current = totals[userId] ?? (0, 0);
-      totals[userId] = isKFood ? (current.$1, current.$2 + amount) : (current.$1 + amount, current.$2);
+      totals[userId] = isKFood
+          ? (current.$1, current.$2 + amount)
+          : (current.$1 + amount, current.$2);
     }
-    return totals.map((userId, t) => MapEntry(userId, (general: t.$1, kfood: t.$2)));
+    return totals
+        .map((userId, t) => MapEntry(userId, (general: t.$1, kfood: t.$2)));
   }
 }

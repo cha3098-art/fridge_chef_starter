@@ -21,6 +21,7 @@ import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import 'add_ingredient_screen.dart';
 import 'banner_detail_screen.dart';
+import 'battle_screen.dart';
 import 'board_screen.dart';
 import 'kfood_screen.dart';
 import 'my_screen.dart';
@@ -359,6 +360,12 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
         icon: '🔥',
         label: tr('임박 재료', 'Expiring'),
         onTap: _scrollToExpiry,
+      ),
+      (
+        icon: '⚔️',
+        label: tr('배틀', 'Battle'),
+        onTap: () => Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => const BattleScreen())),
       ),
       (
         icon: '💬',
