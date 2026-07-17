@@ -7,7 +7,7 @@ import '../services/fridge_store.dart';
 import '../services/profile_store.dart';
 import '../services/realtime_notification_manager.dart';
 import '../theme/app_theme.dart';
-import 'fridge_screen.dart';
+import 'main_dashboard_screen.dart';
 import 'sign_in_screen.dart';
 
 /// Supabase 세션 유무에 따라 로그인 화면 또는 냉장고 화면을 보여준다.
@@ -60,7 +60,7 @@ class _AuthGateState extends State<AuthGate> {
                 body: Center(child: CircularProgressIndicator()),
               );
             }
-            return const FridgeScreen();
+            return const MainDashboardScreen();
           },
         );
       },

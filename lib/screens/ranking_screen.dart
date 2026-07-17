@@ -14,20 +14,61 @@ import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import 'profile_view_sheet.dart';
 
-typedef _RankRow = ({UserProfile profile, int points, bool isKFoodMaster, bool isMe});
+typedef _RankRow = ({
+  UserProfile profile,
+  int points,
+  bool isKFoodMaster,
+  bool isMe
+});
 
-/// 등급별 파스텔 그라데이션 — 게임 아이템 획득 느낌의 은은한 배지 색
+/// 등급별 파스텔 그라데이션 — 게임 아이템 획득 느낌의 은은한 배지 색.
+/// 다크 배경 위에서도 소형 액세서리 칩은 파스텔을 그대로 유지하는 게 더 잘 도드라진다
+/// (My Menu 아이콘 타일과 같은 원칙) — 그래서 이 색상들은 다크 전환 대상에서 제외한다.
 ({List<Color> colors, Color text}) _tierGradient(String? tier) {
   switch (tier) {
     case '초급요리사':
-      return (colors: [const Color(0xFFFFF0DE), const Color(0xFFFFE0C2)], text: const Color(0xFFB4690E));
+      return (
+        colors: [const Color(0xFFFFF0DE), const Color(0xFFFFE0C2)],
+        text: const Color(0xFFB4690E)
+      );
     case '중급요리사':
-      return (colors: [const Color(0xFFE8EEF7), const Color(0xFFD5E0EF)], text: const Color(0xFF4A6285));
+      return (
+        colors: [const Color(0xFFE8EEF7), const Color(0xFFD5E0EF)],
+        text: const Color(0xFF4A6285)
+      );
     case 'Food Master':
-      return (colors: [const Color(0xFFFFF6D9), const Color(0xFFFFEAAC)], text: const Color(0xFF9C7A11));
+      return (
+        colors: [const Color(0xFFFFF6D9), const Color(0xFFFFEAAC)],
+        text: const Color(0xFF9C7A11)
+      );
     default: // 요리 새싹
-      return (colors: [const Color(0xFFE9F9EF), const Color(0xFFD7F3E3)], text: const Color(0xFF2F8A5B));
+      return (
+        colors: [const Color(0xFFE9F9EF), const Color(0xFFD7F3E3)],
+        text: const Color(0xFF2F8A5B)
+      );
   }
+}
+
+const _gold = Color(0xFFFFB020);
+
+/// 라이트 배경 위 카드 — 헤어라인 보더 + 드롭 섀도우로 구분한다.
+/// 포디움처럼 시선이 먼저 가야 하는 카드는 glow: true로 골드 섀도우를 한층 더 키운다.
+BoxDecoration _cardDeco(
+    {double radius = AppSpacing.radiusMd, bool glow = false}) {
+  return BoxDecoration(
+    color: AppColors.card,
+    borderRadius: BorderRadius.circular(radius),
+    border: Border.all(color: AppColors.cardBorder, width: 1.2),
+    boxShadow: glow
+        ? [
+            BoxShadow(
+                color: _gold.withValues(alpha: 0.16),
+                blurRadius: 28,
+                spreadRadius: 2,
+                offset: const Offset(0, 6))
+          ]
+        : cardDropShadow(),
+  );
 }
 
 /// "랭킹" — 가입한 전체 사용자를 누적 포인트가 높은 순서로 보여준다.
@@ -51,7 +92,8 @@ class _RankingScreenState extends State<RankingScreen> {
       return (
         profile: profile,
         points: points?.general ?? 0,
-        isKFoodMaster: (points?.kfood ?? 0) >= ChefPointsStore.kfoodMasterThreshold,
+        isKFoodMaster:
+            (points?.kfood ?? 0) >= ChefPointsStore.kfoodMasterThreshold,
         isMe: profile.id == myUid,
       );
     }).toList();
@@ -71,17 +113,22 @@ class _RankingScreenState extends State<RankingScreen> {
           scrolledUnderElevation: 0,
           title: Text(
             tr('랭킹', 'Ranking'),
-            style: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
+            style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.3,
+                color: AppColors.ink),
           ),
           actions: const [
-            Padding(padding: EdgeInsets.only(right: 12), child: LanguageToggle()),
+            Padding(
+                padding: EdgeInsets.only(right: 12), child: LanguageToggle()),
           ],
         ),
         body: FutureBuilder<List<_RankRow>>(
           future: _rowsFuture,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                  child: CircularProgressIndicator(color: AppColors.green));
             }
             final rows = snapshot.data!;
             if (rows.isEmpty) {
@@ -91,7 +138,8 @@ class _RankingScreenState extends State<RankingScreen> {
                   children: [
                     const FridgeMascot(size: 84),
                     const SizedBox(height: AppSpacing.md),
-                    Text(tr('아직 가입한 사용자가 없어요', 'No one has signed up yet'), style: const TextStyle(color: AppColors.inkSoft)),
+                    Text(tr('아직 가입한 사용자가 없어요', 'No one has signed up yet'),
+                        style: const TextStyle(color: AppColors.inkSoft)),
                   ],
                 ),
               );
@@ -107,16 +155,20 @@ class _RankingScreenState extends State<RankingScreen> {
                   slivers: [
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.md),
-                        child: _RankPodium(rows: rows.take(podiumCount).toList()),
+                        padding: const EdgeInsets.fromLTRB(AppSpacing.md,
+                            AppSpacing.sm, AppSpacing.md, AppSpacing.md),
+                        child:
+                            _RankPodium(rows: rows.take(podiumCount).toList()),
                       ),
                     ),
                     SliverPadding(
                       // 하단 스티키 바에 가려지지 않도록 아래 여백을 넉넉히 준다
-                      padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, 120),
+                      padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.md, 0, AppSpacing.md, 120),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
-                          (context, i) => _RankingRow(row: rest[i], rank: podiumCount + i + 1),
+                          (context, i) => _RankingRow(
+                              row: rest[i], rank: podiumCount + i + 1),
                           childCount: rest.length,
                         ),
                       ),
@@ -128,19 +180,20 @@ class _RankingScreenState extends State<RankingScreen> {
                     bottom: 16,
                     left: 16,
                     right: 16,
-                    child: _MyStickyRankingBar(row: rows[myIndex], rank: myIndex + 1),
+                    child: _MyStickyRankingBar(
+                        row: rows[myIndex], rank: myIndex + 1),
                   ),
               ],
             );
           },
         ),
-        bottomNavigationBar: MainBottomNav(currentIndex: 4),
+        bottomNavigationBar: const MainBottomNav(currentIndex: 4),
       ),
     );
   }
 }
 
-/// 4위 이하 리스트 행 — 화이트 배경, 그림자 없이 여백으로만 구분하는 플랫 스타일
+/// 4위 이하 리스트 행 — 화이트 카드 + 헤어라인 보더로 구분하는 플랫 스타일
 class _RankingRow extends StatelessWidget {
   final _RankRow row;
   final int rank;
@@ -156,11 +209,9 @@ class _RankingRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
         onTap: () => showProfileView(context, row.profile),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          ),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm, vertical: 12),
+          decoration: _cardDeco(),
           child: Row(
             children: [
               SizedBox(
@@ -168,7 +219,11 @@ class _RankingRow extends StatelessWidget {
                 child: Text(
                   '$rank',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: AppColors.ink, letterSpacing: -0.5),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 17,
+                      color: AppColors.ink,
+                      letterSpacing: -0.5),
                 ),
               ),
               const SizedBox(width: 8),
@@ -178,8 +233,10 @@ class _RankingRow extends StatelessWidget {
                   height: 40,
                   color: AppColors.paperDeep,
                   child: view.photoPath == null
-                      ? const Icon(Icons.person, size: 18, color: AppColors.inkSoft)
-                      : Image.file(File(view.photoPath!), fit: BoxFit.cover, width: 40, height: 40),
+                      ? const Icon(Icons.person,
+                          size: 18, color: AppColors.inkSoft)
+                      : Image.file(File(view.photoPath!),
+                          fit: BoxFit.cover, width: 40, height: 40),
                 ),
               ),
               const SizedBox(width: 10),
@@ -193,12 +250,18 @@ class _RankingRow extends StatelessWidget {
                           child: Text(
                             view.nickname,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, letterSpacing: -0.2),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                                letterSpacing: -0.2,
+                                color: AppColors.ink),
                           ),
                         ),
                         if (row.isMe) ...[
                           const SizedBox(width: 4),
-                          Text(tr('(나)', '(Me)'), style: const TextStyle(fontSize: 11, color: AppColors.green)),
+                          Text(tr('(나)', '(Me)'),
+                              style: const TextStyle(
+                                  fontSize: 11, color: AppColors.green)),
                         ],
                       ],
                     ),
@@ -210,7 +273,11 @@ class _RankingRow extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 tr('${row.points}점', '${row.points} pts'),
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppColors.green, letterSpacing: -0.1),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                    color: AppColors.green,
+                    letterSpacing: -0.1),
               ),
             ],
           ),
@@ -240,7 +307,8 @@ class _TierChip extends StatelessWidget {
           ),
           child: Text(
             trTag(tier ?? '요리 새싹'),
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: style.text),
+            style: TextStyle(
+                fontSize: 10, fontWeight: FontWeight.w700, color: style.text),
           ),
         ),
         if (isKFoodMaster) ...[
@@ -263,14 +331,15 @@ class _MyStickyRankingBar extends StatelessWidget {
     final view = row.profile.toPublicView();
     final tier = ChefPointsStore.tierForPoints(row.points);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 12),
+      padding:
+          const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.96),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        border: Border.all(color: AppColors.green, width: 1.2),
+        border: Border.all(color: AppColors.green, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0F172A).withValues(alpha: 0.10),
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -280,12 +349,19 @@ class _MyStickyRankingBar extends StatelessWidget {
         children: [
           Text(
             tr('내 순위', 'My Rank'),
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.inkSoft),
+            style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: AppColors.inkSoft),
           ),
           const SizedBox(width: 10),
           Text(
             '$rank',
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: AppColors.green, letterSpacing: -0.5),
+            style: const TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 20,
+                color: AppColors.green,
+                letterSpacing: -0.5),
           ),
           const SizedBox(width: 12),
           ClipOval(
@@ -295,7 +371,8 @@ class _MyStickyRankingBar extends StatelessWidget {
               color: AppColors.greenSoft,
               child: view.photoPath == null
                   ? const Icon(Icons.person, size: 16, color: AppColors.green)
-                  : Image.file(File(view.photoPath!), fit: BoxFit.cover, width: 34, height: 34),
+                  : Image.file(File(view.photoPath!),
+                      fit: BoxFit.cover, width: 34, height: 34),
             ),
           ),
           const SizedBox(width: 8),
@@ -306,7 +383,11 @@ class _MyStickyRankingBar extends StatelessWidget {
                 Text(
                   view.nickname,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: -0.2),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                      letterSpacing: -0.2,
+                      color: AppColors.ink),
                 ),
                 const SizedBox(height: 2),
                 _TierChip(tier: tier, isKFoodMaster: row.isKFoodMaster),
@@ -315,7 +396,11 @@ class _MyStickyRankingBar extends StatelessWidget {
           ),
           Text(
             tr('${row.points}점', '${row.points} pts'),
-            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.green, letterSpacing: -0.2),
+            style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                color: AppColors.green,
+                letterSpacing: -0.2),
           ),
         ],
       ),
@@ -323,7 +408,7 @@ class _MyStickyRankingBar extends StatelessWidget {
   }
 }
 
-/// 상위 3명 "명예의 전당" — 밝은 화이트 카드 위 파스텔 포디움, 1위는 왕관을 쓴다
+/// 상위 3명 "명예의 전당" — 화이트 카드 위 파스텔 포디움, 1위는 왕관을 쓴다
 class _RankPodium extends StatelessWidget {
   final List<_RankRow> rows;
   const _RankPodium({required this.rows});
@@ -348,8 +433,9 @@ class _RankPodium extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.lg, AppSpacing.md, 0),
-      decoration: cardDecoration(radius: AppSpacing.radiusLg),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.lg, AppSpacing.md, 0),
+      decoration: _cardDeco(radius: AppSpacing.radiusLg, glow: true),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -404,9 +490,15 @@ class _PodiumSpot extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: rank == 1 ? const Color(0xFFF2C94C) : AppColors.cardBorder,
+                color: rank == 1 ? _gold : AppColors.cardBorder,
                 width: rank == 1 ? 2.5 : 1.5,
               ),
+              boxShadow: rank == 1
+                  ? [
+                      BoxShadow(
+                          color: _gold.withValues(alpha: 0.3), blurRadius: 12)
+                    ]
+                  : null,
             ),
             child: ClipOval(
               child: Container(
@@ -414,8 +506,12 @@ class _PodiumSpot extends StatelessWidget {
                 height: avatarSize,
                 color: AppColors.paperDeep,
                 child: view.photoPath == null
-                    ? Icon(Icons.person, size: avatarSize * 0.5, color: AppColors.inkSoft)
-                    : Image.file(File(view.photoPath!), fit: BoxFit.cover, width: avatarSize, height: avatarSize),
+                    ? Icon(Icons.person,
+                        size: avatarSize * 0.5, color: AppColors.inkSoft)
+                    : Image.file(File(view.photoPath!),
+                        fit: BoxFit.cover,
+                        width: avatarSize,
+                        height: avatarSize),
               ),
             ),
           ),
@@ -424,14 +520,22 @@ class _PodiumSpot extends StatelessWidget {
             view.nickname,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: AppColors.ink, fontWeight: FontWeight.w800, fontSize: 12, letterSpacing: -0.2),
+            style: const TextStyle(
+                color: AppColors.ink,
+                fontWeight: FontWeight.w800,
+                fontSize: 12,
+                letterSpacing: -0.2),
           ),
           const SizedBox(height: 2),
           _TierChip(tier: tier, isKFoodMaster: row.isKFoodMaster),
           const SizedBox(height: 2),
           Text(
             tr('${row.points}점', '${row.points} pts'),
-            style: const TextStyle(color: AppColors.inkSoft, fontSize: 10, fontWeight: FontWeight.w600, height: 1.4),
+            style: const TextStyle(
+                color: AppColors.inkSoft,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                height: 1.4),
           ),
           const SizedBox(height: 8),
           Container(
@@ -443,14 +547,15 @@ class _PodiumSpot extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusSm)),
+              borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(AppSpacing.radiusSm)),
             ),
             child: Text(
               '$rank',
               style: TextStyle(
                 fontSize: rank == 1 ? 30 : 22,
                 fontWeight: FontWeight.w900,
-                color: AppColors.ink.withValues(alpha: 0.35),
+                color: Colors.black.withValues(alpha: 0.35),
               ),
             ),
           ),

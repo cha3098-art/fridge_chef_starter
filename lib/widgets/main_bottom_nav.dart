@@ -15,20 +15,24 @@ import '../theme/app_theme.dart';
 class MainBottomNav extends StatelessWidget {
   final int currentIndex;
   final Set<String> fridgeIngredientNames;
+  /// true면 main_dashboard_screen.dart의 다크 네이비 배경에 맞춰 DashColors로 칠한다.
+  /// 나머지 6개 화면은 기본값(false)으로 기존 라이트 테마를 그대로 쓴다.
+  final bool dark;
 
   const MainBottomNav({
     super.key,
     required this.currentIndex,
     this.fridgeIngredientNames = const {},
+    this.dark = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: currentIndex,
-      selectedItemColor: AppColors.green,
-      unselectedItemColor: AppColors.inkSoft,
-      backgroundColor: AppColors.card,
+      selectedItemColor: dark ? DashColors.green : AppColors.green,
+      unselectedItemColor: dark ? DashColors.inkSoft : AppColors.inkSoft,
+      backgroundColor: dark ? DashColors.card : AppColors.card,
       type: BottomNavigationBarType.fixed,
       iconSize: 20,
       selectedFontSize: 9,

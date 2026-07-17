@@ -22,9 +22,70 @@ import '../widgets/main_bottom_nav.dart';
 String _timeAgoLabel(DateTime dateTime) {
   final diff = DateTime.now().difference(dateTime);
   if (diff.inMinutes < 1) return tr('방금 전', 'just now');
-  if (diff.inHours < 1) return tr('${diff.inMinutes}분 전', '${diff.inMinutes}m ago');
+  if (diff.inHours < 1)
+    return tr('${diff.inMinutes}분 전', '${diff.inMinutes}m ago');
   if (diff.inDays < 1) return tr('${diff.inHours}시간 전', '${diff.inHours}h ago');
   return tr('${diff.inDays}일 전', '${diff.inDays}d ago');
+}
+
+/// 라이트 배경 위 카드 — 헤어라인 보더 + 은은한 드롭 섀도우로 배경과 확실히 구분한다.
+BoxDecoration _cardDeco({double radius = AppSpacing.radiusMd}) {
+  return BoxDecoration(
+    color: AppColors.card,
+    borderRadius: BorderRadius.circular(radius),
+    border: Border.all(color: AppColors.cardBorder, width: 1.2),
+    boxShadow: cardDropShadow(),
+  );
+}
+
+/// 빈 상태 화면에서 마스코트를 민트 틴트 링 안에 담아 카드 위에서도 또렷하게 도드라지게 한다.
+class _GlowMascot extends StatelessWidget {
+  const _GlowMascot();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 90,
+      height: 90,
+      decoration: BoxDecoration(
+        color: AppColors.green.withValues(alpha: 0.08),
+        shape: BoxShape.circle,
+        border: Border.all(
+            color: AppColors.green.withValues(alpha: 0.3), width: 1.5),
+      ),
+      child: const Center(child: FridgeMascot(size: 56)),
+    );
+  }
+}
+
+/// 빈 상태 전용 카드 패널 — 마스코트 + 안내 문구를 하나의 화이트 카드로 감싸 화면 중앙에서
+/// 존재감 있게 보여준다.
+class _EmptyStateCard extends StatelessWidget {
+  final String message;
+  const _EmptyStateCard({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.85,
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+        decoration: _cardDeco(radius: AppSpacing.radiusLg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const _GlowMascot(),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppColors.inkSoft, fontSize: 14),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class ShareScreen extends StatefulWidget {
@@ -36,7 +97,8 @@ class ShareScreen extends StatefulWidget {
   State<ShareScreen> createState() => _ShareScreenState();
 }
 
-class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStateMixin {
+class _ShareScreenState extends State<ShareScreen>
+    with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
   List<MealInvite> _invites = [];
@@ -53,7 +115,8 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this)..addListener(() => setState(() {}));
+    _tabController = TabController(length: 2, vsync: this)
+      ..addListener(() => setState(() {}));
     _loadInvites();
   }
 
@@ -78,7 +141,8 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
   }
 
   Future<void> _openCreateInvite() async {
-    final draft = await showModalBottomSheet<({String recipeTitle, String message})>(
+    final draft =
+        await showModalBottomSheet<({String recipeTitle, String message})>(
       context: context,
       backgroundColor: AppColors.card,
       isScrollControlled: true,
@@ -98,7 +162,8 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tr('초대장 생성에 실패했어요', 'Could not create the invite'))),
+        SnackBar(
+            content: Text(tr('초대장 생성에 실패했어요', 'Could not create the invite'))),
       );
       return;
     }
@@ -115,7 +180,9 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
     await Clipboard.setData(ClipboardData(text: result.inviteLink));
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(tr('초대장을 만들고 링크를 복사했어요', 'Invite created and link copied'))),
+      SnackBar(
+          content:
+              Text(tr('초대장을 만들고 링크를 복사했어요', 'Invite created and link copied'))),
     );
   }
 
@@ -133,7 +200,8 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
     setState(() => _brags.insert(0, result));
     final recipe = findRecipeByTitle(result.recipeTitle);
     if (recipe != null) {
-      final isFullMatch = recipe.matchLevel(widget.fridgeIngredientNames) == RecipeMatchLevel.full;
+      final isFullMatch = recipe.matchLevel(widget.fridgeIngredientNames) ==
+          RecipeMatchLevel.full;
       ChefPointsStore.instance.recordCook(
         recipeTitle: recipe.title,
         difficulty: recipe.difficulty,
@@ -164,33 +232,42 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
             ),
           ),
           actions: const [
-            Padding(padding: EdgeInsets.only(right: 8), child: LanguageToggle()),
-            Padding(padding: EdgeInsets.only(right: 16), child: ChefTierBadge()),
+            Padding(
+                padding: EdgeInsets.only(right: 8), child: LanguageToggle()),
+            Padding(
+                padding: EdgeInsets.only(right: 16), child: ChefTierBadge()),
           ],
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: AppColors.paperDeep,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TabBar(
-                controller: _tabController,
-                labelColor: Colors.white,
-                unselectedLabelColor: AppColors.inkSoft,
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                indicator: BoxDecoration(
-                  color: AppColors.green,
-                  borderRadius: BorderRadius.circular(12),
+            preferredSize: const Size.fromHeight(60),
+            // 재료등록/추천 화면의 캡슐 탭과 톤을 맞춘 필(pill) 스타일 세그먼트 탭바
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppColors.paperDeep,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.cardBorder),
                 ),
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                tabs: [
-                  Tab(text: tr('식사 초대장', 'Invites')),
-                  Tab(text: tr('요리 자랑하기', 'Brags')),
-                ],
+                child: TabBar(
+                  controller: _tabController,
+                  labelColor: Colors.white,
+                  unselectedLabelColor: AppColors.inkSoft,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
+                  indicator: BoxDecoration(
+                    color: AppColors.green,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  labelStyle: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 13),
+                  unselectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 13),
+                  tabs: [
+                    Tab(text: tr('식사 초대장', 'Invites')),
+                    Tab(text: tr('요리 자랑하기', 'Brags')),
+                  ],
+                ),
               ),
             ),
           ),
@@ -203,14 +280,15 @@ class _ShareScreenState extends State<ShareScreen> with SingleTickerProviderStat
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
-          elevation: 2,
+          elevation: 0,
           backgroundColor: AppColors.green,
           foregroundColor: Colors.white,
           onPressed: isInviteTab ? _openCreateInvite : _openCreateBrag,
           icon: const Icon(Icons.add, size: 20),
           label: Text(
             isInviteTab ? tr('초대장 만들기', 'New Invite') : tr('자랑하기', 'Brag Now'),
-            style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.3),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, letterSpacing: -0.3),
           ),
         ),
         bottomNavigationBar: MainBottomNav(
@@ -230,32 +308,23 @@ class _InviteTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!loaded) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+          child: CircularProgressIndicator(color: AppColors.green));
     }
     if (invites.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const FridgeMascot(size: 84),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              tr('아직 보낸 초대장이 없어요', 'No invites sent yet'),
-              style: const TextStyle(color: AppColors.inkSoft, fontSize: 14),
-            ),
-          ],
-        ),
-      );
+      return _EmptyStateCard(
+          message: tr('아직 보낸 초대장이 없어요', 'No invites sent yet'));
     }
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 96),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.md, AppSpacing.md, 96),
       itemCount: invites.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (context, index) {
         final invite = invites[index];
         final recipe = findRecipeByTitle(invite.recipeTitle);
         return Container(
-          decoration: cardDecoration(),
+          decoration: _cardDeco(),
           clipBehavior: Clip.antiAlias,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,7 +348,8 @@ class _InviteTab extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            tr('🍽️ ${invite.recipeTitle} 초대장', '🍽️ ${invite.recipeTitle} Invite'),
+                            tr('🍽️ ${invite.recipeTitle} 초대장',
+                                '🍽️ ${invite.recipeTitle} Invite'),
                             style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
@@ -289,7 +359,8 @@ class _InviteTab extends StatelessWidget {
                         ),
                         Text(
                           _timeAgoLabel(invite.createdAt),
-                          style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
+                          style: const TextStyle(
+                              fontSize: 12, color: AppColors.inkSoft),
                         ),
                       ],
                     ),
@@ -305,7 +376,8 @@ class _InviteTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
                         color: AppColors.paperDeep,
                         borderRadius: BorderRadius.circular(10),
@@ -328,16 +400,20 @@ class _InviteTab extends StatelessWidget {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(8),
                               onTap: () async {
-                                await Clipboard.setData(ClipboardData(text: invite.inviteLink));
+                                await Clipboard.setData(
+                                    ClipboardData(text: invite.inviteLink));
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(tr('링크가 복사됐어요', 'Link copied'))),
+                                    SnackBar(
+                                        content: Text(
+                                            tr('링크가 복사됐어요', 'Link copied'))),
                                   );
                                 }
                               },
                               child: const Padding(
                                 padding: EdgeInsets.all(6),
-                                child: Icon(Icons.copy_rounded, size: 16, color: AppColors.green),
+                                child: Icon(Icons.copy_rounded,
+                                    size: 16, color: AppColors.green),
                               ),
                             ),
                           ),
@@ -362,33 +438,24 @@ class _BragTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (brags.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const FridgeMascot(size: 84),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              tr('아직 자랑한 요리가 없어요', 'No dishes shared yet'),
-              style: const TextStyle(color: AppColors.inkSoft, fontSize: 14),
-            ),
-          ],
-        ),
-      );
+      return _EmptyStateCard(
+          message: tr('아직 자랑한 요리가 없어요', 'No dishes shared yet'));
     }
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 96),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.md, AppSpacing.md, 96),
       itemCount: brags.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (context, index) {
         final brag = brags[index];
         return Container(
           padding: const EdgeInsets.all(16),
-          decoration: cardDecoration(),
+          decoration: _cardDeco(),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _BragThumbnail(recipeTitle: brag.recipeTitle, photoPath: brag.photoPath),
+              _BragThumbnail(
+                  recipeTitle: brag.recipeTitle, photoPath: brag.photoPath),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -409,7 +476,8 @@ class _BragTab extends StatelessWidget {
                         ),
                         Text(
                           _timeAgoLabel(brag.completedAt),
-                          style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
+                          style: const TextStyle(
+                              fontSize: 12, color: AppColors.inkSoft),
                         ),
                       ],
                     ),
@@ -498,14 +566,18 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
     final message = _messageController.text.trim();
     Navigator.pop(
       context,
-      (recipeTitle: _selectedRecipe, message: message.isEmpty ? '같이 만들어 먹어요!' : message),
+      (
+        recipeTitle: _selectedRecipe,
+        message: message.isEmpty ? '같이 만들어 먹어요!' : message
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.fromLTRB(
+          20, 20, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -523,7 +595,10 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
               const SizedBox(width: 8),
               Text(
                 tr('식사 초대장 만들기', 'New Invite'),
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: AppColors.ink),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: AppColors.ink),
               ),
             ],
           ),
@@ -532,12 +607,15 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
             initialValue: _selectedRecipe,
             elevation: 2,
             dropdownColor: AppColors.card,
+            style: const TextStyle(color: AppColors.ink, fontSize: 14),
             decoration: InputDecoration(
               labelText: tr('레시피 선택', 'Choose recipe'),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: AppColors.green, width: 1.5),
+                borderSide:
+                    const BorderSide(color: AppColors.green, width: 1.5),
               ),
             ),
             items: allRecipes
@@ -554,13 +632,16 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
           TextField(
             controller: _messageController,
             maxLines: 3,
+            style: const TextStyle(color: AppColors.ink),
             decoration: InputDecoration(
               labelText: tr('초대 메시지', 'Message'),
               alignLabelWithHint: true,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: AppColors.green, width: 1.5),
+                borderSide:
+                    const BorderSide(color: AppColors.green, width: 1.5),
               ),
             ),
           ),
@@ -572,13 +653,15 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.green,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
                 elevation: 0,
               ),
               onPressed: _confirm,
               child: Text(
                 tr('초대장 링크 생성하기', 'Create Invite Link'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ),
@@ -625,12 +708,14 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.photo_camera_rounded, color: AppColors.green),
+              leading: const Icon(Icons.photo_camera_rounded,
+                  color: AppColors.green),
               title: Text(tr('카메라로 촬영', 'Take a photo')),
               onTap: () => Navigator.pop(sheetContext, ImageSource.camera),
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library_rounded, color: AppColors.green),
+              leading: const Icon(Icons.photo_library_rounded,
+                  color: AppColors.green),
               title: Text(tr('갤러리에서 선택', 'Choose from gallery')),
               onTap: () => Navigator.pop(sheetContext, ImageSource.gallery),
             ),
@@ -673,7 +758,8 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.fromLTRB(
+          20, 20, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -691,7 +777,10 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
               const SizedBox(width: 8),
               Text(
                 tr('나의 요리 자랑하기', 'Brag About Your Dish'),
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: AppColors.ink),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: AppColors.ink),
               ),
             ],
           ),
@@ -700,12 +789,15 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
             initialValue: _selectedRecipe,
             elevation: 2,
             dropdownColor: AppColors.card,
+            style: const TextStyle(color: AppColors.ink, fontSize: 14),
             decoration: InputDecoration(
               labelText: tr('만든 레시피', 'Recipe you made'),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: AppColors.green, width: 1.5),
+                borderSide:
+                    const BorderSide(color: AppColors.green, width: 1.5),
               ),
             ),
             items: allRecipes
@@ -739,8 +831,10 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
                     borderRadius: BorderRadius.circular(14),
                     child: Container(
                       padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
-                      child: const Icon(Icons.close_rounded, size: 16, color: Colors.white),
+                      decoration: const BoxDecoration(
+                          color: Colors.black54, shape: BoxShape.circle),
+                      child: const Icon(Icons.close_rounded,
+                          size: 16, color: Colors.white),
                     ),
                   ),
                 ),
@@ -754,7 +848,8 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AppColors.green, width: 1.2),
                   foregroundColor: AppColors.green,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: _openPhotoSourceSheet,
                 icon: const Icon(Icons.photo_camera_rounded, size: 18),
@@ -768,13 +863,16 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
           TextField(
             controller: _captionController,
             maxLines: 3,
+            style: const TextStyle(color: AppColors.ink),
             decoration: InputDecoration(
               labelText: tr('요리 한마디 남기기', 'Say a few words'),
               alignLabelWithHint: true,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: AppColors.green, width: 1.5),
+                borderSide:
+                    const BorderSide(color: AppColors.green, width: 1.5),
               ),
             ),
           ),
@@ -786,13 +884,15 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.green,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
                 elevation: 0,
               ),
               onPressed: _confirm,
               child: Text(
                 tr('자랑 타임라인에 등록', 'Brag Now'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ),

@@ -71,16 +71,21 @@ class IngredientAvatar extends StatelessWidget {
   final String name;
   final String category;
   final double size;
+  /// true면 카테고리 그라데이션의 진한 쪽 색으로 얇은 테두리 링을 더해준다 —
+  /// 어두운 배경 위 리스트처럼 아바타 발색을 한 번 더 강조하고 싶을 때만 켠다.
+  final bool showBorder;
 
   const IngredientAvatar({
     super.key,
     required this.name,
     this.category = '기타',
     this.size = 40,
+    this.showBorder = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final gradient = categoryGradient(category);
     return Container(
       width: size,
       height: size,
@@ -88,10 +93,11 @@ class IngredientAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          colors: categoryGradient(category),
+          colors: gradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
+        border: showBorder ? Border.all(color: gradient.last.withValues(alpha: 0.6), width: 1.5) : null,
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 4, offset: const Offset(0, 2)),
         ],
@@ -99,6 +105,52 @@ class IngredientAvatar extends StatelessWidget {
       child: Text(
         emojiForIngredient(name, category: category),
         style: TextStyle(fontSize: size * 0.42),
+      ),
+    );
+  }
+}
+
+/// IngredientAvatar의 사진 버전 — 위키미디어 커먼즈에서 재료명으로 직접 검증해둔 실물 사진을
+/// 원형으로 보여주고, 로딩 중이거나 네트워크 실패 시엔 기존 IngredientAvatar와 똑같은
+/// 그라데이션+이모지로 자연스럽게 대체된다 (RecipePhoto와 동일한 패턴).
+class IngredientPhoto extends StatelessWidget {
+  final String photoUrl;
+  final String name;
+  final String category;
+  final double size;
+  final bool showBorder;
+
+  const IngredientPhoto({
+    super.key,
+    required this.photoUrl,
+    required this.name,
+    this.category = '기타',
+    this.size = 40,
+    this.showBorder = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final gradient = categoryGradient(category);
+    return Container(
+      width: size,
+      height: size,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: showBorder ? Border.all(color: gradient.last.withValues(alpha: 0.6), width: 1.5) : null,
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 4, offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Image.network(
+        photoUrl,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, progress) =>
+            progress == null ? child : IngredientAvatar(name: name, category: category, size: size),
+        errorBuilder: (context, error, stack) => IngredientAvatar(name: name, category: category, size: size),
       ),
     );
   }

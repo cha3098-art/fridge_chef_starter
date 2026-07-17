@@ -30,90 +30,124 @@ class RecipeDetailScreen extends StatelessWidget {
     return ListenableBuilder(
       listenable: LocaleStore.instance,
       builder: (context, _) => Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC), // Slate 50
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: 180,
-            backgroundColor: gradient.last,
-            foregroundColor: Colors.white,
-            iconTheme: const IconThemeData(color: Colors.white),
-            actions: const [
-              Padding(padding: EdgeInsets.only(right: 8), child: LanguageToggle()),
-              Padding(padding: EdgeInsets.only(right: 12), child: ChefTierBadge()),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                recipe.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                  shadows: [Shadow(color: Colors.black38, blurRadius: 6)],
+        backgroundColor: const Color(0xFFF8FAFC), // Slate 50
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              expandedHeight: 180,
+              backgroundColor: gradient.last,
+              foregroundColor: Colors.white,
+              iconTheme: const IconThemeData(
+                color: Colors.white,
+                shadows: [Shadow(color: Colors.black45, blurRadius: 6)],
+              ),
+              actions: const [
+                Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: LanguageToggle()),
+                Padding(
+                    padding: EdgeInsets.only(right: 12),
+                    child: ChefTierBadge()),
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(
+                  recipe.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    shadows: [Shadow(color: Colors.black38, blurRadius: 6)],
+                  ),
                 ),
-              ),
-              background: RecipePhoto(
-                photoUrl: recipe.photoUrl,
-                emoji: recipe.emoji,
-                cuisineType: recipe.cuisineType,
-                width: double.infinity,
-                height: 180,
-                emojiSize: 72,
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.lg),
-            sliver: SliverList.list(
-              children: [
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
+                background: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    _InfoChip(label: trServings(servings)),
-                    _InfoChip(label: trTag(recipe.cuisineType)),
-                    _InfoChip(label: '${tr('난이도', 'Level')} ${trTag(recipe.difficulty)}'),
-                    _InfoChip(label: '${recipe.cookTimeMin}${tr('분', 'min')}'),
-                    _InfoChip(label: '${recipe.caloriesPerServing}kcal'),
+                    RecipePhoto(
+                      photoUrl: recipe.photoUrl,
+                      emoji: recipe.emoji,
+                      cuisineType: recipe.cuisineType,
+                      width: double.infinity,
+                      height: 180,
+                      emojiSize: 72,
+                    ),
+                    // 사진이 밝은 톤(흰 접시·밥 등)이어도 뒤로가기 화살표가 항상 또렷하게
+                    // 보이도록, 상단에만 은은하게 어두워지는 그라데이션 스크림을 깐다.
+                    const DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.black45, Colors.transparent],
+                          stops: [0.0, 0.55],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                _MatchBanner(matched: matched, total: total, missing: missing),
-                const SizedBox(height: 20),
-                _SectionTitle(tr('영양정보 (1인분 기준)', 'Nutrition (per serving)')),
-                const SizedBox(height: 10),
-                _NutritionGrid(recipe: recipe),
-                const SizedBox(height: 20),
-                _SectionTitle(tr('재료 (1인분 기준)', 'Ingredients (per serving)')),
-                const SizedBox(height: 10),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.lg),
+              sliver: SliverList.list(
+                children: [
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      _InfoChip(label: trServings(servings)),
+                      _InfoChip(label: trTag(recipe.cuisineType)),
+                      _InfoChip(
+                          label:
+                              '${tr('난이도', 'Level')} ${trTag(recipe.difficulty)}'),
+                      _InfoChip(
+                          label: '${recipe.cookTimeMin}${tr('분', 'min')}'),
+                      _InfoChip(label: '${recipe.caloriesPerServing}kcal'),
+                    ],
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Column(
-                    children: recipe.ingredients
-                        .map((ingredient) => _IngredientRow(
-                              ingredient: ingredient,
-                              owned: fridgeIngredientNames.contains(ingredient.name),
-                              servings: servings,
-                            ))
+                  const SizedBox(height: 16),
+                  _MatchBanner(
+                      matched: matched, total: total, missing: missing),
+                  const SizedBox(height: 20),
+                  _SectionTitle(tr('영양정보 (1인분 기준)', 'Nutrition (per serving)')),
+                  const SizedBox(height: 10),
+                  _NutritionGrid(recipe: recipe),
+                  const SizedBox(height: 20),
+                  _SectionTitle(tr('재료 (1인분 기준)', 'Ingredients (per serving)')),
+                  const SizedBox(height: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border:
+                          Border.all(color: const Color(0xFFF1F5F9), width: 1),
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    child: Column(
+                      children: recipe.ingredients
+                          .map((ingredient) => _IngredientRow(
+                                ingredient: ingredient,
+                                owned: fridgeIngredientNames
+                                    .contains(ingredient.name),
+                                servings: servings,
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _SectionTitle(tr('조리순서', 'Steps')),
+                  const SizedBox(height: 10),
+                  Column(
+                    children: recipe.steps
+                        .map((step) => _StepTile(step: step))
                         .toList(),
                   ),
-                ),
-                const SizedBox(height: 20),
-                _SectionTitle(tr('조리순서', 'Steps')),
-                const SizedBox(height: 10),
-                Column(
-                  children: recipe.steps.map((step) => _StepTile(step: step)).toList(),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
@@ -127,7 +161,11 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink, letterSpacing: -0.2),
+      style: const TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 15,
+          color: AppColors.ink,
+          letterSpacing: -0.2),
     );
   }
 }
@@ -146,7 +184,11 @@ class _InfoChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.inkSoft, letterSpacing: 0.1),
+        style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppColors.inkSoft,
+            letterSpacing: 0.1),
       ),
     );
   }
@@ -157,7 +199,8 @@ class _MatchBanner extends StatelessWidget {
   final int total;
   final List<String> missing;
 
-  const _MatchBanner({required this.matched, required this.total, required this.missing});
+  const _MatchBanner(
+      {required this.matched, required this.total, required this.missing});
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +211,8 @@ class _MatchBanner extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(16)),
+      decoration:
+          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -182,9 +226,12 @@ class _MatchBanner extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 isFull
-                    ? tr('냉장고 재료로 바로 만들 수 있어요', 'You can make this with what\'s in your fridge')
-                    : tr('냉장고 재료 $matched/$total 매칭돼요', '$matched/$total ingredients matched'),
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: fg),
+                    ? tr('냉장고 재료로 바로 만들 수 있어요',
+                        'You can make this with what\'s in your fridge')
+                    : tr('냉장고 재료 $matched/$total 매칭돼요',
+                        '$matched/$total ingredients matched'),
+                style: TextStyle(
+                    fontSize: 13, fontWeight: FontWeight.w700, color: fg),
               ),
             ],
           ),
@@ -230,12 +277,16 @@ class _NutritionGrid extends StatelessWidget {
                 children: [
                   Text(
                     entries[i].$2,
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, letterSpacing: -0.1),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        letterSpacing: -0.1),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     entries[i].$1,
-                    style: const TextStyle(fontSize: 11, color: AppColors.inkSoft, height: 1.4),
+                    style: const TextStyle(
+                        fontSize: 11, color: AppColors.inkSoft, height: 1.4),
                   ),
                 ],
               ),
@@ -251,7 +302,8 @@ class _IngredientRow extends StatelessWidget {
   final bool owned;
   final int servings;
 
-  const _IngredientRow({required this.ingredient, required this.owned, required this.servings});
+  const _IngredientRow(
+      {required this.ingredient, required this.owned, required this.servings});
 
   @override
   Widget build(BuildContext context) {
@@ -276,17 +328,23 @@ class _IngredientRow extends StatelessWidget {
                   children: [
                     Text(
                       ingredient.name,
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: -0.1),
+                      style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.1),
                     ),
                     if (ingredient.isOptional) ...[
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: AppColors.paperDeep,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Text(tr('선택', 'Optional'), style: const TextStyle(fontSize: 10, color: AppColors.inkSoft)),
+                        child: Text(tr('선택', 'Optional'),
+                            style: const TextStyle(
+                                fontSize: 10, color: AppColors.inkSoft)),
                       ),
                     ],
                   ],
@@ -294,13 +352,17 @@ class _IngredientRow extends StatelessWidget {
               ),
               Text(
                 ingredient.quantityLabelForServings(1),
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.ink),
+                style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink),
               ),
             ],
           ),
           Padding(
             padding: const EdgeInsets.only(left: 24, top: 4),
-            child: _ServingsBreakdown(ingredient: ingredient, selectedServings: servings),
+            child: _ServingsBreakdown(
+                ingredient: ingredient, selectedServings: servings),
           ),
         ],
       ),
@@ -314,19 +376,22 @@ class _ServingsBreakdown extends StatelessWidget {
   final RecipeIngredient ingredient;
   final int selectedServings;
 
-  const _ServingsBreakdown({required this.ingredient, required this.selectedServings});
+  const _ServingsBreakdown(
+      {required this.ingredient, required this.selectedServings});
 
   @override
   Widget build(BuildContext context) {
     const tiers = [2, 3, 4];
     final spans = <InlineSpan>[
-      const TextSpan(text: '(', style: TextStyle(fontSize: 11, color: AppColors.inkSoft)),
+      const TextSpan(
+          text: '(', style: TextStyle(fontSize: 11, color: AppColors.inkSoft)),
     ];
     for (var i = 0; i < tiers.length; i++) {
       final tier = tiers[i];
       final isSelected = tier == selectedServings;
       spans.add(TextSpan(
-        text: '${trTag('$tier인분')} ${ingredient.quantityLabelForServings(tier)}',
+        text:
+            '${trTag('$tier인분')} ${ingredient.quantityLabelForServings(tier)}',
         style: TextStyle(
           fontSize: 11,
           color: isSelected ? AppColors.green : AppColors.inkSoft,
@@ -334,10 +399,13 @@ class _ServingsBreakdown extends StatelessWidget {
         ),
       ));
       if (i != tiers.length - 1) {
-        spans.add(const TextSpan(text: ' · ', style: TextStyle(fontSize: 11, color: AppColors.inkSoft)));
+        spans.add(const TextSpan(
+            text: ' · ',
+            style: TextStyle(fontSize: 11, color: AppColors.inkSoft)));
       }
     }
-    spans.add(const TextSpan(text: ')', style: TextStyle(fontSize: 11, color: AppColors.inkSoft)));
+    spans.add(const TextSpan(
+        text: ')', style: TextStyle(fontSize: 11, color: AppColors.inkSoft)));
     return RichText(text: TextSpan(children: spans));
   }
 }
@@ -357,10 +425,14 @@ class _StepTile extends StatelessWidget {
             width: 24,
             height: 24,
             alignment: Alignment.center,
-            decoration: const BoxDecoration(color: Color(0xFF2AC1BC), shape: BoxShape.circle),
+            decoration: const BoxDecoration(
+                color: Color(0xFF2AC1BC), shape: BoxShape.circle),
             child: Text(
               '${step.order}',
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFFFFFFFF)),
+              style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFFFFFFF)),
             ),
           ),
           const SizedBox(width: 10),
@@ -368,14 +440,19 @@ class _StepTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(step.description, style: const TextStyle(fontSize: 13, height: 1.5, letterSpacing: 0.1)),
+                Text(step.description,
+                    style: const TextStyle(
+                        fontSize: 13, height: 1.5, letterSpacing: 0.1)),
                 if (step.timerLabel != null) ...[
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.timer_outlined, size: 13, color: AppColors.inkSoft),
+                      const Icon(Icons.timer_outlined,
+                          size: 13, color: AppColors.inkSoft),
                       const SizedBox(width: 4),
-                      Text(step.timerLabel!, style: const TextStyle(fontSize: 11, color: AppColors.inkSoft)),
+                      Text(step.timerLabel!,
+                          style: const TextStyle(
+                              fontSize: 11, color: AppColors.inkSoft)),
                     ],
                   ),
                 ],
