@@ -497,16 +497,40 @@ class _StatusBanner extends StatelessWidget {
           AppColors.red
         ),
     };
+    final deadline = battle.votingEndsAt;
+    final remaining = battle.status == BattleStatus.voting && deadline != null
+        ? deadline.difference(DateTime.now())
+        : null;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
-      child: Text(label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              color: color, fontWeight: FontWeight.w700, fontSize: 13)),
+      child: Column(
+        children: [
+          Text(label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: color, fontWeight: FontWeight.w700, fontSize: 13)),
+          if (remaining != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              remaining.isNegative
+                  ? tr('곧 자동으로 마감돼요', 'Closing automatically any moment now')
+                  : remaining.inHours >= 1
+                      ? tr('${remaining.inHours}시간 후 자동 마감',
+                          'Closes automatically in ${remaining.inHours}h')
+                      : tr('${remaining.inMinutes}분 후 자동 마감',
+                          'Closes automatically in ${remaining.inMinutes}m'),
+              textAlign: TextAlign.center,
+              style:
+                  TextStyle(color: color.withValues(alpha: 0.8), fontSize: 11),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
