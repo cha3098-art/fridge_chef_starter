@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "63106125847",
+    "project_id": "fridge-chef-69580",
+    "storage_bucket": "fridge-chef-69580.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:63106125847:android:d6eb242b40a0f65ab10c52",
+        "android_client_info": {
+          "package_name": "com.example.fridge_chef"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxsLcMa0mC6s4A-IPi-1B1_kK1P0yP7yc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

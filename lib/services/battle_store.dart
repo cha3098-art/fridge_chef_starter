@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/tr.dart';
 import '../models/battle.dart';
 import '../models/battle_participant.dart';
 import '../models/battle_vote.dart';
@@ -14,6 +15,27 @@ class BattleStore extends ChangeNotifier {
   static final BattleStore instance = BattleStore._();
 
   SupabaseClient get _client => Supabase.instance.client;
+
+  /// 상대에게 영향을 주는 행동을 마친 직후 호출 — supabase/functions/send-push가
+  /// device_tokens를 조회해서 실제 FCM 푸시를 보낸다. 발신자 본인에게는 함수가 알아서 걸러준다.
+  /// 실패해도(오프라인, 함수 미배포 등) 방금 완료된 실제 배틀 행동 자체를 되돌리면 안 되므로 조용히 무시한다.
+  Future<void> _notify({
+    required List<String> userIds,
+    required String title,
+    required String body,
+    Map<String, String>? data,
+  }) async {
+    try {
+      await _client.functions.invoke('send-push', body: {
+        'userIds': userIds,
+        'title': title,
+        'body': body,
+        if (data != null) 'data': data,
+      });
+    } catch (e) {
+      debugPrint('BattleStore._notify failed: $e');
+    }
+  }
 
   Battle _mapBattle(Map<String, dynamic> row) => Battle(
         id: row['id'] as String,
@@ -138,6 +160,16 @@ class BattleStore extends ChangeNotifier {
       'user_id': uid,
       'role': 'opponent',
     });
+
+    final battle = await fetchBattle(battleId);
+    if (battle != null) {
+      await _notify(
+        userIds: [battle.hostUserId],
+        title: tr('상대가 배틀에 참가했어요', 'Someone joined your battle'),
+        body: tr('완성 사진을 제출해보세요!', 'Time to submit your finished dish!'),
+        data: {'battleId': battleId},
+      );
+    }
   }
 
   /// 완성 사진을 board-photos 버킷에 업로드한다 (게시판과 동일한 공개 버킷 재사용).
@@ -173,6 +205,13 @@ class BattleStore extends ChangeNotifier {
       await _client
           .from('battles')
           .update({'status': BattleStatus.voting.dbValue}).eq('id', battleId);
+      await _notify(
+        userIds: participants.map((p) => p.userId).toList(),
+        title: tr('투표가 시작됐어요', 'Voting has started'),
+        body: tr('양쪽 다 사진을 제출해서 투표를 받을 수 있어요!',
+            'Both dishes are in — go get some votes!'),
+        data: {'battleId': battleId},
+      );
     }
   }
 
@@ -209,6 +248,13 @@ class BattleStore extends ChangeNotifier {
       'status': BattleStatus.completed.dbValue,
       'winner_user_id': winner.userId,
     }).eq('id', battleId);
+
+    await _notify(
+      userIds: participants.map((p) => p.userId).toList(),
+      title: tr('배틀이 종료됐어요', 'The battle is over'),
+      body: tr('결과를 확인해보세요!', 'Check out the result!'),
+      data: {'battleId': battleId},
+    );
   }
 
   /// 참가자 카드에 닉네임을 보여주기 위한 배치 조회 (users.id → nickname)

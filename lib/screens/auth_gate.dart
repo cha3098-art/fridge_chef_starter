@@ -5,6 +5,7 @@ import '../services/auth_service.dart';
 import '../services/chef_points_store.dart';
 import '../services/fridge_store.dart';
 import '../services/profile_store.dart';
+import '../services/push_notification_service.dart';
 import '../services/realtime_notification_manager.dart';
 import '../theme/app_theme.dart';
 import 'main_dashboard_screen.dart';
@@ -41,16 +42,19 @@ class _AuthGateState extends State<AuthGate> {
     return StreamBuilder<AuthState>(
       stream: AuthService.instance.onAuthStateChange,
       builder: (context, snapshot) {
-        final session = snapshot.data?.session ?? AuthService.instance.currentSession;
+        final session =
+            snapshot.data?.session ?? AuthService.instance.currentSession;
         if (session == null) {
           _profileLoadedForUid = null;
           ProfileStore.instance.clear();
           FridgeStore.instance.clear();
           ChefPointsStore.instance.clear();
           RealtimeNotificationManager.instance.stopListening();
+          PushNotificationService.instance.unregister();
           return const SignInScreen();
         }
         RealtimeNotificationManager.instance.startListening();
+        PushNotificationService.instance.registerForUser(session.user.id);
         return FutureBuilder<void>(
           future: _ensureProfileLoaded(session.user.id),
           builder: (context, profileSnapshot) {

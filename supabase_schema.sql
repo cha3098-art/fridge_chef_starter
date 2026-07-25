@@ -583,3 +583,22 @@ create policy "본인만 대기열 취소" on public.battle_queue for delete usi
 
 -- BattleStore.watchMatchedBattleId()가 .stream()으로 구독하려면 realtime publication에 포함돼야 한다
 alter publication supabase_realtime add table public.battle_queue;
+
+-- ============================================================
+-- 17. device_tokens (FCM 푸시알림 — 앱이 백그라운드/종료 상태여도 배틀 이벤트를 알려주기 위함, Phase 3)
+-- 한 사용자가 여러 기기를 쓸 수 있어 (user_id, token) 조합을 기본키로 둔다.
+-- 실제 발송은 supabase/functions/send-push Edge Function이 담당하고, 클라이언트는
+-- 상대에게 영향을 주는 배틀 행동(참가/제출/투표마감)을 완료한 직후 그 함수를 호출한다.
+-- ============================================================
+create table public.device_tokens (
+  user_id uuid not null references public.users(id) on delete cascade,
+  token text not null,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, token)
+);
+
+alter table public.device_tokens enable row level security;
+create policy "본인 기기 토큰만 조회" on public.device_tokens for select using (auth.uid() = user_id);
+create policy "본인만 기기 토큰 등록" on public.device_tokens for insert with check (auth.uid() = user_id);
+create policy "본인만 기기 토큰 갱신" on public.device_tokens for update using (auth.uid() = user_id);
+create policy "본인만 기기 토큰 삭제" on public.device_tokens for delete using (auth.uid() = user_id);

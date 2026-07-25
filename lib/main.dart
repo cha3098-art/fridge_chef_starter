@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,9 +14,18 @@ import 'theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService.instance.init();
+  try {
+    // android/app/google-services.json이 아직 없으면(Firebase 프로젝트 미설정) 여기서 실패하는데,
+    // 푸시알림은 부가 기능이라 앱의 나머지 부분은 그대로 정상 동작해야 한다
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint(
+        'Firebase.initializeApp failed (google-services.json 미설정일 수 있음): $e');
+  }
   var showOnboarding = false;
   if (SupabaseConfig.isConfigured) {
-    await Supabase.initialize(url: SupabaseConfig.url, publishableKey: SupabaseConfig.anonKey);
+    await Supabase.initialize(
+        url: SupabaseConfig.url, publishableKey: SupabaseConfig.anonKey);
     // 초대장 상세 조회가 Supabase에 의존하므로 설정된 경우에만 딥링크 리스너를 켠다
     await DeeplinkManager.instance.init();
     showOnboarding = !await OnboardingScreen.hasSeen();
@@ -65,7 +75,8 @@ class _SupabaseSetupNeededScreen extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 tr('Supabase 설정이 필요해요', 'Supabase setup needed'),
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
@@ -74,7 +85,8 @@ class _SupabaseSetupNeededScreen extends StatelessWidget {
                   'lib/supabase_config.dart 파일에\nsupabase.com 프로젝트의 URL과 anon key를 입력해주세요.',
                   'Fill in your Supabase project URL and anon key\nin lib/supabase_config.dart.',
                 ),
-                style: const TextStyle(fontSize: 13, color: AppColors.inkSoft, height: 1.5),
+                style: const TextStyle(
+                    fontSize: 13, color: AppColors.inkSoft, height: 1.5),
                 textAlign: TextAlign.center,
               ),
             ],
