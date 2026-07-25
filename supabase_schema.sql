@@ -519,3 +519,67 @@ create policy "본인 제출물만 수정" on public.battle_participants for upd
 create policy "배틀 투표 전체 공개 조회" on public.battle_votes for select using (true);
 create policy "본인 명의로만 투표" on public.battle_votes for insert with check (auth.uid() = voter_id);
 create policy "본인 투표만 취소" on public.battle_votes for delete using (auth.uid() = voter_id);
+
+-- ============================================================
+-- 16. battle_queue (배틀 모드 — 실시간 빠른 매칭, Phase 3)
+-- 대기열에 들어온 순서대로 먼저 있던 상대와 즉시 매칭한다. 클라이언트가 서로를 보고
+-- 알아서 배틀을 만드는 방식(경쟁 상태 위험)이 아니라, DB 트리거가 행 잠금(for update
+-- skip locked)으로 한 쌍만 원자적으로 매칭해서 battles/battle_participants를 직접 만든다.
+-- 매칭 결과는 본인 대기열 행의 matched_battle_id 변화를 realtime으로 구독해서 받는다.
+-- ============================================================
+create table public.battle_queue (
+  user_id uuid primary key references public.users(id) on delete cascade,
+  joined_at timestamptz not null default now(),
+  matched_battle_id uuid references public.battles(id)
+);
+
+create or replace function public.handle_battle_queue_insert()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  opponent_row public.battle_queue;
+  new_battle_id uuid;
+begin
+  select * into opponent_row
+  from public.battle_queue
+  where user_id <> new.user_id and matched_battle_id is null
+  order by joined_at
+  limit 1
+  for update skip locked;
+
+  if opponent_row.user_id is null then
+    return new;
+  end if;
+
+  insert into public.battles (host_user_id, theme_title, status, invite_link)
+  values (new.user_id, '빠른 매칭 배틀', 'submitted', null)
+  returning id into new_battle_id;
+
+  insert into public.battle_participants (battle_id, user_id, role) values
+    (new_battle_id, new.user_id, 'host'),
+    (new_battle_id, opponent_row.user_id, 'opponent');
+
+  update public.battle_queue set matched_battle_id = new_battle_id where user_id = new.user_id;
+  update public.battle_queue set matched_battle_id = new_battle_id where user_id = opponent_row.user_id;
+
+  return new;
+end;
+$$;
+
+create trigger on_battle_queue_insert
+after insert on public.battle_queue
+for each row execute function public.handle_battle_queue_insert();
+
+alter table public.battle_queue enable row level security;
+
+-- 대기열은 "누가 기다리는지" 자체가 노출되면 안 되므로 본인 행만 보고 넣고 지울 수 있다.
+-- matched_battle_id 갱신은 위 트리거(SECURITY DEFINER)를 통해서만 이루어진다.
+create policy "본인 대기열 행만 조회" on public.battle_queue for select using (auth.uid() = user_id);
+create policy "본인만 대기열 등록" on public.battle_queue for insert with check (auth.uid() = user_id);
+create policy "본인만 대기열 취소" on public.battle_queue for delete using (auth.uid() = user_id);
+
+-- BattleStore.watchMatchedBattleId()가 .stream()으로 구독하려면 realtime publication에 포함돼야 한다
+alter publication supabase_realtime add table public.battle_queue;

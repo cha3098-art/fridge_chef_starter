@@ -5,9 +5,10 @@ import '../models/battle.dart';
 import '../models/battle_participant.dart';
 import '../models/battle_vote.dart';
 
-/// 배틀(1:1 비동기 요리 대결) 상태. battles/battle_participants/battle_votes 테이블과 동기화한다.
-/// 실시간 매칭이 아니라 초대 링크 기반 비동기 대결이라, 상태 갱신은 자동 구독이 아니라
-/// 화면에서 명시적으로 다시 불러오는 방식(pull-to-refresh 등)으로 처리한다.
+/// 배틀(1:1 요리 대결) 상태. battles/battle_participants/battle_votes 테이블과 동기화한다.
+/// 초대 링크 기반 비동기 대결의 상태 갱신은 화면에서 명시적으로 다시 불러오는 방식
+/// (pull-to-refresh 등)으로 처리한다. battle_queue를 통한 빠른 매칭만 realtime으로
+/// 구독한다(watchMatchedBattleId) — 매칭 자체는 DB 트리거가 원자적으로 처리한다.
 class BattleStore extends ChangeNotifier {
   BattleStore._();
   static final BattleStore instance = BattleStore._();
@@ -227,5 +228,41 @@ class BattleStore extends ChangeNotifier {
     await _client
         .from('battles')
         .update({'status': BattleStatus.cancelled.dbValue}).eq('id', battleId);
+  }
+
+  /// 빠른 매칭 대기열에 들어간다. 이미 대기 중이던 행이 있으면(예: 이전 세션이 취소 없이
+  /// 끊긴 경우) 지우고 새로 넣어야 INSERT 트리거(handle_battle_queue_insert)가 반드시
+  /// 다시 실행된다 — upsert로 기존 행을 UPDATE하면 트리거가 안 걸린다.
+  Future<void> joinQueue() async {
+    final uid = _client.auth.currentUser?.id;
+    if (uid == null) throw StateError('로그인 후 이용해주세요');
+    await _client.from('battle_queue').delete().eq('user_id', uid);
+    await _client.from('battle_queue').insert({'user_id': uid});
+  }
+
+  /// 매칭 대기를 취소한다. 이미 매칭이 잡힌 뒤에는(상대와 배틀이 생성된 뒤) 호출해도 무해하다.
+  /// 화면 dispose·뒤로가기 등 여러 경로에서 호출되는 정리용 작업이라, 실패해도
+  /// (네트워크 문제 등) 사용자가 화면을 벗어나는 흐름 자체를 막지 않도록 조용히 무시한다.
+  Future<void> leaveQueue() async {
+    final uid = _client.auth.currentUser?.id;
+    if (uid == null) return;
+    try {
+      await _client.from('battle_queue').delete().eq('user_id', uid);
+    } catch (e) {
+      debugPrint('BattleStore.leaveQueue failed: $e');
+    }
+  }
+
+  /// 본인 대기열 행의 matched_battle_id 변화를 실시간 구독한다.
+  /// 상대가 매칭되면(트리거가 갱신) 배틀 id를 흘려보내고, 대기열에서 빠지면 null을 흘려보낸다.
+  Stream<String?> watchMatchedBattleId() {
+    final uid = _client.auth.currentUser?.id;
+    if (uid == null) return Stream.value(null);
+    return _client
+        .from('battle_queue')
+        .stream(primaryKey: ['user_id'])
+        .eq('user_id', uid)
+        .map((rows) =>
+            rows.isEmpty ? null : rows.first['matched_battle_id'] as String?);
   }
 }

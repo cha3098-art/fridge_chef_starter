@@ -8,9 +8,9 @@ import '../services/battle_store.dart';
 import '../theme/app_theme.dart';
 import '../widgets/fridge_mascot.dart';
 import 'battle_detail_screen.dart';
+import 'quick_match_screen.dart';
 
-/// 내 배틀 목록 + 새 배틀 만들기. 실시간 매칭이 아니라 초대 링크로 상대를 부르는
-/// 비동기 대결이라, 여기서는 "만들기"와 "내가 참여 중인 배틀 목록"만 다룬다.
+/// 내 배틀 목록 + 새 배틀 만들기(초대 링크 기반) + 빠른 매칭(실시간 대기열 기반).
 class BattleScreen extends StatefulWidget {
   const BattleScreen({super.key});
 
@@ -175,15 +175,35 @@ class _BattleScreenState extends State<BattleScreen> {
                         },
                       ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        elevation: 0,
-        backgroundColor: AppColors.green,
-        foregroundColor: Colors.white,
-        onPressed: _openCreateSheet,
-        icon: const Icon(Icons.add, size: 20),
-        label: Text(tr('새 배틀 만들기', 'New Battle'),
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, letterSpacing: -0.3)),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+            heroTag: 'quickMatch',
+            elevation: 0,
+            backgroundColor: AppColors.card,
+            foregroundColor: AppColors.ink,
+            onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const QuickMatchScreen())),
+            icon: const Icon(Icons.bolt_outlined, size: 20),
+            label: Text(tr('빠른 매칭', 'Quick Match'),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, letterSpacing: -0.3)),
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton.extended(
+            heroTag: 'createBattle',
+            elevation: 0,
+            backgroundColor: AppColors.green,
+            foregroundColor: Colors.white,
+            onPressed: _openCreateSheet,
+            icon: const Icon(Icons.add, size: 20),
+            label: Text(tr('새 배틀 만들기', 'New Battle'),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, letterSpacing: -0.3)),
+          ),
+        ],
       ),
     );
   }
