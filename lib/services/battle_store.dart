@@ -202,9 +202,13 @@ class BattleStore extends ChangeNotifier {
     final bothSubmitted =
         participants.length == 2 && participants.every((p) => p.hasSubmitted);
     if (bothSubmitted) {
-      await _client
-          .from('battles')
-          .update({'status': BattleStatus.voting.dbValue}).eq('id', battleId);
+      await _client.from('battles').update({
+        'status': BattleStatus.voting.dbValue,
+        // 24시간 뒤 close-expired-battles Edge Function이 자동으로 마감하고 승자를 확정한다
+        // (호스트가 "투표 마감" 버튼을 직접 안 눌러도 배틀이 무기한 방치되지 않는다).
+        'voting_ends_at':
+            DateTime.now().add(const Duration(hours: 24)).toIso8601String(),
+      }).eq('id', battleId);
       await _notify(
         userIds: participants.map((p) => p.userId).toList(),
         title: tr('투표가 시작됐어요', 'Voting has started'),

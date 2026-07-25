@@ -602,3 +602,28 @@ create policy "본인 기기 토큰만 조회" on public.device_tokens for selec
 create policy "본인만 기기 토큰 등록" on public.device_tokens for insert with check (auth.uid() = user_id);
 create policy "본인만 기기 토큰 갱신" on public.device_tokens for update using (auth.uid() = user_id);
 create policy "본인만 기기 토큰 삭제" on public.device_tokens for delete using (auth.uid() = user_id);
+
+-- ============================================================
+-- 18. pg_cron — 투표 마감 자동화 (서버 타이머, Phase 3)
+-- 5분마다 close-expired-battles Edge Function을 호출해서, voting_ends_at이 지난
+-- 배틀을 자동으로 마감한다(호스트가 "투표 마감" 버튼을 직접 누르지 않아도 됨).
+-- CRON_SECRET은 supabase secrets set으로 등록한 값과 반드시 같아야 하며,
+-- close-expired-battles는 이 값을 Authorization 헤더로만 호출을 허용한다.
+-- ============================================================
+create extension if not exists pg_cron with schema extensions;
+create extension if not exists pg_net with schema extensions;
+
+select cron.schedule(
+  'close-expired-battles',
+  '*/5 * * * *',
+  $$
+  select net.http_post(
+    url := 'https://opqmulhoxidtblpuerii.supabase.co/functions/v1/close-expired-battles',
+    headers := jsonb_build_object(
+      'Authorization', 'Bearer bfq8dvsw53u2y6grilmcz0n1at7hpxoje94k',
+      'Content-Type', 'application/json'
+    ),
+    body := '{}'::jsonb
+  );
+  $$
+);
