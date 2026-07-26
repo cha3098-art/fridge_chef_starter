@@ -85,32 +85,57 @@ const _bannerDetails = <_BannerDetail>[
     themeColor: Color(0xFF3B82F6),
     titleKo: '냉장고 셰프 100% 활용 가이드 💡',
     titleEn: 'Get 100% out of Fridge Chef 💡',
-    subtitleKo: '냉장실 정리부터 소셜 홈파티까지 앱의 가장 유용하고 편리한 대표 핵심 기능 가이드',
-    subtitleEn: 'From organizing your fridge to hosting a social dinner — a guide to the app\'s best features.',
+    subtitleKo: '재료 등록부터 AI 추천, 요리 배틀, 커뮤니티까지 — 앱의 핵심 기능을 한눈에 정리했어요',
+    subtitleEn:
+        'From adding ingredients to AI recipes, cooking battles, and community — here\'s a quick tour of every core feature.',
     sections: [
       (
         icon: '📸',
-        headlineKo: '카메라 영수증 자동 등록',
-        headlineEn: 'Auto-register items from a receipt photo',
-        bodyKo: '장보고 받은 마트 영수증을 사진으로 찰칵 찍어보세요. AI OCR 엔진이 텍스트를 분석해 귀찮은 타이핑 없이 식재료명과 유통기한을 냉장고에 1초 만에 쏙 넣어줍니다.',
+        headlineKo: '재료 등록 — 검색 · 영수증 스캔 · AI 사진인식',
+        headlineEn: 'Add ingredients — search, receipt scan, or AI photo',
+        bodyKo: '재료를 직접 검색해서 등록하거나, 마트 영수증을 찍으면 OCR이 자동으로 읽어 등록해줘요. 냉장고 속 재료 하나 또는 냉장고 전체를 사진으로 찍으면 AI가 실제 눈에 보이는 재료만 골라 인식해줍니다.',
         bodyEn:
-            'Snap a photo of your grocery receipt. The on-device OCR reads the text and adds ingredient names and expiry dates to your fridge instantly — no typing needed.',
+            'Search and add ingredients manually, snap a grocery receipt for automatic OCR registration, or photograph a single item — or your whole fridge — and let AI recognize what\'s actually visible.',
       ),
       (
         icon: '🍳',
-        headlineKo: 'AI 밀착형 레시피 추천',
-        headlineEn: 'AI recipe matching from your fridge',
-        bodyKo: '현재 냉장고에 보관 중인 대파, 애호박, 계란 등의 재료들을 기반으로 요리 가능한 매칭율(%)을 실시간 계산하여 부족한 재료와 완벽한 레시피 순서까지 가이드합니다.',
+        headlineKo: 'AI 레시피 추천 & K-Food 챌린지',
+        headlineEn: 'AI recipe matching & the K-Food Challenge',
+        bodyKo: '지금 냉장고에 있는 재료로 만들 수 있는 요리를 매칭율(%)로 보여주고, 부족한 재료도 알려줘요. 김치찌개·불고기 같은 한식 레시피를 완성하면 K-Food Master 등급에도 도전할 수 있어요.',
         bodyEn:
-            'Based on what\'s actually in your fridge, recipes are matched with a live percentage score, showing exactly what\'s missing and the full cooking steps.',
+            'See a live match-rate for recipes you can cook with what you already have, plus what\'s missing. Complete Korean dishes like kimchi jjigae or bulgogi to work toward K-Food Master rank.',
+      ),
+      (
+        icon: '⚔️',
+        headlineKo: '요리 배틀 — 실시간 매칭부터 투표까지',
+        headlineEn: 'Cooking Battle — real-time matching to voting',
+        bodyKo: '초대 링크로 친구와 1:1 대결하거나, 빠른 매칭으로 실시간 상대를 바로 찾을 수 있어요. 완성 사진을 제출하면 투표가 열리고 24시간 뒤 자동으로 승자가 확정돼요. 상대가 응답이 없으면 부전승·자동 취소로 정리되니 무기한 기다릴 필요도 없어요.',
+        bodyEn:
+            'Challenge a friend via invite link, or use quick match to find a real opponent instantly. Submit your finished dish to open voting, which closes automatically after 24 hours. If your opponent goes quiet, the battle resolves itself by walkover or cancellation — no waiting forever.',
+      ),
+      (
+        icon: '💬',
+        headlineKo: '게시판 & 랭킹으로 성장하는 셰프',
+        headlineEn: 'Grow your chef rank via the board & ranking',
+        bodyKo: '소통 광장에 요리 사진을 올리고 좋아요를 받으면 자동으로 요리 포인트가 쌓여요. 전체 사용자 포인트 순위를 랭킹 탭에서 실시간으로 확인할 수 있어요.',
+        bodyEn:
+            'Post a photo of your dish to the board — likes automatically earn you chef points. Check the Ranking tab to see how you stack up against every real user, live.',
       ),
       (
         icon: '✉️',
-        headlineKo: '소셜 식사 초대장 & 딥링크',
-        headlineEn: 'Social meal invites & deep links',
-        bodyKo: '내가 만든 요리를 활용해 근사한 식사 초대 링크를 생성해 보세요. 친구가 공유된 딥링크를 누르면 앱이 자동으로 열리며 식사 초대 티켓이 화면에 쫀득하게 팝업됩니다.',
+        headlineKo: '식사 초대장 & 딥링크 공유',
+        headlineEn: 'Meal invites & deep-link sharing',
+        bodyKo: '내가 만든 요리를 소재로 식사 초대 링크를 만들어 보세요. 친구가 공유된 링크를 누르면 앱이 자동으로 열리고 초대 티켓이 화면에 바로 뜹니다.',
         bodyEn:
             'Turn a dish you made into a shareable invite link. When a friend taps it, the app opens automatically and the invite ticket pops right up.',
+      ),
+      (
+        icon: '🔔',
+        headlineKo: '놓치지 않는 알림',
+        headlineEn: 'Never miss a beat with notifications',
+        bodyKo: '내 게시글에 댓글이 달리면 실시간으로, 재료 유통기한이 임박하면 미리 알려드려요. 요리 배틀 참가·제출·투표 마감 같은 이벤트는 앱을 꺼둬도 푸시 알림으로 받아볼 수 있어요.',
+        bodyEn:
+            'Get notified in real time when someone comments on your post, and ahead of time when an ingredient is about to expire. Battle events — joins, submissions, voting deadlines — reach you via push even when the app is closed.',
       ),
     ],
   ),

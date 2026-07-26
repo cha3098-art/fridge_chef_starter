@@ -464,8 +464,8 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
         colors: [const Color(0xFF0369A1), const Color(0xFF075985)],
         emoji: '🚀',
         title: tr('냉장고 셰프 100% 활용법 💡', 'Get the most out of Fridge Chef 💡'),
-        subtitle: tr('영수증 스캔 등록부터 초대장 공유까지 한눈에',
-            'From receipt-scan registration to sharing invites, all in one place'),
+        subtitle: tr('재료 등록부터 AI 추천, 요리 배틀, 커뮤니티까지 한눈에',
+            'Ingredients, AI recipes, battles, and community — all in one place'),
       ),
     ];
     return Column(
