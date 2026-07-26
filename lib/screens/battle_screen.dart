@@ -184,8 +184,11 @@ class _BattleScreenState extends State<BattleScreen> {
             elevation: 0,
             backgroundColor: AppColors.card,
             foregroundColor: AppColors.ink,
-            onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const QuickMatchScreen())),
+            onPressed: () async {
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const QuickMatchScreen()));
+              _load();
+            },
             icon: const Icon(Icons.bolt_outlined, size: 20),
             label: Text(tr('빠른 매칭', 'Quick Match'),
                 style: const TextStyle(
