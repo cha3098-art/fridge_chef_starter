@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../data/recipe_catalog.dart';
 import '../l10n/tr.dart';
 import '../models/battle.dart';
+import '../models/battle_list_item.dart';
 import '../services/battle_store.dart';
 import '../theme/app_theme.dart';
 import '../widgets/fridge_mascot.dart';
@@ -19,7 +20,7 @@ class BattleScreen extends StatefulWidget {
 }
 
 class _BattleScreenState extends State<BattleScreen> {
-  List<Battle> _battles = [];
+  List<BattleListItem> _items = [];
   bool _loaded = false;
   String? _errorMessage;
 
@@ -32,10 +33,10 @@ class _BattleScreenState extends State<BattleScreen> {
   Future<void> _load() async {
     setState(() => _errorMessage = null);
     try {
-      final battles = await BattleStore.instance.fetchMyBattles();
+      final items = await BattleStore.instance.fetchMyBattleItems();
       if (!mounted) return;
       setState(() {
-        _battles = battles;
+        _items = items;
         _loaded = true;
       });
     } catch (e) {
@@ -79,8 +80,8 @@ class _BattleScreenState extends State<BattleScreen> {
           content: Text(tr('배틀을 만들고 초대 링크를 복사했어요',
               'Battle created and invite link copied'))),
     );
-    await Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => BattleDetailScreen(battleId: battle.id)));
+    await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => BattleDetailScreen(battleId: battle.id)));
     _load();
   }
 
@@ -92,8 +93,21 @@ class _BattleScreenState extends State<BattleScreen> {
         backgroundColor: AppColors.paper,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text(tr('요리 배틀', 'Cooking Battle'),
-            style: const TextStyle(fontWeight: FontWeight.w800)),
+        toolbarHeight: 76,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset('assets/icon/icon_challenge_rival.png',
+                  width: 58, height: 58, fit: BoxFit.cover),
+            ),
+            const SizedBox(width: 8),
+            Text(tr('요리 배틀', 'Cooking Battle'),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w800, letterSpacing: -0.3)),
+          ],
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: _load,
@@ -110,10 +124,9 @@ class _BattleScreenState extends State<BattleScreen> {
                           children: [
                             const FridgeMascot(size: 84),
                             const SizedBox(height: AppSpacing.md),
-                            Text(
-                              _errorMessage!,
-                              style: const TextStyle(color: AppColors.red),
-                            ),
+                            Text(_errorMessage!,
+                                style:
+                                    const TextStyle(color: AppColors.red)),
                             const SizedBox(height: 16),
                             OutlinedButton(
                               onPressed: _load,
@@ -124,7 +137,7 @@ class _BattleScreenState extends State<BattleScreen> {
                       ),
                     ],
                   )
-                : _battles.isEmpty
+                : _items.isEmpty
                     ? ListView(
                         padding: const EdgeInsets.all(AppSpacing.md),
                         children: [
@@ -135,14 +148,15 @@ class _BattleScreenState extends State<BattleScreen> {
                                 const FridgeMascot(size: 84),
                                 const SizedBox(height: AppSpacing.md),
                                 Text(
-                                  tr('아직 참여 중인 배틀이 없어요', 'No battles yet'),
-                                  style:
-                                      const TextStyle(color: AppColors.inkSoft),
+                                  tr('아직 참여 중인 배틀이 없어요',
+                                      'No battles yet'),
+                                  style: const TextStyle(
+                                      color: AppColors.inkSoft),
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  tr('상대를 초대해서 요리 대결을 시작해보세요!',
-                                      'Invite someone to start a cooking battle!'),
+                                  tr('상대를 초대하거나 빠른 매칭으로 대결을 시작해보세요!',
+                                      'Invite someone or use Quick Match to start!'),
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       color: AppColors.inkSoft, fontSize: 12),
@@ -154,21 +168,19 @@ class _BattleScreenState extends State<BattleScreen> {
                       )
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(
-                            AppSpacing.md, AppSpacing.md, AppSpacing.md, 96),
-                        itemCount: _battles.length,
+                            AppSpacing.md, AppSpacing.md, AppSpacing.md, 100),
+                        itemCount: _items.length,
                         separatorBuilder: (_, __) =>
-                            const SizedBox(height: AppSpacing.md),
+                            const SizedBox(height: AppSpacing.sm),
                         itemBuilder: (context, index) {
-                          final battle = _battles[index];
+                          final item = _items[index];
                           return _BattleCard(
-                            battle: battle,
-                            title: battle.themeTitle ??
-                                tr('자유 주제 배틀', 'Freestyle battle'),
+                            item: item,
                             onTap: () async {
                               await Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (_) => BattleDetailScreen(
-                                          battleId: battle.id)));
+                                          battleId: item.battle.id)));
                               _load();
                             },
                           );
@@ -185,8 +197,8 @@ class _BattleScreenState extends State<BattleScreen> {
             backgroundColor: AppColors.card,
             foregroundColor: AppColors.ink,
             onPressed: () async {
-              await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => const QuickMatchScreen()));
+              await Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const QuickMatchScreen()));
               _load();
             },
             icon: const Icon(Icons.bolt_outlined, size: 20),
@@ -212,66 +224,180 @@ class _BattleScreenState extends State<BattleScreen> {
   }
 }
 
+// ── 배틀 목록 카드 ─────────────────────────────────────────────────────────────
+
 class _BattleCard extends StatelessWidget {
-  final Battle battle;
-  final String title;
+  final BattleListItem item;
   final VoidCallback onTap;
-  const _BattleCard(
-      {required this.battle, required this.title, required this.onTap});
 
-  String _statusLabel(BattleStatus status) => switch (status) {
-        BattleStatus.waitingOpponent => tr('상대 기다리는 중', 'Waiting for opponent'),
-        BattleStatus.submitted => tr('진행 중', 'In progress'),
-        BattleStatus.voting => tr('투표 중', 'Voting open'),
-        BattleStatus.completed => tr('종료됨', 'Completed'),
-        BattleStatus.cancelled => tr('취소됨', 'Cancelled'),
-      };
+  const _BattleCard({required this.item, required this.onTap});
 
-  Color _statusColor(BattleStatus status) => switch (status) {
-        BattleStatus.waitingOpponent => AppColors.inkSoft,
-        BattleStatus.submitted => AppColors.carrot,
-        BattleStatus.voting => AppColors.gold,
-        BattleStatus.completed => AppColors.green,
-        BattleStatus.cancelled => AppColors.red,
+  (String, Color) get _statusTag => switch (item.battle.status) {
+        BattleStatus.waitingOpponent =>
+          (tr('매칭 전', 'Finding match'), AppColors.inkSoft),
+        BattleStatus.submitted =>
+          (tr('매칭 중', 'In progress'), AppColors.carrot),
+        BattleStatus.voting =>
+          (tr('투표 중', 'Voting'), AppColors.gold),
+        BattleStatus.completed =>
+          (tr('종료', 'Ended'), AppColors.green),
+        BattleStatus.cancelled =>
+          (tr('취소', 'Cancelled'), AppColors.red),
       };
 
   @override
   Widget build(BuildContext context) {
+    final (statusLabel, statusColor) = _statusTag;
+    final battle = item.battle;
+    final challenger = item.challengerNickname;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
         decoration: cardDecoration(radius: AppSpacing.radiusLg),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('⚔️', style: TextStyle(fontSize: 32)),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 15,
-                          color: AppColors.ink)),
-                  const SizedBox(height: 4),
-                  Text(_statusLabel(battle.status),
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: _statusColor(battle.status),
-                          fontWeight: FontWeight.w700)),
-                ],
-              ),
+            // Title + status badge
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    battle.themeTitle ?? tr('자유 주제 배틀', 'Freestyle battle'),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                        color: AppColors.ink),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: statusColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: statusColor.withValues(alpha: 0.3), width: 1),
+                  ),
+                  child: Text(
+                    statusLabel,
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: statusColor),
+                  ),
+                ),
+              ],
             ),
-            const Icon(Icons.chevron_right, color: AppColors.inkSoft),
+            const SizedBox(height: 12),
+            // VS row
+            Row(
+              children: [
+                Expanded(
+                  child: _NicknameChip(
+                    nickname: item.hostNickname,
+                    label: tr('호스트', 'Host'),
+                    align: CrossAxisAlignment.start,
+                  ),
+                ),
+                Container(
+                  width: 36,
+                  height: 36,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.paperDeep,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.line, width: 1),
+                  ),
+                  child: const Text('⚔️', style: TextStyle(fontSize: 16)),
+                ),
+                Expanded(
+                  child: _NicknameChip(
+                    nickname: challenger ?? tr('대기 중…', 'Waiting…'),
+                    label: tr('상대', 'Opponent'),
+                    align: CrossAxisAlignment.end,
+                    isPlaceholder: challenger == null,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Footer: time ago + chevron
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  _timeAgo(battle.createdAt),
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.inkSoft),
+                ),
+                const SizedBox(width: 4),
+                const Icon(Icons.chevron_right,
+                    color: AppColors.inkSoft, size: 16),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
+
+  String _timeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return tr('방금 전', 'just now');
+    if (diff.inHours < 1) return tr('${diff.inMinutes}분 전', '${diff.inMinutes}m ago');
+    if (diff.inDays < 1) return tr('${diff.inHours}시간 전', '${diff.inHours}h ago');
+    return tr('${diff.inDays}일 전', '${diff.inDays}d ago');
+  }
 }
+
+class _NicknameChip extends StatelessWidget {
+  final String nickname;
+  final String label;
+  final CrossAxisAlignment align;
+  final bool isPlaceholder;
+
+  const _NicknameChip({
+    required this.nickname,
+    required this.label,
+    required this.align,
+    this.isPlaceholder = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: align,
+      children: [
+        Text(label,
+            style: const TextStyle(
+                fontSize: 10,
+                color: AppColors.inkSoft,
+                fontWeight: FontWeight.w600)),
+        const SizedBox(height: 3),
+        Text(
+          nickname,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: isPlaceholder ? AppColors.inkSoft : AppColors.ink,
+            fontStyle:
+                isPlaceholder ? FontStyle.italic : FontStyle.normal,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+}
+
+// ── 배틀 만들기 바텀시트 ────────────────────────────────────────────────────────
 
 class _CreateBattleSheet extends StatefulWidget {
   const _CreateBattleSheet();
@@ -312,6 +438,16 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Center(
+            child: Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                  color: const Color(0xFFE2E8F0),
+                  borderRadius: BorderRadius.circular(2)),
+            ),
+          ),
+          const SizedBox(height: 16),
           Row(
             children: [
               Container(
@@ -362,7 +498,8 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
               style: const TextStyle(color: AppColors.ink),
               decoration: InputDecoration(
                 labelText: tr('배틀 제목', 'Battle title'),
-                hintText: tr('예: 매운 음식 대결', 'e.g. Spiciest dish challenge'),
+                hintText:
+                    tr('예: 매운 음식 대결', 'e.g. Spiciest dish challenge'),
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 focusedBorder: OutlineInputBorder(
@@ -386,7 +523,9 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
                 elevation: 0,
               ),
               onPressed: _confirm,
-              child: Text(tr('배틀 만들고 초대 링크 생성', 'Create battle & invite link'),
+              child: Text(
+                  tr('배틀 만들고 초대 링크 생성',
+                      'Create battle & invite link'),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 14)),
             ),

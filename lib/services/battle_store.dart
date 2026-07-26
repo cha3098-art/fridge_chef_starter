@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/tr.dart';
 import '../models/battle.dart';
+import '../models/battle_list_item.dart';
 import '../models/battle_participant.dart';
 import '../models/battle_vote.dart';
 
@@ -267,6 +268,93 @@ class BattleStore extends ChangeNotifier {
       body: tr('결과를 확인해보세요!', 'Check out the result!'),
       data: {'battleId': battleId},
     );
+  }
+
+  /// 내 배틀 목록에 호스트/챌린저 닉네임을 미리 포함한다 — 배틀 목록 화면의 VS 카드용.
+  Future<List<BattleListItem>> fetchMyBattleItems() async {
+    final battles = await fetchMyBattles();
+    if (battles.isEmpty) return [];
+
+    final battleIds = battles.map((b) => b.id).toList();
+    final participantRows = await _client
+        .from('battle_participants')
+        .select()
+        .inFilter('battle_id', battleIds);
+    final participants = (participantRows as List)
+        .map((r) => _mapParticipant(r as Map<String, dynamic>))
+        .toList();
+
+    final userIds = participants.map((p) => p.userId).toSet().toList();
+    final nicknames = await fetchNicknames(userIds);
+
+    return battles.map((battle) {
+      final parts = participants.where((p) => p.battleId == battle.id).toList();
+      final host = parts
+          .where((p) => p.role == BattleParticipantRole.host)
+          .firstOrNull;
+      final challenger = parts
+          .where((p) => p.role == BattleParticipantRole.opponent)
+          .firstOrNull;
+      return BattleListItem(
+        battle: battle,
+        hostNickname:
+            host == null ? '?' : (nicknames[host.userId] ?? tr('냉장고 셰프', 'Chef')),
+        challengerNickname: challenger == null
+            ? null
+            : (nicknames[challenger.userId] ?? tr('냉장고 셰프', 'Chef')),
+      );
+    }).toList();
+  }
+
+  /// 메인 대시보드 라이브 티커용 — submitted/voting 상태인 배틀 최근 N건
+  Future<List<BattleListItem>> fetchActiveBattleItems({int limit = 6}) async {
+    try {
+      final rows = await _client
+          .from('battles')
+          .select()
+          .inFilter('status', ['submitted', 'voting'])
+          .order('created_at', ascending: false)
+          .limit(limit);
+      final battles = (rows as List)
+          .map((r) => _mapBattle(r as Map<String, dynamic>))
+          .toList();
+      if (battles.isEmpty) return [];
+
+      final battleIds = battles.map((b) => b.id).toList();
+      final participantRows = await _client
+          .from('battle_participants')
+          .select()
+          .inFilter('battle_id', battleIds);
+      final participants = (participantRows as List)
+          .map((r) => _mapParticipant(r as Map<String, dynamic>))
+          .toList();
+
+      final userIds = participants.map((p) => p.userId).toSet().toList();
+      final nicknames = await fetchNicknames(userIds);
+
+      return battles.map((battle) {
+        final parts =
+            participants.where((p) => p.battleId == battle.id).toList();
+        final host = parts
+            .where((p) => p.role == BattleParticipantRole.host)
+            .firstOrNull;
+        final challenger = parts
+            .where((p) => p.role == BattleParticipantRole.opponent)
+            .firstOrNull;
+        return BattleListItem(
+          battle: battle,
+          hostNickname: host == null
+              ? '?'
+              : (nicknames[host.userId] ?? tr('냉장고 셰프', 'Chef')),
+          challengerNickname: challenger == null
+              ? null
+              : (nicknames[challenger.userId] ?? tr('냉장고 셰프', 'Chef')),
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint('BattleStore.fetchActiveBattleItems failed: $e');
+      return [];
+    }
   }
 
   /// 참가자 카드에 닉네임을 보여주기 위한 배치 조회 (users.id → nickname)

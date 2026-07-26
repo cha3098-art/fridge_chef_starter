@@ -21,6 +21,10 @@ import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import 'add_ingredient_screen.dart';
 import 'banner_detail_screen.dart';
+import '../models/battle.dart';
+import '../models/battle_list_item.dart';
+import '../services/battle_store.dart';
+import 'battle_detail_screen.dart';
 import 'battle_screen.dart';
 import 'board_screen.dart';
 import 'kfood_screen.dart';
@@ -61,12 +65,17 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
   late final Animation<double> _tooltipBounce;
   bool _showTooltip = true;
 
+  List<BattleListItem> _activeBattles = [];
+  int _tickerIndex = 0;
+  Timer? _tickerTimer;
+
   @override
   void initState() {
     super.initState();
     if (!FridgeStore.instance.isLoaded) FridgeStore.instance.loadItems();
     _extrasFuture = _loadExtras();
     _startBannerAutoRolling();
+    _loadActiveBattles();
 
     // 영수증 등록 기능을 놓치지 않도록 위아래로 콩콩 튀는 안내 툴팁 애니메이션.
     _tooltipController = AnimationController(
@@ -79,9 +88,107 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
   @override
   void dispose() {
     _rollingTimer?.cancel();
+    _tickerTimer?.cancel();
     _bannerController.dispose();
     _tooltipController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadActiveBattles() async {
+    final battles = await BattleStore.instance.fetchActiveBattleItems();
+    if (!mounted || battles.isEmpty) return;
+    setState(() => _activeBattles = battles);
+    _tickerTimer?.cancel();
+    _tickerTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (!mounted) return;
+      setState(
+          () => _tickerIndex = (_tickerIndex + 1) % _activeBattles.length);
+    });
+  }
+
+  /// 현재 진행 중인 배틀을 4초마다 슬라이드로 보여주는 라이브 티커 스트립.
+  Widget _buildBattleTicker() {
+    if (_activeBattles.isEmpty) return const SizedBox.shrink();
+    final item = _activeBattles[_tickerIndex % _activeBattles.length];
+    final battle = item.battle;
+    final statusLabel = battle.status == BattleStatus.voting
+        ? tr('투표 중', 'Voting')
+        : tr('진행 중', 'Live');
+    final statusColor =
+        battle.status == BattleStatus.voting ? AppColors.gold : AppColors.carrot;
+    final challenger = item.challengerNickname ?? tr('대기 중', 'Waiting');
+
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (_) => BattleDetailScreen(battleId: battle.id)),
+      ),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        transitionBuilder: (child, anim) => SlideTransition(
+          position:
+              Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
+                  .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
+          child: FadeTransition(opacity: anim, child: child),
+        ),
+        child: Container(
+          key: ValueKey(_tickerIndex),
+          width: double.infinity,
+          padding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                statusColor.withValues(alpha: 0.10),
+                statusColor.withValues(alpha: 0.04),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(14),
+            border:
+                Border.all(color: statusColor.withValues(alpha: 0.25), width: 1),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '● $statusLabel',
+                  style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  '${item.hostNickname}  ⚔️  $challenger',
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.ink),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (_activeBattles.length > 1)
+                Text(
+                  '${_tickerIndex + 1}/${_activeBattles.length}',
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.inkSoft),
+                ),
+              const SizedBox(width: 4),
+              const Icon(Icons.chevron_right,
+                  size: 16, color: AppColors.inkSoft),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   /// 콩콩 뛰는 신기능 안내 말풍선 — 닫기 버튼으로 사용자가 직접 없앨 수 있다.
@@ -234,6 +341,10 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                             _buildMyMenuGrid(names),
                             const SizedBox(height: 24),
                             _buildRollingBanner(),
+                            if (_activeBattles.isNotEmpty) ...[
+                              const SizedBox(height: 12),
+                              _buildBattleTicker(),
+                            ],
                             const SizedBox(height: 24),
                             _buildEventPromoCard(names),
                             const SizedBox(height: 24),

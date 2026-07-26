@@ -14,6 +14,8 @@ import '../theme/app_theme.dart';
 import '../utils/image_compressor.dart';
 import '../widgets/fridge_mascot.dart';
 
+
+
 /// 배틀 상세 화면 — 초대 링크(https://fridgechef.app/battle/{id})로도 진입한다.
 /// 참가/사진 제출/투표/승자 확정까지 이 한 화면에서 상태에 따라 다르게 보여준다.
 class BattleDetailScreen extends StatefulWidget {
@@ -33,6 +35,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   bool _loaded = false;
   bool _busy = false;
   String? _errorMessage;
+  RealtimeChannel? _votesChannel;
 
   String? get _myUid => Supabase.instance.client.auth.currentUser?.id;
 
@@ -40,6 +43,52 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   void initState() {
     super.initState();
     _load();
+    _subscribeVotes();
+  }
+
+  void _subscribeVotes() {
+    _votesChannel = Supabase.instance.client
+        .channel('battle_votes_${widget.battleId}')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'battle_votes',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'battle_id',
+            value: widget.battleId,
+          ),
+          callback: (_) => _refreshVoteCounts(),
+        )
+        .subscribe();
+  }
+
+  Future<void> _refreshVoteCounts() async {
+    if (_participants.isEmpty) return;
+    try {
+      final votes =
+          await BattleStore.instance.fetchVotes(widget.battleId);
+      final tally = <String, int>{for (final p in _participants) p.id: 0};
+      for (final v in votes) {
+        tally[v.votedForParticipantId] =
+            (tally[v.votedForParticipantId] ?? 0) + 1;
+      }
+      final myVote = votes
+          .where((v) => v.voterId == _myUid)
+          .map((v) => v.votedForParticipantId)
+          .firstOrNull;
+      if (!mounted) return;
+      setState(() {
+        _voteCounts = tally;
+        _myVoteParticipantId = myVote;
+      });
+    } catch (_) {}
+  }
+
+  @override
+  void dispose() {
+    _votesChannel?.unsubscribe();
+    super.dispose();
   }
 
   Future<void> _load() async {
@@ -495,12 +544,14 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
           ),
           const SizedBox(height: 10),
           if (battle.status == BattleStatus.voting ||
-              battle.status == BattleStatus.completed)
-            Text('🗳️ $voteCount',
-                style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.ink)),
+              battle.status == BattleStatus.completed) ...[
+            const SizedBox(height: 8),
+            _VoteBar(
+              voteCount: voteCount,
+              totalVotes: _voteCounts.values.fold(0, (a, b) => a + b),
+              iVotedThis: iVotedThis,
+            ),
+          ],
           if (canVote) ...[
             const SizedBox(height: 8),
             SizedBox(
@@ -517,7 +568,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                 ),
                 onPressed: _busy ? null : () => _vote(participant.id),
                 child: Text(
-                  iVotedThis ? tr('투표함', 'Voted') : tr('투표하기', 'Vote'),
+                  iVotedThis ? tr('투표함 ✓', 'Voted ✓') : tr('투표하기', 'Vote'),
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.bold),
                 ),
@@ -529,6 +580,69 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
     );
   }
 }
+
+// ── 투표 수 + 프로그레스 바 ──────────────────────────────────────────────────────
+
+class _VoteBar extends StatelessWidget {
+  final int voteCount;
+  final int totalVotes;
+  final bool iVotedThis;
+
+  const _VoteBar({
+    required this.voteCount,
+    required this.totalVotes,
+    required this.iVotedThis,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ratio = totalVotes > 0 ? voteCount / totalVotes : 0.0;
+    final pct = (ratio * 100).round();
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                const Text('🗳️', style: TextStyle(fontSize: 13)),
+                const SizedBox(width: 4),
+                Text(
+                  '$voteCount',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: iVotedThis ? AppColors.green : AppColors.ink,
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              '$pct%',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: iVotedThis ? AppColors.green : AppColors.inkSoft,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: ratio,
+            minHeight: 6,
+            backgroundColor: AppColors.paperDeep,
+            color: iVotedThis ? AppColors.green : AppColors.carrot,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── 상태 배너 ──────────────────────────────────────────────────────────────────
 
 class _StatusBanner extends StatelessWidget {
   final Battle battle;
