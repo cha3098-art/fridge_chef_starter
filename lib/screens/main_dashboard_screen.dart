@@ -657,7 +657,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(recipe.title,
+                      Text(tr(recipe.title, recipe.titleEn),
                           style: const TextStyle(
                               color: AppColors.ink,
                               fontSize: 15,

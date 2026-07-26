@@ -1,5 +1,17 @@
 enum RecipeMatchLevel { full, partial, low }
 
+/// 부동소수점 곱셈 오차(예: 0.3 * 3 == 0.8999999999999999)를 소수 둘째 자리에서
+/// 반올림해 정리하고, 뒤에 붙는 불필요한 0과 소수점은 잘라낸다 (1.50 -> 1.5, 2.00 -> 2)
+/// recipe.dart와 l10n/recipe_i18n.dart(영어 단위 환산) 양쪽에서 같이 쓰는 공용 포맷터.
+String formatRecipeAmount(double value) {
+  var text = value.toStringAsFixed(2);
+  if (text.contains('.')) {
+    text = text.replaceFirst(RegExp(r'0+$'), '');
+    text = text.replaceFirst(RegExp(r'\.$'), '');
+  }
+  return text;
+}
+
 /// recipe_ingredients 테이블에 대응하는 레시피 재료 항목
 class RecipeIngredient {
   final String name;
@@ -16,20 +28,11 @@ class RecipeIngredient {
 
   String get quantityLabel => quantityLabelForServings(1);
 
-  /// 재료 수량은 1인분 기준으로 저장되어 있으므로 선택한 인분수만큼 스케일링한다
+  /// 재료 수량은 1인분 기준으로 저장되어 있으므로 선택한 인분수만큼 스케일링한다.
+  /// 항상 한글 단위 그대로 표시한다 — 언어별 표시는 l10n/recipe_i18n.dart의
+  /// localizedQuantityLabelForServings()를 화면에서 대신 쓴다.
   String quantityLabelForServings(int servings) {
-    return '${_formatAmount(quantity * servings)}$unit';
-  }
-
-  /// 부동소수점 곱셈 오차(예: 0.3 * 3 == 0.8999999999999999)를 소수 둘째 자리에서
-  /// 반올림해 정리하고, 뒤에 붙는 불필요한 0과 소수점은 잘라낸다 (1.50 -> 1.5, 2.00 -> 2)
-  static String _formatAmount(double value) {
-    var text = value.toStringAsFixed(2);
-    if (text.contains('.')) {
-      text = text.replaceFirst(RegExp(r'0+$'), '');
-      text = text.replaceFirst(RegExp(r'\.$'), '');
-    }
-    return text;
+    return '${formatRecipeAmount(quantity * servings)}$unit';
   }
 }
 
@@ -37,25 +40,22 @@ class RecipeIngredient {
 class RecipeStep {
   final int order;
   final String description;
+  final String descriptionEn;
   final int? timerSec;
 
-  const RecipeStep({required this.order, required this.description, this.timerSec});
-
-  String? get timerLabel {
-    final sec = timerSec;
-    if (sec == null) return null;
-    final m = sec ~/ 60;
-    final s = sec % 60;
-    if (m == 0) return '$s초';
-    if (s == 0) return '$m분';
-    return '$m분 $s초';
-  }
+  const RecipeStep({
+    required this.order,
+    required this.description,
+    required this.descriptionEn,
+    this.timerSec,
+  });
 }
 
 /// recipes 테이블에 대응하는 레시피 모델
 /// 매칭 로직(내 냉장고 재료로 몇 개나 만들 수 있는지)은 여기서 계산한다
 class Recipe {
   final String title;
+  final String titleEn;
   final int cookTimeMin;
   final String difficulty; // 하/중/상
   final String cuisineType; // 한식/중식/양식/분식
@@ -78,6 +78,7 @@ class Recipe {
 
   const Recipe({
     required this.title,
+    required this.titleEn,
     required this.cookTimeMin,
     required this.difficulty,
     required this.cuisineType,

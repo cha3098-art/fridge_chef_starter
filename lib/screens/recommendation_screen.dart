@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/recipe_catalog.dart';
+import '../l10n/recipe_i18n.dart';
 import '../l10n/tr.dart';
 import '../models/recipe.dart';
 import '../services/fridge_store.dart';
@@ -539,7 +540,7 @@ class _RecipeCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        recipe.title,
+                        tr(recipe.title, recipe.titleEn),
                         style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
@@ -571,7 +572,7 @@ class _RecipeCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(999),
                                 ),
                                 child: Text(
-                                  '${tr('부족한 재료', 'Missing')}: ${missing.join(', ')}',
+                                  '${tr('부족한 재료', 'Missing')}: ${missing.map(trIngredientName).join(', ')}',
                                   style: const TextStyle(
                                       fontSize: 11,
                                       color: AppColors.carrot,
@@ -632,7 +633,7 @@ class _BuyIngredientsButtonState extends State<_BuyIngredientsButton>
   }
 
   void _showPurchaseSheet(BuildContext context) {
-    final missingLabel = widget.missingIngredients.join(', ');
+    final missingLabel = widget.missingIngredients.map(trIngredientName).join(', ');
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.card,

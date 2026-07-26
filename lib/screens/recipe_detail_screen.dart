@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/recipe_i18n.dart';
 import '../l10n/tr.dart';
 import '../models/recipe.dart';
 import '../services/locale_store.dart';
@@ -52,7 +53,7 @@ class RecipeDetailScreen extends StatelessWidget {
               ],
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
-                  recipe.title,
+                  tr(recipe.title, recipe.titleEn),
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -238,7 +239,7 @@ class _MatchBanner extends StatelessWidget {
           if (missing.isNotEmpty) ...[
             const SizedBox(height: 6),
             Text(
-              '${tr('부족한 재료', 'Missing')}: ${missing.join(', ')}',
+              '${tr('부족한 재료', 'Missing')}: ${missing.map(trIngredientName).join(', ')}',
               style: TextStyle(fontSize: 12, color: fg),
             ),
           ],
@@ -327,7 +328,7 @@ class _IngredientRow extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      ingredient.name,
+                      trIngredientName(ingredient.name),
                       style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -351,7 +352,7 @@ class _IngredientRow extends StatelessWidget {
                 ),
               ),
               Text(
-                ingredient.quantityLabelForServings(1),
+                ingredient.localizedQuantityLabelForServings(1),
                 style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -391,7 +392,7 @@ class _ServingsBreakdown extends StatelessWidget {
       final isSelected = tier == selectedServings;
       spans.add(TextSpan(
         text:
-            '${trTag('$tier인분')} ${ingredient.quantityLabelForServings(tier)}',
+            '${trTag('$tier인분')} ${ingredient.localizedQuantityLabelForServings(tier)}',
         style: TextStyle(
           fontSize: 11,
           color: isSelected ? AppColors.green : AppColors.inkSoft,
@@ -440,17 +441,17 @@ class _StepTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(step.description,
+                Text(tr(step.description, step.descriptionEn),
                     style: const TextStyle(
                         fontSize: 13, height: 1.5, letterSpacing: 0.1)),
-                if (step.timerLabel != null) ...[
+                if (localizedTimerLabel(step.timerSec) != null) ...[
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(Icons.timer_outlined,
                           size: 13, color: AppColors.inkSoft),
                       const SizedBox(width: 4),
-                      Text(step.timerLabel!,
+                      Text(localizedTimerLabel(step.timerSec)!,
                           style: const TextStyle(
                               fontSize: 11, color: AppColors.inkSoft)),
                     ],

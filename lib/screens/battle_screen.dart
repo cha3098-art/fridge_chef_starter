@@ -349,7 +349,9 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
                   value: null, child: Text(tr('자유 주제', 'Freestyle'))),
               ...allRecipes.map((r) => DropdownMenuItem<String?>(
                   value: r.title,
-                  child: Text(r.isKFood ? '🇰🇷 ${r.title}' : r.title))),
+                  child: Text(r.isKFood
+                      ? '🇰🇷 ${tr(r.title, r.titleEn)}'
+                      : tr(r.title, r.titleEn)))),
             ],
             onChanged: (v) => setState(() => _selectedRecipe = v),
           ),

@@ -259,7 +259,7 @@ class _KFoodCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    recipe.title,
+                    tr(recipe.title, recipe.titleEn),
                     style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 13,

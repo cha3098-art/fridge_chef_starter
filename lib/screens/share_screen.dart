@@ -621,7 +621,9 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
             items: allRecipes
                 .map((r) => DropdownMenuItem(
                       value: r.title,
-                      child: Text(r.isKFood ? '🇰🇷 ${r.title}' : r.title),
+                      child: Text(r.isKFood
+                          ? '🇰🇷 ${tr(r.title, r.titleEn)}'
+                          : tr(r.title, r.titleEn)),
                     ))
                 .toList(),
             onChanged: (v) {
@@ -803,7 +805,9 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
             items: allRecipes
                 .map((r) => DropdownMenuItem(
                       value: r.title,
-                      child: Text(r.isKFood ? '🇰🇷 ${r.title}' : r.title),
+                      child: Text(r.isKFood
+                          ? '🇰🇷 ${tr(r.title, r.titleEn)}'
+                          : tr(r.title, r.titleEn)),
                     ))
                 .toList(),
             onChanged: (v) {
