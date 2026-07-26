@@ -735,7 +735,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
             const Text('✉️', style: TextStyle(fontSize: 22)),
             const SizedBox(height: 2),
             Text(
-              tr('초대하기', 'Invite'),
+              tr('SNS공유', 'Share'),
               style: const TextStyle(
                   color: AppColors.greenDeep,
                   fontSize: 9,

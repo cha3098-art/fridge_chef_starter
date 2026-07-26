@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/recipe_i18n.dart';
 import '../l10n/tr.dart';
 import '../models/recipe.dart';
+import '../services/fridge_store.dart';
 import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
@@ -9,7 +10,7 @@ import '../widgets/chef_tier_badge.dart';
 import '../widgets/language_toggle.dart';
 
 /// 레시피 상세 화면 — 영양정보, 재료(보유 여부 표시), 조리순서를 보여준다
-class RecipeDetailScreen extends StatelessWidget {
+class RecipeDetailScreen extends StatefulWidget {
   final Recipe recipe;
   final Set<String> fridgeIngredientNames;
   final int servings;
@@ -22,7 +23,144 @@ class RecipeDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<RecipeDetailScreen> createState() => _RecipeDetailScreenState();
+}
+
+class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
+  late int _selectedServings;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedServings = widget.servings;
+  }
+
+  Future<void> _showServingsSheet() async {
+    int picked = _selectedServings;
+    final confirmed = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE2E8F0),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                tr('몇 인분으로 요리할까요?', 'How many servings?'),
+                style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                tr('선택한 인분에 맞게 냉장고 재료가 차감돼요.',
+                    'Fridge ingredients will be deducted accordingly.'),
+                style: const TextStyle(fontSize: 13, color: AppColors.inkSoft),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [1, 2, 3, 4].map((n) {
+                  final isSelected = n == picked;
+                  return Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: n < 4 ? 8 : 0),
+                      child: GestureDetector(
+                        onTap: () => setSheetState(() => picked = n),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          height: 52,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.green
+                                : const Color(0xFFF1F5F9),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            tr('$n인분', '$n serving${n > 1 ? 's' : ''}'),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: isSelected
+                                  ? Colors.white
+                                  : AppColors.inkSoft,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton.icon(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  icon: const Icon(Icons.kitchen_outlined, size: 20),
+                  label: Text(
+                    tr('선택하기 ($picked인분) — 재료 소진',
+                        'Apply ($picked serving${picked > 1 ? 's' : ''}) — use ingredients'),
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w700),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.green,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                    elevation: 0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      setState(() => _selectedServings = picked);
+      await FridgeStore.instance
+          .consumeIngredients(widget.recipe.ingredients, picked);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(tr(
+                '${widget.recipe.title} $picked인분 재료를 냉장고에서 차감했어요 🍳',
+                'Deducted $picked-serving ingredients from your fridge 🍳')),
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final recipe = widget.recipe;
+    final fridgeIngredientNames = widget.fridgeIngredientNames;
     final matched = recipe.matchedCount(fridgeIngredientNames);
     final total = recipe.requiredIngredients.length;
     final missing = recipe.missingIngredients(fridgeIngredientNames);
@@ -43,11 +181,44 @@ class RecipeDetailScreen extends StatelessWidget {
                 color: Colors.white,
                 shadows: [Shadow(color: Colors.black45, blurRadius: 6)],
               ),
-              actions: const [
-                Padding(
+              actions: [
+                GestureDetector(
+                  onTap: _showServingsSheet,
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 4),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.6), width: 1),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.restaurant_menu,
+                            size: 14, color: Colors.white),
+                        const SizedBox(width: 4),
+                        Text(
+                          tr('$_selectedServings인분 선택',
+                              '$_selectedServings serving${_selectedServings > 1 ? 's' : ''}'),
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(Icons.expand_more,
+                            size: 14, color: Colors.white),
+                      ],
+                    ),
+                  ),
+                ),
+                const Padding(
                     padding: EdgeInsets.only(right: 8),
                     child: LanguageToggle()),
-                Padding(
+                const Padding(
                     padding: EdgeInsets.only(right: 12),
                     child: ChefTierBadge()),
               ],
@@ -96,7 +267,7 @@ class RecipeDetailScreen extends StatelessWidget {
                     spacing: 6,
                     runSpacing: 6,
                     children: [
-                      _InfoChip(label: trServings(servings)),
+                      _InfoChip(label: trServings(_selectedServings)),
                       _InfoChip(label: trTag(recipe.cuisineType)),
                       _InfoChip(
                           label:
@@ -131,7 +302,7 @@ class RecipeDetailScreen extends StatelessWidget {
                                 ingredient: ingredient,
                                 owned: fridgeIngredientNames
                                     .contains(ingredient.name),
-                                servings: servings,
+                                servings: _selectedServings,
                               ))
                           .toList(),
                     ),

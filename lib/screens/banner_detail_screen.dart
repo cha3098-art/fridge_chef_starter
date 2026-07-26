@@ -194,7 +194,7 @@ class BannerDetailScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       tr(detail.subtitleKo, detail.subtitleEn),
-                      style: const TextStyle(fontSize: 14, color: AppColors.inkSoft, height: 1.5),
+                      style: const TextStyle(fontSize: 15, color: AppColors.ink, height: 1.6),
                     ),
                     const SizedBox(height: 12),
                     const Divider(color: AppColors.line, height: 32),
@@ -231,7 +231,7 @@ class BannerDetailScreen extends StatelessWidget {
                                     const SizedBox(height: 6),
                                     Text(
                                       tr(section.bodyKo, section.bodyEn),
-                                      style: const TextStyle(color: AppColors.inkSoft, fontSize: 13, height: 1.45),
+                                      style: const TextStyle(color: AppColors.ink, fontSize: 14, height: 1.6),
                                     ),
                                   ],
                                 ),

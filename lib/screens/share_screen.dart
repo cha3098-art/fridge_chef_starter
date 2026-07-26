@@ -208,6 +208,69 @@ class _ShareScreenState extends State<ShareScreen>
         isFullFridgeMatch: isFullMatch,
       );
     }
+    final bragId = result.completedAt.millisecondsSinceEpoch;
+    final bragLink = 'https://fridgechef.app/brag/$bragId';
+    await Clipboard.setData(ClipboardData(text: bragLink));
+    if (!mounted) return;
+    _showBragLinkDialog(bragLink, result.recipeTitle);
+  }
+
+  void _showBragLinkDialog(String link, String recipeTitle) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          tr('요리 자랑 링크 생성!', 'Brag link created!'),
+          style: const TextStyle(
+              fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.ink),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tr('$recipeTitle 요리 자랑 링크를 클립보드에 복사했어요.',
+                  'The $recipeTitle brag link was copied to your clipboard.'),
+              style: const TextStyle(fontSize: 13, color: AppColors.inkSoft, height: 1.5),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.paperDeep,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.line),
+              ),
+              child: Text(
+                link,
+                style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.green,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: link));
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+            child: Text(tr('링크 복사', 'Copy link'),
+                style: const TextStyle(color: AppColors.green, fontWeight: FontWeight.w700)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(tr('닫기', 'Close'),
+                style: const TextStyle(color: AppColors.inkSoft)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

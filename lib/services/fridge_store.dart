@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/fridge_item.dart';
+import '../models/recipe.dart';
 import 'notification_service.dart';
 
 /// 내 냉장고 상태 (싱글턴). Supabase의 ingredients/user_ingredients 테이블과 동기화한다.
@@ -153,6 +154,36 @@ class FridgeStore extends ChangeNotifier {
       _error = _describeError(e);
       notifyListeners();
     }
+  }
+
+  /// 레시피 조리 완료 시 사용한 재료를 냉장고에서 차감한다.
+  /// 보유량보다 많이 썼거나 재고가 없는 재료는 조용히 건너뛴다.
+  Future<void> consumeIngredients(
+      List<RecipeIngredient> ingredients, int servings) async {
+    if (_items.isEmpty) return;
+    try {
+      for (final ing in ingredients) {
+        final match = _items.cast<FridgeItem?>().firstWhere(
+              (i) => i?.name == ing.name,
+              orElse: () => null,
+            );
+        if (match == null || match.id == null) continue;
+        final needed = ing.quantity * servings;
+        final remaining = match.quantity - needed;
+        if (remaining <= 0) {
+          await _client.from('user_ingredients').delete().eq('id', match.id!);
+        } else {
+          await _client
+              .from('user_ingredients')
+              .update({'quantity': remaining}).eq('id', match.id!);
+        }
+      }
+      _error = null;
+    } catch (e) {
+      _error = _describeError(e);
+      notifyListeners();
+    }
+    await loadItems();
   }
 
   String _describeError(Object e) {
