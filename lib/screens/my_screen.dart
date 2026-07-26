@@ -59,12 +59,25 @@ class _MyScreenState extends State<MyScreen> {
         backgroundColor: AppColors.paper,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text(
-          tr('마이', 'My'),
-          style: const TextStyle(
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.3,
-              color: AppColors.ink),
+        toolbarHeight: 76,
+        titleSpacing: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset('assets/icon/icon_my.png',
+                  width: 58, height: 58, fit: BoxFit.cover),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              tr('마이', 'My'),
+              style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.3,
+                  color: AppColors.ink),
+            ),
+          ],
         ),
         actions: [
           if (ProfileStore.instance.currentProfile != null)

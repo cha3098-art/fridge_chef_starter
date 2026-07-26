@@ -56,13 +56,29 @@ class _KFoodScreenState extends State<KFoodScreen>
           backgroundColor: AppColors.paper,
           elevation: 0,
           scrolledUnderElevation: 0,
-          title: Text(
-            tr('K-Food 만들기', 'Make K-Food'),
-            style: const TextStyle(
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.3,
-                color: AppColors.ink),
+          toolbarHeight: 76,
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset('assets/icon/icon_challenge.png',
+                    width: 58, height: 58, fit: BoxFit.cover),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  tr('K-Food 만들기', 'Make K-Food'),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.3,
+                      color: AppColors.ink),
+                ),
+              ),
+            ],
           ),
+          titleSpacing: 0,
           actions: const [
             Padding(
                 padding: EdgeInsets.only(right: 8), child: LanguageToggle()),
@@ -88,36 +104,84 @@ class _KFoodScreenState extends State<KFoodScreen>
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Column(
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        tr('🇰🇷 대한민국 대표 요리', '🇰🇷 Iconic Korean Dishes'),
-                        style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.2),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tr('🇰🇷 대한민국 대표 요리', '🇰🇷 Iconic Korean Dishes'),
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.2),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              tr('집에서 만드는 K-Food', 'Make K-Food at Home'),
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: -0.3,
+                                  height: 1.2),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              tr('완성하고 자랑하면 K-Food 포인트가 쌓여요 · 초대장은 2배!',
+                                  'Finish and brag to earn K-Food points · invites earn double!'),
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white70,
+                                  height: 1.5,
+                                  letterSpacing: 0.1),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        tr('집에서 만드는 K-Food', 'Make K-Food at Home'),
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: -0.3,
-                            height: 1.2),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        tr('완성하고 자랑하면 K-Food 포인트가 쌓여요 · 초대장은 2배!',
-                            'Finish and brag to earn K-Food points · invites earn double!'),
-                        style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.white70,
-                            height: 1.5,
-                            letterSpacing: 0.1),
+                      const SizedBox(width: 12),
+                      // 배너 오른쪽에 K-Food 전용 마스코트 듀오를 겹쳐 보여준다.
+                      SizedBox(
+                        width: 64,
+                        height: 76,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Positioned(
+                              right: 0,
+                              top: 8,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(14),
+                                child: Image.asset(
+                                    'assets/icon/icon_kfood_cooking.png',
+                                    width: 58,
+                                    height: 58,
+                                    fit: BoxFit.cover),
+                              ),
+                            ),
+                            Positioned(
+                              left: 0,
+                              bottom: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: Colors.white, width: 2),
+                                ),
+                                child: ClipOval(
+                                  child: Image.asset(
+                                      'assets/icon/icon_kfood_hanbok.png',
+                                      width: 32,
+                                      height: 32,
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

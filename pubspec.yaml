@@ -28,9 +28,37 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/icon_1024.png"
+  adaptive_icon_background: "#FAFBFC"
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/icon/icon_square.png
+    - assets/icon/icon_share.png
+    - assets/icon/icon_challenge.png
+    - assets/icon/icon_recipe.png
+    - assets/icon/icon_kfood_hanbok.png
+    - assets/icon/icon_kfood_cooking.png
+    - assets/icon/icon_challenge_rival.png
+    - assets/icon/icon_board.png
+    - assets/icon/icon_my.png
+    - assets/icon/icon_ranking.png
+    - assets/icon/menu_receipt.png
+    - assets/icon/menu_additem.png
+    - assets/icon/menu_airecipe.png
+    - assets/icon/menu_invite.png
+    - assets/icon/menu_kfood.png
+    - assets/icon/menu_expiring.png
+    - assets/icon/menu_battle.png
+    - assets/icon/menu_board.png
   fonts:
     - family: Pretendard
       fonts:

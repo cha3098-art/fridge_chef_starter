@@ -148,7 +148,23 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.paper,
           elevation: 0,
-          title: Text(tr('레시피 추천', 'Recipe Picks')),
+          toolbarHeight: 76,
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset('assets/icon/icon_recipe.png',
+                    width: 58, height: 58, fit: BoxFit.cover),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(tr('레시피 추천', 'Recipe Picks'),
+                    overflow: TextOverflow.ellipsis),
+              ),
+            ],
+          ),
+          titleSpacing: 0,
           actions: [
             const Padding(
                 padding: EdgeInsets.only(right: 8), child: LanguageToggle()),

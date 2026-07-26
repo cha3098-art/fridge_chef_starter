@@ -124,12 +124,35 @@ class _BoardScreenState extends State<BoardScreen> {
             backgroundColor: AppColors.paper,
             elevation: 0,
             scrolledUnderElevation: 0,
-            title: Text(
-              tr('게시판', 'Board'),
-              style: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.3,
-                  color: AppColors.ink),
+            toolbarHeight: 76,
+            titleSpacing: 0,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                      _category == BoardCategory.challenge
+                          ? 'assets/icon/icon_challenge_rival.png'
+                          : 'assets/icon/icon_board.png',
+                      width: 58,
+                      height: 58,
+                      fit: BoxFit.cover),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    _category == BoardCategory.challenge
+                        ? tr('챌린지 게시판', 'Challenge Board')
+                        : tr('게시판', 'Board'),
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.3,
+                        color: AppColors.ink),
+                  ),
+                ),
+              ],
             ),
             actions: const [
               Padding(
@@ -158,6 +181,7 @@ class _BoardScreenState extends State<BoardScreen> {
                       child: _CategoryButton(
                         label: BoardCategory.challenge.label,
                         selected: _category == BoardCategory.challenge,
+                        iconAsset: 'assets/icon/icon_challenge_rival.png',
                         onTap: () =>
                             setState(() => _category = BoardCategory.challenge),
                       ),
@@ -175,7 +199,17 @@ class _BoardScreenState extends State<BoardScreen> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const FridgeMascot(size: 84),
+                                _category == BoardCategory.challenge
+                                    ? ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(20),
+                                        child: Image.asset(
+                                            'assets/icon/icon_challenge_rival.png',
+                                            width: 84,
+                                            height: 84,
+                                            fit: BoxFit.cover),
+                                      )
+                                    : const FridgeMascot(size: 84),
                                 const SizedBox(height: AppSpacing.md),
                                 Text(tr('아직 글이 없어요', 'No posts yet'),
                                     style: const TextStyle(
@@ -218,9 +252,13 @@ class _CategoryButton extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final String? iconAsset;
 
   const _CategoryButton(
-      {required this.label, required this.selected, required this.onTap});
+      {required this.label,
+      required this.selected,
+      required this.onTap,
+      this.iconAsset});
 
   @override
   Widget build(BuildContext context) {
@@ -236,14 +274,27 @@ class _CategoryButton extends StatelessWidget {
           border: Border.all(
               color: selected ? AppColors.ink : AppColors.cardBorder),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.1,
-            color: selected ? Colors.white : AppColors.inkSoft,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (iconAsset != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child:
+                    Image.asset(iconAsset!, width: 16, height: 16, fit: BoxFit.cover),
+              ),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.1,
+                color: selected ? Colors.white : AppColors.inkSoft,
+              ),
+            ),
+          ],
         ),
       ),
     );

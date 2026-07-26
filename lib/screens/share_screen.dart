@@ -223,14 +223,30 @@ class _ShareScreenState extends State<ShareScreen>
           backgroundColor: AppColors.paper,
           elevation: 0,
           scrolledUnderElevation: 0,
-          title: Text(
-            tr('공유하기', 'Share'),
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-              color: AppColors.ink,
-            ),
+          toolbarHeight: 76,
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset('assets/icon/icon_share.png',
+                    width: 58, height: 58, fit: BoxFit.cover),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  tr('공유하기', 'Share'),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                    color: AppColors.ink,
+                  ),
+                ),
+              ),
+            ],
           ),
+          titleSpacing: 0,
           actions: const [
             Padding(
                 padding: EdgeInsets.only(right: 8), child: LanguageToggle()),

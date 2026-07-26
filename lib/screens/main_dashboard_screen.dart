@@ -280,6 +280,29 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
               children: [
                 Row(
                   children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(
+                        'assets/icon/icon_square.png',
+                        width: 58,
+                        height: 58,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      tr('냉장고 셰프', 'Fridge Chef'),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.greenDeep,
+                          letterSpacing: -0.1),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
                     Flexible(
                       child: Text(
                         tr('$nickname 님', nickname),
@@ -337,19 +360,19 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
   }
 
   Widget _buildMyMenuGrid(Set<String> names) {
-    final menuItems = <({String icon, String label, VoidCallback onTap})>[
+    final menuItems = <({String iconAsset, String label, VoidCallback onTap})>[
       (
-        icon: '📸',
+        iconAsset: 'assets/icon/menu_receipt.png',
         label: tr('영수증 등록', 'Receipt'),
         onTap: () => _openAddIngredient(tab: 2),
       ),
       (
-        icon: '🥕',
+        iconAsset: 'assets/icon/menu_additem.png',
         label: tr('재료 추가', 'Add item'),
         onTap: () => _openAddIngredient(tab: 0),
       ),
       (
-        icon: '🍳',
+        iconAsset: 'assets/icon/menu_airecipe.png',
         label: tr('AI 추천', 'AI Recipes'),
         onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -358,30 +381,30 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
             ),
       ),
       (
-        icon: '✉️',
+        iconAsset: 'assets/icon/menu_invite.png',
         label: tr('식사 초대', 'Invite'),
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => ShareScreen(fridgeIngredientNames: names))),
       ),
       (
-        icon: '🇰🇷',
+        iconAsset: 'assets/icon/menu_kfood.png',
         label: tr('K-Food', 'K-Food'),
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => KFoodScreen(fridgeIngredientNames: names))),
       ),
       (
-        icon: '🔥',
+        iconAsset: 'assets/icon/menu_expiring.png',
         label: tr('임박 재료', 'Expiring'),
         onTap: _scrollToExpiry,
       ),
       (
-        icon: '⚔️',
+        iconAsset: 'assets/icon/menu_battle.png',
         label: tr('배틀', 'Battle'),
         onTap: () => Navigator.of(context)
             .push(MaterialPageRoute(builder: (_) => const BattleScreen())),
       ),
       (
-        icon: '💬',
+        iconAsset: 'assets/icon/menu_board.png',
         label: tr('소통 광장', 'Board'),
         onTap: () => Navigator.of(context)
             .push(MaterialPageRoute(builder: (_) => const BoardScreen())),
@@ -429,9 +452,9 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                       ),
                     ],
                   ),
-                  child: Center(
-                      child: Text(item.icon,
-                          style: const TextStyle(fontSize: 26, height: 1.1))),
+                  child: ClipOval(
+                    child: Image.asset(item.iconAsset, fit: BoxFit.cover),
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Text(
