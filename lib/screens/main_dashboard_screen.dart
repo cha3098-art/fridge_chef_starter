@@ -306,16 +306,29 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
           ),
           const LanguageToggle(),
           const SizedBox(width: 4),
+          // My Menu에서 "마이" 아이콘을 없앤 만큼, 마이페이지로 가는 유일한 입구가 되어
+          // 눈에 띄어야 해서 시그니처 민트 톤으로 강조했다(기존엔 무채색 원 버튼이었음).
           GestureDetector(
             onTap: () => Navigator.of(context)
                 .push(MaterialPageRoute(builder: (_) => const MyScreen())),
             child: Container(
-              width: 36,
-              height: 36,
-              decoration: const BoxDecoration(
-                  color: AppColors.paperDeep, shape: BoxShape.circle),
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.greenSoft,
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: AppColors.green.withValues(alpha: 0.4), width: 1.4),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.green.withValues(alpha: 0.18),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
               child: const Icon(Icons.settings_outlined,
-                  size: 18, color: AppColors.ink),
+                  size: 20, color: AppColors.greenDeep),
             ),
           ),
         ],
@@ -372,12 +385,6 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
         label: tr('소통 광장', 'Board'),
         onTap: () => Navigator.of(context)
             .push(MaterialPageRoute(builder: (_) => const BoardScreen())),
-      ),
-      (
-        icon: '⚙️',
-        label: tr('마이', 'My'),
-        onTap: () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const MyScreen())),
       ),
     ];
 
