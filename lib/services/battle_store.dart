@@ -47,6 +47,9 @@ class BattleStore extends ChangeNotifier {
         votingEndsAt: row['voting_ends_at'] == null
             ? null
             : DateTime.parse(row['voting_ends_at'] as String),
+        submissionDeadline: row['submission_deadline'] == null
+            ? null
+            : DateTime.parse(row['submission_deadline'] as String),
         winnerUserId: row['winner_user_id'] as String?,
         createdAt: DateTime.parse(row['created_at'] as String),
       );
@@ -161,6 +164,11 @@ class BattleStore extends ChangeNotifier {
       'role': 'opponent',
     });
 
+    // 상태를 submitted로 넘기고 3시간 제출 타이머를 시작한다. 이 호출은 상대(호스트가
+    // 아닌 쪽)가 하므로, "호스트만 배틀 정보 수정" RLS를 우회하는 RPC로 처리한다.
+    await _client
+        .rpc('mark_battle_submitted', params: {'target_battle_id': battleId});
+
     final battle = await fetchBattle(battleId);
     if (battle != null) {
       await _notify(
@@ -274,10 +282,26 @@ class BattleStore extends ChangeNotifier {
     };
   }
 
+  /// 참가자 본인(호스트든 상대든)이 배틀을 포기/취소한다. RLS상 battles UPDATE는
+  /// 호스트 전용이라(테마·레시피 등은 호스트만 고쳐야 하므로), 참가자 본인 확인만 하는
+  /// cancel_battle RPC로 우회한다. 이미 투표 단계 이후면 서버에서 조용히 무시된다.
   Future<void> cancelBattle(String battleId) async {
+    final uid = _client.auth.currentUser?.id;
+    final participants = await fetchParticipants(battleId);
     await _client
-        .from('battles')
-        .update({'status': BattleStatus.cancelled.dbValue}).eq('id', battleId);
+        .rpc('cancel_battle', params: {'target_battle_id': battleId});
+
+    final others =
+        participants.map((p) => p.userId).where((id) => id != uid).toList();
+    if (others.isNotEmpty) {
+      await _notify(
+        userIds: others,
+        title: tr('상대가 배틀을 취소했어요', 'The battle was cancelled'),
+        body: tr('상대방이 배틀을 포기해서 이 배틀은 취소됐어요',
+            'Your opponent gave up, so this battle has been cancelled'),
+        data: {'battleId': battleId},
+      );
+    }
   }
 
   /// 빠른 매칭 대기열에 들어간다. 이미 대기 중이던 행이 있으면(예: 이전 세션이 취소 없이

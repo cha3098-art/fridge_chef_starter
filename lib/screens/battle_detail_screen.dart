@@ -233,6 +233,42 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
     }
   }
 
+  Future<void> _cancel() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(tr('배틀을 포기할까요?', 'Give up this battle?')),
+        content: Text(tr('상대에게도 알림이 가고, 이 배틀은 취소돼요.',
+            "Your opponent will be notified and this battle will be cancelled.")),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(tr('아니요', 'No')),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(tr('포기하기', 'Give up'),
+                style: const TextStyle(color: AppColors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _busy = true);
+    try {
+      await BattleStore.instance.cancelBattle(widget.battleId);
+      await _load();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('취소에 실패했어요', 'Could not cancel'))),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final battle = _battle;
@@ -325,6 +361,16 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                   'Close voting & pick winner'),
                               onPressed: _busy ? null : _finalize,
                             ),
+                          if (_myParticipant != null &&
+                              (battle.status == BattleStatus.waitingOpponent ||
+                                  battle.status == BattleStatus.submitted))
+                            _actionButton(
+                              label: _opponentParticipant == null
+                                  ? tr('초대 취소', 'Cancel invite')
+                                  : tr('배틀 포기', 'Give up'),
+                              onPressed: _busy ? null : _cancel,
+                              isDestructive: true,
+                            ),
                         ],
                       ),
                     ),
@@ -332,25 +378,40 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   }
 
   Widget _actionButton(
-      {required String label, required VoidCallback? onPressed}) {
+      {required String label,
+      required VoidCallback? onPressed,
+      bool isDestructive = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: SizedBox(
         width: double.infinity,
         height: 48,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.green,
-            foregroundColor: Colors.white,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 0,
-          ),
-          onPressed: onPressed,
-          child: Text(label,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        ),
+        child: isDestructive
+            ? OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.red,
+                  side: const BorderSide(color: AppColors.red),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: onPressed,
+                child: Text(label,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14)),
+              )
+            : ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.green,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+                onPressed: onPressed,
+                child: Text(label,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14)),
+              ),
       ),
     );
   }
@@ -497,10 +558,13 @@ class _StatusBanner extends StatelessWidget {
           AppColors.red
         ),
     };
-    final deadline = battle.votingEndsAt;
-    final remaining = battle.status == BattleStatus.voting && deadline != null
-        ? deadline.difference(DateTime.now())
-        : null;
+    final deadline = battle.status == BattleStatus.voting
+        ? battle.votingEndsAt
+        : battle.status == BattleStatus.submitted
+            ? battle.submissionDeadline
+            : null;
+    final remaining = deadline?.difference(DateTime.now());
+    final isSubmissionPhase = battle.status == BattleStatus.submitted;
 
     return Container(
       width: double.infinity,
@@ -518,12 +582,20 @@ class _StatusBanner extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               remaining.isNegative
-                  ? tr('곧 자동으로 마감돼요', 'Closing automatically any moment now')
-                  : remaining.inHours >= 1
-                      ? tr('${remaining.inHours}시간 후 자동 마감',
-                          'Closes automatically in ${remaining.inHours}h')
-                      : tr('${remaining.inMinutes}분 후 자동 마감',
-                          'Closes automatically in ${remaining.inMinutes}m'),
+                  ? (isSubmissionPhase
+                      ? tr('곧 자동으로 기권 처리돼요',
+                          'Closing out as a forfeit any moment now')
+                      : tr('곧 자동으로 마감돼요',
+                          'Closing automatically any moment now'))
+                  : isSubmissionPhase
+                      ? tr(
+                          '${remaining.inHours}시간 후 미제출 시 자동 기권',
+                          'Auto-forfeits if not submitted in ${remaining.inHours}h')
+                      : remaining.inHours >= 1
+                          ? tr('${remaining.inHours}시간 후 자동 마감',
+                              'Closes automatically in ${remaining.inHours}h')
+                          : tr('${remaining.inMinutes}분 후 자동 마감',
+                              'Closes automatically in ${remaining.inMinutes}m'),
               textAlign: TextAlign.center,
               style:
                   TextStyle(color: color.withValues(alpha: 0.8), fontSize: 11),

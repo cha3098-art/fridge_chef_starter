@@ -627,3 +627,128 @@ select cron.schedule(
   );
   $$
 );
+
+-- ============================================================
+-- 19. 배틀 타임아웃 & 기권 처리 (Phase 2 보완)
+-- 지금까지는 "양쪽 다 제출 -> 투표(voting_ends_at)"만 자동 마감이 있었고, 그 앞 단계가
+-- 무기한 방치될 수 있었다. 두 케이스를 서버 타이머로 정리한다:
+--   1) 매칭/참가는 됐는데(status=submitted) 한쪽 또는 양쪽이 사진을 영영 안 올리는 경우
+--      -> submission_deadline(3시간)이 지나면 close-expired-battles가 부전승/취소 처리
+--   2) 초대 링크 배틀에 상대가 영영 안 들어오는 경우(status=waiting_opponent)
+--      -> created_at 24시간이 지나면 close-expired-battles가 자동 취소
+-- 수동 포기/취소는 cancel_battle() RPC로 처리한다. battles UPDATE RLS가 "호스트만 배틀
+-- 정보 수정"으로 제한돼 있어서(테마/레시피 등은 호스트만 고쳐야 하므로), 상대방도 기권할
+-- 수 있으려면 참가자 본인 확인만 하는 별도 SECURITY DEFINER 함수로 우회해야 한다.
+-- ============================================================
+alter table public.battles add column submission_deadline timestamptz;
+
+-- 빠른 매칭은 매칭 즉시 양쪽이 다 참가한 상태(status=submitted)로 시작하므로,
+-- 배틀 생성 시점에 바로 제출 마감 타이머를 심어준다.
+create or replace function public.handle_battle_queue_insert()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  opponent_row public.battle_queue;
+  new_battle_id uuid;
+begin
+  select * into opponent_row
+  from public.battle_queue
+  where user_id <> new.user_id and matched_battle_id is null
+  order by joined_at
+  limit 1
+  for update skip locked;
+
+  if opponent_row.user_id is null then
+    return new;
+  end if;
+
+  insert into public.battles (host_user_id, theme_title, status, invite_link, submission_deadline)
+  values (new.user_id, '빠른 매칭 배틀', 'submitted', null, now() + interval '3 hours')
+  returning id into new_battle_id;
+
+  insert into public.battle_participants (battle_id, user_id, role) values
+    (new_battle_id, new.user_id, 'host'),
+    (new_battle_id, opponent_row.user_id, 'opponent');
+
+  update public.battle_queue set matched_battle_id = new_battle_id where user_id = new.user_id;
+  update public.battle_queue set matched_battle_id = new_battle_id where user_id = opponent_row.user_id;
+
+  return new;
+end;
+$$;
+
+-- 초대 링크 배틀은 상대가 나중에 들어오므로, 그 시점(참가자 본인이 호출)에 상태를
+-- submitted로 넘기고 제출 마감 타이머를 시작한다.
+create or replace function public.mark_battle_submitted(target_battle_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1 from public.battle_participants
+    where battle_id = target_battle_id and user_id = auth.uid()
+  ) then
+    raise exception '이 배틀의 참가자만 호출할 수 있습니다';
+  end if;
+
+  update public.battles
+  set status = 'submitted',
+      submission_deadline = now() + interval '3 hours'
+  where id = target_battle_id
+    and status = 'waiting_opponent';
+end;
+$$;
+grant execute on function public.mark_battle_submitted(uuid) to authenticated;
+
+-- 수동 포기/취소 — 호스트든 상대든 이 배틀의 참가자 본인만 호출할 수 있다.
+-- 이미 투표 단계 이후(voting/completed/cancelled)는 실제 제출물·투표가 걸려있으니
+-- 취소 대상에서 제외한다(where 절이 걸러줌 — 조용히 아무 일도 안 일어난다).
+create or replace function public.cancel_battle(target_battle_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1 from public.battle_participants
+    where battle_id = target_battle_id and user_id = auth.uid()
+  ) then
+    raise exception '이 배틀의 참가자만 취소할 수 있습니다';
+  end if;
+
+  update public.battles
+  set status = 'cancelled'
+  where id = target_battle_id
+    and status in ('waiting_opponent', 'submitted');
+end;
+$$;
+grant execute on function public.cancel_battle(uuid) to authenticated;
+
+-- ============================================================
+-- 20. register_device_token RPC (기기 토큰 교차 계정 정리 버그 수정)
+-- PushNotificationService._saveToken은 같은 기기를 다른 계정이 이어서 쓸 때 예전 사용자의
+-- 토큰 행을 먼저 지우려 했지만, device_tokens의 삭제 RLS가 "본인 행만"이라 다른 사용자의
+-- 행은 애초에 지워지지 않았다(조용히 0건 삭제) — 그 결과 같은 물리 기기가 두 계정 밑에
+-- 동시에 등록된 채 남아, 한쪽에게만 보내야 할 배틀 알림이 다른 계정에도 함께 떴다.
+-- SECURITY DEFINER로 소유자 상관없이 같은 토큰 값을 지우고 현재 로그인한 사용자로만
+-- 다시 등록하도록 우회한다.
+-- ============================================================
+create or replace function public.register_device_token(p_token text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from public.device_tokens where token = p_token;
+  insert into public.device_tokens (user_id, token, updated_at)
+  values (auth.uid(), p_token, now());
+end;
+$$;
+grant execute on function public.register_device_token(text) to authenticated;

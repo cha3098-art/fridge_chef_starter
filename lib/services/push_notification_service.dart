@@ -47,21 +47,13 @@ class PushNotificationService {
   }
 
   /// 같은 기기를 다른 계정이 이어서 쓸 수 있으므로(예: 로그아웃 후 다른 계정 로그인),
-  /// 같은 토큰이 예전 사용자 행으로 남아 잘못된 사람에게 푸시가 가지 않도록 먼저 지운다.
-  /// 마지막은 upsert로 — 같은 사용자가 같은 토큰을 다시 등록하는 경우(예: 화면 재빌드로
-  /// registerForUser가 중복 호출됨)에도 (user_id, token) 기본키 충돌 없이 그냥 갱신된다.
+  /// 같은 토큰이 예전 사용자 행으로 남아 잘못된 사람에게도 푸시가 가지 않도록 먼저 지워야
+  /// 한다. device_tokens의 삭제 RLS는 "본인 행만" 지울 수 있어서 클라이언트가 직접
+  /// 다른 사용자 행을 지울 수 없다 — register_device_token RPC(SECURITY DEFINER)가
+  /// 소유자 상관없이 같은 토큰 값을 지우고 현재 로그인한 사용자로 다시 등록해준다.
   Future<void> _saveToken(String userId, String token) async {
     try {
-      await _client
-          .from('device_tokens')
-          .delete()
-          .eq('token', token)
-          .neq('user_id', userId);
-      await _client.from('device_tokens').upsert({
-        'user_id': userId,
-        'token': token,
-        'updated_at': DateTime.now().toIso8601String(),
-      });
+      await _client.rpc('register_device_token', params: {'p_token': token});
     } catch (e) {
       debugPrint('PushNotificationService._saveToken failed: $e');
     }

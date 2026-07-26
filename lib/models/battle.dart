@@ -36,6 +36,7 @@ class Battle {
   final BattleStatus status;
   final String? inviteLink;
   final DateTime? votingEndsAt;
+  final DateTime? submissionDeadline;
   final String? winnerUserId;
   final DateTime createdAt;
 
@@ -48,6 +49,7 @@ class Battle {
     this.themeTitle,
     this.inviteLink,
     this.votingEndsAt,
+    this.submissionDeadline,
     this.winnerUserId,
   });
 }
