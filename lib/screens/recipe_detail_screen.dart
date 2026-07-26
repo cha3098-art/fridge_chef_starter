@@ -35,121 +35,67 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     _selectedServings = widget.servings;
   }
 
-  Future<void> _showServingsSheet() async {
-    int picked = _selectedServings;
-    final confirmed = await showModalBottomSheet<bool>(
+  Future<void> _selectAndConsume() async {
+    final recipe = widget.recipe;
+    final n = _selectedServings;
+    final confirmed = await showDialog<bool>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE2E8F0),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                tr('몇 인분으로 요리할까요?', 'How many servings?'),
-                style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.ink),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                tr('선택한 인분에 맞게 냉장고 재료가 차감돼요.',
-                    'Fridge ingredients will be deducted accordingly.'),
-                style: const TextStyle(fontSize: 13, color: AppColors.inkSoft),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [1, 2, 3, 4].map((n) {
-                  final isSelected = n == picked;
-                  return Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: n < 4 ? 8 : 0),
-                      child: GestureDetector(
-                        onTap: () => setSheetState(() => picked = n),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          height: 52,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.green
-                                : const Color(0xFFF1F5F9),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            tr('$n인분', '$n serving${n > 1 ? 's' : ''}'),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: isSelected
-                                  ? Colors.white
-                                  : AppColors.inkSoft,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton.icon(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  icon: const Icon(Icons.kitchen_outlined, size: 20),
-                  label: Text(
-                    tr('선택하기 ($picked인분) — 재료 소진',
-                        'Apply ($picked serving${picked > 1 ? 's' : ''}) — use ingredients'),
-                    style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.w700),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.green,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
-                    elevation: 0,
-                  ),
-                ),
-              ),
-            ],
-          ),
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          tr('요리 선택 확인', 'Confirm selection'),
+          style: const TextStyle(
+              fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.ink),
         ),
+        content: Text(
+          tr('${recipe.title} $n인분을 요리할까요?\n냉장고 재료가 차감됩니다.',
+              'Cook ${recipe.titleEn} for $n ${n > 1 ? 'servings' : 'serving'}?\nIngredients will be deducted from your fridge.'),
+          style: const TextStyle(
+              fontSize: 14, color: AppColors.inkSoft, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(tr('취소', 'Cancel'),
+                style: const TextStyle(color: AppColors.inkSoft)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.green,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+            child: Text(tr('요리 시작!', 'Start cooking!'),
+                style: const TextStyle(fontWeight: FontWeight.w700)),
+          ),
+        ],
       ),
     );
 
     if (confirmed == true && mounted) {
-      setState(() => _selectedServings = picked);
       await FridgeStore.instance
-          .consumeIngredients(widget.recipe.ingredients, picked);
+          .consumeIngredients(widget.recipe.ingredients, n);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(tr(
-                '${widget.recipe.title} $picked인분 재료를 냉장고에서 차감했어요 🍳',
-                'Deducted $picked-serving ingredients from your fridge 🍳')),
+            content: Row(
+              children: [
+                const Text('🍳 ', style: TextStyle(fontSize: 16)),
+                Expanded(
+                  child: Text(tr(
+                      '${recipe.title} $n인분 재료를 냉장고에서 차감했어요!',
+                      'Deducted $n-serving ingredients from your fridge!')),
+                ),
+              ],
+            ),
             behavior: SnackBarBehavior.floating,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            backgroundColor: AppColors.green,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -181,44 +127,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 color: Colors.white,
                 shadows: [Shadow(color: Colors.black45, blurRadius: 6)],
               ),
-              actions: [
-                GestureDetector(
-                  onTap: _showServingsSheet,
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 4),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.25),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.6), width: 1),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.restaurant_menu,
-                            size: 14, color: Colors.white),
-                        const SizedBox(width: 4),
-                        Text(
-                          tr('$_selectedServings인분 선택',
-                              '$_selectedServings serving${_selectedServings > 1 ? 's' : ''}'),
-                          style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white),
-                        ),
-                        const SizedBox(width: 2),
-                        const Icon(Icons.expand_more,
-                            size: 14, color: Colors.white),
-                      ],
-                    ),
-                  ),
-                ),
-                const Padding(
+              actions: const [
+                Padding(
                     padding: EdgeInsets.only(right: 8),
                     child: LanguageToggle()),
-                const Padding(
+                Padding(
                     padding: EdgeInsets.only(right: 12),
                     child: ChefTierBadge()),
               ],
@@ -319,6 +232,111 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               ),
             ),
           ],
+        ),
+        bottomNavigationBar: _buildBottomBar(),
+      ),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return SafeArea(
+      minimum: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // 인분 스테퍼
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _stepBtn(
+                    icon: Icons.remove,
+                    onTap: _selectedServings > 1
+                        ? () => setState(() => _selectedServings--)
+                        : null,
+                  ),
+                  SizedBox(
+                    width: 56,
+                    child: Text(
+                      tr('$_selectedServings인분', '$_selectedServings serv.'),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.ink,
+                      ),
+                    ),
+                  ),
+                  _stepBtn(
+                    icon: Icons.add,
+                    onTap: _selectedServings < 8
+                        ? () => setState(() => _selectedServings++)
+                        : null,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            // 요리 선택 CTA
+            Expanded(
+              child: SizedBox(
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _selectAndConsume,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.green,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('🍳', style: TextStyle(fontSize: 18)),
+                      const SizedBox(width: 6),
+                      Text(
+                        tr('요리 선택하기', 'Cook this'),
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w800),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _stepBtn({required IconData icon, VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Icon(
+          icon,
+          size: 18,
+          color: onTap == null ? const Color(0xFFCBD5E1) : AppColors.ink,
         ),
       ),
     );

@@ -493,7 +493,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
       ),
       (
         iconAsset: 'assets/icon/menu_invite.png',
-        label: tr('식사 초대', 'Invite'),
+        label: tr('SNS공유', 'Share'),
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => ShareScreen(fridgeIngredientNames: names))),
       ),
