@@ -85,6 +85,28 @@ class _BattleScreenState extends State<BattleScreen> {
     _load();
   }
 
+  Future<void> _vote(BattleListItem item, String participantId) async {
+    try {
+      await BattleStore.instance
+          .vote(battleId: item.battle.id, participantId: participantId);
+      _load();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('투표에 실패했어요', 'Could not submit the vote'))),
+      );
+    }
+  }
+
+  Future<void> _copyInvite(Battle battle) async {
+    if (battle.inviteLink == null) return;
+    await Clipboard.setData(ClipboardData(text: battle.inviteLink!));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(tr('초대 링크를 복사했어요', 'Invite link copied'))),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,6 +205,9 @@ class _BattleScreenState extends State<BattleScreen> {
                                           battleId: item.battle.id)));
                               _load();
                             },
+                            onVote: (participantId) =>
+                                _vote(item, participantId),
+                            onCopyInvite: () => _copyInvite(item.battle),
                           );
                         },
                       ),
@@ -229,8 +254,15 @@ class _BattleScreenState extends State<BattleScreen> {
 class _BattleCard extends StatelessWidget {
   final BattleListItem item;
   final VoidCallback onTap;
+  final ValueChanged<String> onVote;
+  final VoidCallback onCopyInvite;
 
-  const _BattleCard({required this.item, required this.onTap});
+  const _BattleCard({
+    required this.item,
+    required this.onTap,
+    required this.onVote,
+    required this.onCopyInvite,
+  });
 
   (String, Color) get _statusTag => switch (item.battle.status) {
         BattleStatus.waitingOpponent =>
@@ -238,9 +270,9 @@ class _BattleCard extends StatelessWidget {
         BattleStatus.submitted =>
           (tr('매칭 중', 'In progress'), AppColors.carrot),
         BattleStatus.voting =>
-          (tr('투표 중', 'Voting'), AppColors.gold),
+          (tr('매칭 중 · 투표', 'In progress · Voting'), AppColors.gold),
         BattleStatus.completed =>
-          (tr('종료', 'Ended'), AppColors.green),
+          (tr('매칭 종료', 'Ended'), AppColors.green),
         BattleStatus.cancelled =>
           (tr('취소', 'Cancelled'), AppColors.red),
       };
@@ -250,6 +282,26 @@ class _BattleCard extends StatelessWidget {
     final (statusLabel, statusColor) = _statusTag;
     final battle = item.battle;
     final challenger = item.challengerNickname;
+    final isVoting = battle.status == BattleStatus.voting;
+    final isCompleted = battle.status == BattleStatus.completed;
+
+    final iAmHost = item.myParticipantId != null &&
+        item.myParticipantId == item.hostParticipantId;
+    final iAmChallenger = item.myParticipantId != null &&
+        item.myParticipantId == item.challengerParticipantId;
+
+    final canVoteHost = isVoting && item.hostParticipantId != null && iAmChallenger;
+    final canVoteChallenger =
+        isVoting && item.challengerParticipantId != null && iAmHost;
+    final votedHost = item.myVoteParticipantId != null &&
+        item.myVoteParticipantId == item.hostParticipantId;
+    final votedChallenger = item.myVoteParticipantId != null &&
+        item.myVoteParticipantId == item.challengerParticipantId;
+
+    final showInvite = battle.status == BattleStatus.waitingOpponent &&
+        iAmHost &&
+        challenger == null &&
+        battle.inviteLink != null;
 
     return InkWell(
       onTap: onTap,
@@ -297,17 +349,21 @@ class _BattleCard extends StatelessWidget {
             const SizedBox(height: 12),
             // VS row
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: _NicknameChip(
                     nickname: item.hostNickname,
                     label: tr('호스트', 'Host'),
                     align: CrossAxisAlignment.start,
+                    voteCount: item.hostVotes,
+                    showVoteCount: isVoting || isCompleted,
                   ),
                 ),
                 Container(
                   width: 36,
                   height: 36,
+                  margin: const EdgeInsets.only(top: 2),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: AppColors.paperDeep,
@@ -322,10 +378,58 @@ class _BattleCard extends StatelessWidget {
                     label: tr('상대', 'Opponent'),
                     align: CrossAxisAlignment.end,
                     isPlaceholder: challenger == null,
+                    voteCount: item.challengerVotes,
+                    showVoteCount:
+                        challenger != null && (isVoting || isCompleted),
                   ),
                 ),
               ],
             ),
+            if (canVoteHost || canVoteChallenger) ...[
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: canVoteHost
+                        ? _VoteButton(
+                            voted: votedHost,
+                            onTap: () => onVote(item.hostParticipantId!),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                  const SizedBox(width: 44),
+                  Expanded(
+                    child: canVoteChallenger
+                        ? _VoteButton(
+                            voted: votedChallenger,
+                            onTap: () =>
+                                onVote(item.challengerParticipantId!),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ],
+            if (showInvite) ...[
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                height: 34,
+                child: OutlinedButton.icon(
+                  onPressed: onCopyInvite,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.green,
+                    side: const BorderSide(color: AppColors.green),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.link, size: 14),
+                  label: Text(tr('초대 링크 복사', 'Copy invite link'),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
             const SizedBox(height: 8),
             // Footer: time ago + chevron
             Row(
@@ -361,12 +465,16 @@ class _NicknameChip extends StatelessWidget {
   final String label;
   final CrossAxisAlignment align;
   final bool isPlaceholder;
+  final int voteCount;
+  final bool showVoteCount;
 
   const _NicknameChip({
     required this.nickname,
     required this.label,
     required this.align,
     this.isPlaceholder = false,
+    this.voteCount = 0,
+    this.showVoteCount = false,
   });
 
   @override
@@ -392,7 +500,54 @@ class _NicknameChip extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
+        if (showVoteCount) ...[
+          const SizedBox(height: 3),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: align == CrossAxisAlignment.end
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
+            children: [
+              const Text('🗳️', style: TextStyle(fontSize: 10)),
+              const SizedBox(width: 2),
+              Text('$voteCount${tr('표', '')}',
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.carrot)),
+            ],
+          ),
+        ],
       ],
+    );
+  }
+}
+
+class _VoteButton extends StatelessWidget {
+  final bool voted;
+  final VoidCallback onTap;
+
+  const _VoteButton({required this.voted, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 30,
+      child: OutlinedButton(
+        onPressed: voted ? null : onTap,
+        style: OutlinedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          foregroundColor: voted ? Colors.white : AppColors.green,
+          backgroundColor: voted ? AppColors.green : Colors.transparent,
+          side: const BorderSide(color: AppColors.green),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: Text(
+          voted ? tr('투표함 ✓', 'Voted ✓') : tr('투표하기', 'Vote'),
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 }

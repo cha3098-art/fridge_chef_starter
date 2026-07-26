@@ -270,8 +270,9 @@ class BattleStore extends ChangeNotifier {
     );
   }
 
-  /// 내 배틀 목록에 호스트/챌린저 닉네임을 미리 포함한다 — 배틀 목록 화면의 VS 카드용.
+  /// 내 배틀 목록에 호스트/챌린저 닉네임 + 득표수까지 미리 포함한다 — 배틀 목록 화면의 VS 카드용.
   Future<List<BattleListItem>> fetchMyBattleItems() async {
+    final uid = _client.auth.currentUser?.id;
     final battles = await fetchMyBattles();
     if (battles.isEmpty) return [];
 
@@ -287,6 +288,20 @@ class BattleStore extends ChangeNotifier {
     final userIds = participants.map((p) => p.userId).toSet().toList();
     final nicknames = await fetchNicknames(userIds);
 
+    final voteRows = await _client
+        .from('battle_votes')
+        .select()
+        .inFilter('battle_id', battleIds);
+    final votes = (voteRows as List)
+        .map((r) => BattleVote(
+              id: r['id'] as String,
+              battleId: r['battle_id'] as String,
+              voterId: r['voter_id'] as String,
+              votedForParticipantId: r['voted_for_participant_id'] as String,
+              createdAt: DateTime.parse(r['created_at'] as String),
+            ))
+        .toList();
+
     return battles.map((battle) {
       final parts = participants.where((p) => p.battleId == battle.id).toList();
       final host = parts
@@ -295,13 +310,32 @@ class BattleStore extends ChangeNotifier {
       final challenger = parts
           .where((p) => p.role == BattleParticipantRole.opponent)
           .firstOrNull;
+      final battleVotes = votes.where((v) => v.battleId == battle.id).toList();
+      final myParticipant = parts.where((p) => p.userId == uid).firstOrNull;
+      final myVote = battleVotes
+          .where((v) => v.voterId == uid)
+          .map((v) => v.votedForParticipantId)
+          .firstOrNull;
+
       return BattleListItem(
         battle: battle,
         hostNickname:
             host == null ? '?' : (nicknames[host.userId] ?? tr('냉장고 셰프', 'Chef')),
+        hostParticipantId: host?.id,
+        hostVotes: host == null
+            ? 0
+            : battleVotes.where((v) => v.votedForParticipantId == host.id).length,
         challengerNickname: challenger == null
             ? null
             : (nicknames[challenger.userId] ?? tr('냉장고 셰프', 'Chef')),
+        challengerParticipantId: challenger?.id,
+        challengerVotes: challenger == null
+            ? 0
+            : battleVotes
+                .where((v) => v.votedForParticipantId == challenger.id)
+                .length,
+        myParticipantId: myParticipant?.id,
+        myVoteParticipantId: myVote,
       );
     }).toList();
   }

@@ -24,7 +24,6 @@ import 'banner_detail_screen.dart';
 import '../models/battle.dart';
 import '../models/battle_list_item.dart';
 import '../services/battle_store.dart';
-import 'battle_detail_screen.dart';
 import 'battle_screen.dart';
 import 'board_screen.dart';
 import 'kfood_screen.dart';
@@ -120,8 +119,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
 
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (_) => BattleDetailScreen(battleId: battle.id)),
+        MaterialPageRoute(builder: (_) => const BattleScreen()),
       ),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
