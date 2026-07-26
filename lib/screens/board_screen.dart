@@ -241,7 +241,7 @@ class _BoardScreenState extends State<BoardScreen> {
             label: Text(tr('글쓰기', 'Write'),
                 style: const TextStyle(fontWeight: FontWeight.w700)),
           ),
-          bottomNavigationBar: const MainBottomNav(currentIndex: 5),
+          bottomNavigationBar: const MainBottomNav(currentIndex: 4),
         );
       },
     );

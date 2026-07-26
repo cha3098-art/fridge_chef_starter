@@ -200,7 +200,7 @@ class _RankingScreenState extends State<RankingScreen> {
             );
           },
         ),
-        bottomNavigationBar: const MainBottomNav(currentIndex: 4),
+        bottomNavigationBar: const MainBottomNav(currentIndex: 3),
       ),
     );
   }

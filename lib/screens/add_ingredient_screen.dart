@@ -433,6 +433,16 @@ class _QuantitySheetState extends State<_QuantitySheet> {
               ),
             ),
           ),
+          const SizedBox(height: 6),
+          Text(
+            tr(
+                '포장지에 적힌 유통기한(또는 소비기한)을 눌러서 선택해주세요. 이 날짜를 기준으로 '
+                '냉장고 화면의 D-Day와 유통기한 임박 알림이 계산돼요.',
+                'Tap to select the expiry (or use-by) date printed on the package. '
+                    "It's what drives the D-Day badge and expiry alerts on the Fridge screen."),
+            style: const TextStyle(
+                fontSize: 11.5, color: AppColors.inkSoft, height: 1.4),
+          ),
           const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,

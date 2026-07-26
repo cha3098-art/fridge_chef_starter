@@ -185,7 +185,7 @@ class _MyScreenState extends State<MyScreen> {
           );
         },
       ),
-      bottomNavigationBar: const MainBottomNav(currentIndex: 3),
+      bottomNavigationBar: const MainBottomNav(currentIndex: 2),
     );
   }
 

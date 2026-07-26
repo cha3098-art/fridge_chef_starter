@@ -244,7 +244,7 @@ class _KFoodScreenState extends State<KFoodScreen>
           ],
         ),
         bottomNavigationBar: MainBottomNav(
-          currentIndex: 6,
+          currentIndex: 5,
           fridgeIngredientNames: fridgeIngredientNames,
         ),
       ),

@@ -17,7 +17,6 @@ import '../theme/food_visuals.dart';
 import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
 import '../widgets/language_toggle.dart';
-import '../widgets/main_bottom_nav.dart';
 
 String _timeAgoLabel(DateTime dateTime) {
   final diff = DateTime.now().difference(dateTime);
@@ -306,10 +305,6 @@ class _ShareScreenState extends State<ShareScreen>
             style: const TextStyle(
                 fontWeight: FontWeight.bold, letterSpacing: -0.3),
           ),
-        ),
-        bottomNavigationBar: MainBottomNav(
-          currentIndex: 2,
-          fridgeIngredientNames: widget.fridgeIngredientNames,
         ),
       ),
     );
