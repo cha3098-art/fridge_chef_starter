@@ -231,6 +231,11 @@ class _MyScreenState extends State<MyScreen> {
     );
     if (confirmed == true) {
       await AuthService.instance.signOut();
+      if (!context.mounted) return;
+      // 마이 화면까지 쌓인 push 스택을 걷어내서 AuthGate가 다시 그려주는
+      // 로그인 화면(루트 라우트)이 바로 보이게 한다 — 안 그러면 로그아웃 후에도
+      // 지금 화면에 그대로 남아 있다가 뒤로가기를 눌러야만 로그인 화면이 나타난다.
+      Navigator.of(context).popUntil((route) => route.isFirst);
     }
   }
 
