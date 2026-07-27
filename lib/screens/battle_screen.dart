@@ -406,7 +406,9 @@ class _BattleCard extends StatelessWidget {
         myUid != null;
 
     return InkWell(
-      onTap: onTap,
+      // 상대가 없는 배틀은 카드 어디를 눌러도 바로 참여된다 — "리스트를 누르면 참여"라는
+      // 요청을 그대로 반영. 그 외 상태에서는 기존대로 상세 화면으로 이동한다.
+      onTap: showJoin ? onJoin : onTap,
       borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
@@ -460,6 +462,11 @@ class _BattleCard extends StatelessWidget {
                     align: CrossAxisAlignment.start,
                     voteCount: item.hostVotes,
                     showVoteCount: isVoting || isCompleted,
+                    canVote: canVoteHost,
+                    voted: votedHost,
+                    onTap: canVoteHost && !votedHost
+                        ? () => onVote(item.hostParticipantId!)
+                        : null,
                   ),
                 ),
                 Container(
@@ -483,35 +490,15 @@ class _BattleCard extends StatelessWidget {
                     voteCount: item.challengerVotes,
                     showVoteCount:
                         challenger != null && (isVoting || isCompleted),
+                    canVote: canVoteChallenger,
+                    voted: votedChallenger,
+                    onTap: canVoteChallenger && !votedChallenger
+                        ? () => onVote(item.challengerParticipantId!)
+                        : null,
                   ),
                 ),
               ],
             ),
-            if (canVoteHost || canVoteChallenger) ...[
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: canVoteHost
-                        ? _VoteButton(
-                            voted: votedHost,
-                            onTap: () => onVote(item.hostParticipantId!),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                  const SizedBox(width: 44),
-                  Expanded(
-                    child: canVoteChallenger
-                        ? _VoteButton(
-                            voted: votedChallenger,
-                            onTap: () =>
-                                onVote(item.challengerParticipantId!),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ],
-              ),
-            ],
             if (showInvite) ...[
               const SizedBox(height: 10),
               SizedBox(
@@ -591,6 +578,9 @@ class _NicknameChip extends StatelessWidget {
   final bool isPlaceholder;
   final int voteCount;
   final bool showVoteCount;
+  final bool canVote;
+  final bool voted;
+  final VoidCallback? onTap;
 
   const _NicknameChip({
     required this.nickname,
@@ -599,11 +589,15 @@ class _NicknameChip extends StatelessWidget {
     this.isPlaceholder = false,
     this.voteCount = 0,
     this.showVoteCount = false,
+    this.canVote = false,
+    this.voted = false,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final isTappable = onTap != null;
+    final content = Column(
       crossAxisAlignment: align,
       children: [
         Text(label,
@@ -617,7 +611,13 @@ class _NicknameChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w700,
-            color: isPlaceholder ? AppColors.inkSoft : AppColors.ink,
+            color: isPlaceholder
+                ? AppColors.inkSoft
+                : isTappable
+                    ? AppColors.green
+                    : AppColors.ink,
+            decoration: isTappable ? TextDecoration.underline : null,
+            decorationColor: AppColors.green,
             fontStyle:
                 isPlaceholder ? FontStyle.italic : FontStyle.normal,
           ),
@@ -626,51 +626,41 @@ class _NicknameChip extends StatelessWidget {
         ),
         if (showVoteCount) ...[
           const SizedBox(height: 3),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: align == CrossAxisAlignment.end
-                ? MainAxisAlignment.end
-                : MainAxisAlignment.start,
-            children: [
-              const Text('🗳️', style: TextStyle(fontSize: 10)),
-              const SizedBox(width: 2),
-              Text('$voteCount${tr('표', '')}',
-                  style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.carrot)),
-            ],
-          ),
+          // 투표 가능하면 "눌러서 투표" 안내로, 이미 투표했거나 남의 투표 상황을 볼 때는
+          // 득표수로 — 사람 이름(칩) 어디를 눌러도 같은 동작이라 별도 버튼이 필요 없다.
+          if (canVote && !voted)
+            Text(tr('👆 눌러서 투표', '👆 Tap to vote'),
+                style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.green))
+          else
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: align == CrossAxisAlignment.end
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
+              children: [
+                Text(voted ? '✓' : '🗳️', style: const TextStyle(fontSize: 10)),
+                const SizedBox(width: 2),
+                Text('$voteCount${tr('표', '')}',
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: voted ? AppColors.green : AppColors.carrot)),
+              ],
+            ),
         ],
       ],
     );
-  }
-}
 
-class _VoteButton extends StatelessWidget {
-  final bool voted;
-  final VoidCallback onTap;
-
-  const _VoteButton({required this.voted, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 30,
-      child: OutlinedButton(
-        onPressed: voted ? null : onTap,
-        style: OutlinedButton.styleFrom(
-          padding: EdgeInsets.zero,
-          foregroundColor: voted ? Colors.white : AppColors.green,
-          backgroundColor: voted ? AppColors.green : Colors.transparent,
-          side: const BorderSide(color: AppColors.green),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Text(
-          voted ? tr('투표함 ✓', 'Voted ✓') : tr('투표하기', 'Vote'),
-          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        ),
+    if (!isTappable) return content;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: content,
       ),
     );
   }
@@ -703,8 +693,9 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
 
   void _confirm() {
     final freeTitle = _themeController.text.trim();
-    final title = _selectedRecipe ??
-        (freeTitle.isEmpty ? tr('자유 주제 배틀', 'Freestyle battle') : freeTitle);
+    final title = freeTitle.isNotEmpty
+        ? freeTitle
+        : (_selectedRecipe ?? tr('자유 주제 배틀', 'Freestyle battle'));
     Navigator.pop(context, (themeTitle: title, recipeId: null as String?));
   }
 
@@ -768,27 +759,34 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
                       ? '🇰🇷 ${tr(r.title, r.titleEn)}'
                       : tr(r.title, r.titleEn)))),
             ],
-            onChanged: (v) => setState(() => _selectedRecipe = v),
+            onChanged: (v) => setState(() {
+              _selectedRecipe = v;
+              // 레시피를 고르면 제목을 비워둔 사람에게만 레시피명을 기본값으로 채워준다 —
+              // 이미 직접 쓴 제목은 덮어쓰지 않는다.
+              if (v != null && _themeController.text.trim().isEmpty) {
+                _themeController.text = v;
+              }
+            }),
           ),
-          if (_selectedRecipe == null) ...[
-            const SizedBox(height: 16),
-            TextField(
-              controller: _themeController,
-              style: const TextStyle(color: AppColors.ink),
-              decoration: InputDecoration(
-                labelText: tr('배틀 제목', 'Battle title'),
-                hintText:
-                    tr('예: 매운 음식 대결', 'e.g. Spiciest dish challenge'),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide:
-                      const BorderSide(color: AppColors.green, width: 1.5),
-                ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _themeController,
+            style: const TextStyle(color: AppColors.ink),
+            decoration: InputDecoration(
+              labelText: tr('배틀 제목', 'Battle title'),
+              hintText: _selectedRecipe != null
+                  ? tr('비워두면 "$_selectedRecipe"로 등록돼요',
+                      'Leave blank to use "$_selectedRecipe"')
+                  : tr('예: 매운 음식 대결', 'e.g. Spiciest dish challenge'),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide:
+                    const BorderSide(color: AppColors.green, width: 1.5),
               ),
             ),
-          ],
+          ),
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
