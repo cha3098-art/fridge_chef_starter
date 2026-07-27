@@ -9,6 +9,7 @@ class BattleListItem {
   final int hostVotes;
   final String? challengerNickname;
   final String? challengerParticipantId;
+  final String? challengerUserId;
   final int challengerVotes;
 
   /// 현재 로그인한 유저가 이 배틀의 참가자라면 그 participant id (호스트든 상대든).
@@ -24,6 +25,7 @@ class BattleListItem {
     this.hostVotes = 0,
     this.challengerNickname,
     this.challengerParticipantId,
+    this.challengerUserId,
     this.challengerVotes = 0,
     this.myParticipantId,
     this.myVoteParticipantId,

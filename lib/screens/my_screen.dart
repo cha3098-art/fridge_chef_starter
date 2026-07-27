@@ -84,7 +84,7 @@ class _MyScreenState extends State<MyScreen> {
             IconButton(
               icon: const Icon(Icons.logout, color: AppColors.inkSoft),
               tooltip: tr('로그아웃', 'Sign out'),
-              onPressed: () => AuthService.instance.signOut(),
+              onPressed: () => _confirmSignOut(context),
             ),
           const Padding(
               padding: EdgeInsets.only(right: 12), child: LanguageToggle()),
@@ -181,12 +181,57 @@ class _MyScreenState extends State<MyScreen> {
                         .toList(),
                   ),
                 ),
+              if (profile != null) ...[
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _confirmSignOut(context),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.red,
+                      side: const BorderSide(color: AppColors.red),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.logout, size: 18),
+                    label: Text(tr('로그아웃', 'Sign out'),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14)),
+                  ),
+                ),
+              ],
             ],
           );
         },
       ),
       bottomNavigationBar: const MainBottomNav(currentIndex: 2),
     );
+  }
+
+  Future<void> _confirmSignOut(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(tr('로그아웃 할까요?', 'Sign out?')),
+        content: Text(tr('다시 로그인하면 정보는 그대로 남아있어요.',
+            "You'll keep all your data — just sign back in anytime.")),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(tr('취소', 'Cancel')),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(tr('로그아웃', 'Sign out'),
+                style: const TextStyle(color: AppColors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await AuthService.instance.signOut();
+    }
   }
 
   static String? _nextGeneralTierLabel(int points) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/recipe_catalog.dart';
 import '../l10n/tr.dart';
@@ -11,7 +12,7 @@ import '../widgets/fridge_mascot.dart';
 import 'battle_detail_screen.dart';
 import 'quick_match_screen.dart';
 
-/// 내 배틀 목록 + 새 배틀 만들기(초대 링크 기반) + 빠른 매칭(실시간 대기열 기반).
+/// 내 배틀 목록 + 진행 중인 모든 배틀(참여/투표) + 새 배틀 만들기 + 빠른 매칭.
 class BattleScreen extends StatefulWidget {
   const BattleScreen({super.key});
 
@@ -19,24 +20,40 @@ class BattleScreen extends StatefulWidget {
   State<BattleScreen> createState() => _BattleScreenState();
 }
 
-class _BattleScreenState extends State<BattleScreen> {
-  List<BattleListItem> _items = [];
+class _BattleScreenState extends State<BattleScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  List<BattleListItem> _myItems = [];
+  List<BattleListItem> _openItems = [];
   bool _loaded = false;
   String? _errorMessage;
+
+  String? get _myUid => Supabase.instance.client.auth.currentUser?.id;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _load();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _load() async {
     setState(() => _errorMessage = null);
     try {
-      final items = await BattleStore.instance.fetchMyBattleItems();
+      final results = await Future.wait([
+        BattleStore.instance.fetchMyBattleItems(),
+        BattleStore.instance.fetchOpenBattleItems(),
+      ]);
       if (!mounted) return;
       setState(() {
-        _items = items;
+        _myItems = results[0];
+        _openItems = results[1];
         _loaded = true;
       });
     } catch (e) {
@@ -107,6 +124,23 @@ class _BattleScreenState extends State<BattleScreen> {
     );
   }
 
+  Future<void> _join(BattleListItem item) async {
+    try {
+      await BattleStore.instance.joinBattle(item.battle.id);
+      if (!mounted) return;
+      await Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => BattleDetailScreen(battleId: item.battle.id)));
+      _load();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(tr('참여에 실패했어요 (이미 상대가 있을 수 있어요)',
+                'Could not join (opponent slot may be taken)'))),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,6 +164,39 @@ class _BattleScreenState extends State<BattleScreen> {
                     fontWeight: FontWeight.w800, letterSpacing: -0.3)),
           ],
         ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: AppColors.paperDeep,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.cardBorder),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                labelColor: Colors.white,
+                unselectedLabelColor: AppColors.inkSoft,
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                indicator: BoxDecoration(
+                  color: AppColors.green,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                labelStyle: const TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 13),
+                unselectedLabelStyle: const TextStyle(
+                    fontWeight: FontWeight.w600, fontSize: 13),
+                tabs: [
+                  Tab(text: tr('내 배틀', 'My Battles')),
+                  Tab(text: tr('전체 배틀', 'All Battles')),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: _load,
@@ -137,80 +204,26 @@ class _BattleScreenState extends State<BattleScreen> {
             ? const Center(
                 child: CircularProgressIndicator(color: AppColors.green))
             : _errorMessage != null
-                ? ListView(
-                    padding: const EdgeInsets.all(AppSpacing.md),
+                ? _buildError()
+                : TabBarView(
+                    controller: _tabController,
                     children: [
-                      const SizedBox(height: 60),
-                      Center(
-                        child: Column(
-                          children: [
-                            const FridgeMascot(size: 84),
-                            const SizedBox(height: AppSpacing.md),
-                            Text(_errorMessage!,
-                                style:
-                                    const TextStyle(color: AppColors.red)),
-                            const SizedBox(height: 16),
-                            OutlinedButton(
-                              onPressed: _load,
-                              child: Text(tr('다시 시도', 'Try again')),
-                            ),
-                          ],
-                        ),
+                      _buildList(
+                        items: _myItems,
+                        emptyTitle:
+                            tr('아직 참여 중인 배틀이 없어요', 'No battles yet'),
+                        emptySubtitle: tr('상대를 초대하거나 빠른 매칭으로 대결을 시작해보세요!',
+                            'Invite someone or use Quick Match to start!'),
+                      ),
+                      _buildList(
+                        items: _openItems,
+                        emptyTitle: tr(
+                            '진행 중인 배틀이 없어요', 'No battles happening right now'),
+                        emptySubtitle: tr('새 배틀을 만들어서 첫 대결을 시작해보세요!',
+                            'Create the first battle and get things started!'),
                       ),
                     ],
-                  )
-                : _items.isEmpty
-                    ? ListView(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        children: [
-                          const SizedBox(height: 60),
-                          Center(
-                            child: Column(
-                              children: [
-                                const FridgeMascot(size: 84),
-                                const SizedBox(height: AppSpacing.md),
-                                Text(
-                                  tr('아직 참여 중인 배틀이 없어요',
-                                      'No battles yet'),
-                                  style: const TextStyle(
-                                      color: AppColors.inkSoft),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  tr('상대를 초대하거나 빠른 매칭으로 대결을 시작해보세요!',
-                                      'Invite someone or use Quick Match to start!'),
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      color: AppColors.inkSoft, fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(
-                            AppSpacing.md, AppSpacing.md, AppSpacing.md, 100),
-                        itemCount: _items.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: AppSpacing.sm),
-                        itemBuilder: (context, index) {
-                          final item = _items[index];
-                          return _BattleCard(
-                            item: item,
-                            onTap: () async {
-                              await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (_) => BattleDetailScreen(
-                                          battleId: item.battle.id)));
-                              _load();
-                            },
-                            onVote: (participantId) =>
-                                _vote(item, participantId),
-                            onCopyInvite: () => _copyInvite(item.battle),
-                          );
-                        },
-                      ),
+                  ),
       ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
@@ -247,21 +260,99 @@ class _BattleScreenState extends State<BattleScreen> {
       ),
     );
   }
+
+  Widget _buildError() {
+    return ListView(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      children: [
+        const SizedBox(height: 60),
+        Center(
+          child: Column(
+            children: [
+              const FridgeMascot(size: 84),
+              const SizedBox(height: AppSpacing.md),
+              Text(_errorMessage!, style: const TextStyle(color: AppColors.red)),
+              const SizedBox(height: 16),
+              OutlinedButton(
+                onPressed: _load,
+                child: Text(tr('다시 시도', 'Try again')),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildList({
+    required List<BattleListItem> items,
+    required String emptyTitle,
+    required String emptySubtitle,
+  }) {
+    if (items.isEmpty) {
+      return ListView(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        children: [
+          const SizedBox(height: 60),
+          Center(
+            child: Column(
+              children: [
+                const FridgeMascot(size: 84),
+                const SizedBox(height: AppSpacing.md),
+                Text(emptyTitle, style: const TextStyle(color: AppColors.inkSoft)),
+                const SizedBox(height: 6),
+                Text(
+                  emptySubtitle,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppColors.inkSoft, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.md, AppSpacing.md, 100),
+      itemCount: items.length,
+      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return _BattleCard(
+          item: item,
+          myUid: _myUid,
+          onTap: () async {
+            await Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => BattleDetailScreen(battleId: item.battle.id)));
+            _load();
+          },
+          onVote: (participantId) => _vote(item, participantId),
+          onCopyInvite: () => _copyInvite(item.battle),
+          onJoin: () => _join(item),
+        );
+      },
+    );
+  }
 }
 
 // ── 배틀 목록 카드 ─────────────────────────────────────────────────────────────
 
 class _BattleCard extends StatelessWidget {
   final BattleListItem item;
+  final String? myUid;
   final VoidCallback onTap;
   final ValueChanged<String> onVote;
   final VoidCallback onCopyInvite;
+  final VoidCallback onJoin;
 
   const _BattleCard({
     required this.item,
+    required this.myUid,
     required this.onTap,
     required this.onVote,
     required this.onCopyInvite,
+    required this.onJoin,
   });
 
   (String, Color) get _statusTag => switch (item.battle.status) {
@@ -284,24 +375,35 @@ class _BattleCard extends StatelessWidget {
     final challenger = item.challengerNickname;
     final isVoting = battle.status == BattleStatus.voting;
     final isCompleted = battle.status == BattleStatus.completed;
+    final isWaiting = battle.status == BattleStatus.waitingOpponent;
 
     final iAmHost = item.myParticipantId != null &&
         item.myParticipantId == item.hostParticipantId;
-    final iAmChallenger = item.myParticipantId != null &&
-        item.myParticipantId == item.challengerParticipantId;
 
-    final canVoteHost = isVoting && item.hostParticipantId != null && iAmChallenger;
-    final canVoteChallenger =
-        isVoting && item.challengerParticipantId != null && iAmHost;
+    // 투표는 참가자 두 명끼리만이 아니라 관객으로 로그인한 누구나 할 수 있다 — 단, 본인
+    // 요리에는 투표할 수 없다 (battle_detail_screen.dart의 canVote 규칙과 동일).
+    final canVoteHost = isVoting &&
+        item.hostParticipantId != null &&
+        myUid != null &&
+        myUid != battle.hostUserId;
+    final canVoteChallenger = isVoting &&
+        item.challengerParticipantId != null &&
+        myUid != null &&
+        myUid != item.challengerUserId;
     final votedHost = item.myVoteParticipantId != null &&
         item.myVoteParticipantId == item.hostParticipantId;
     final votedChallenger = item.myVoteParticipantId != null &&
         item.myVoteParticipantId == item.challengerParticipantId;
 
-    final showInvite = battle.status == BattleStatus.waitingOpponent &&
-        iAmHost &&
+    final showInvite =
+        isWaiting && iAmHost && challenger == null && battle.inviteLink != null;
+
+    // 상대 자리가 비어 있고 나는 아직 이 배틀의 참가자가 아니면(호스트도 아니고 이미
+    // 들어간 것도 아니면) 목록에서 바로 참여할 수 있다 — "전체 배틀" 탭의 핵심 액션.
+    final showJoin = isWaiting &&
         challenger == null &&
-        battle.inviteLink != null;
+        item.myParticipantId == null &&
+        myUid != null;
 
     return InkWell(
       onTap: onTap,
@@ -425,6 +527,28 @@ class _BattleCard extends StatelessWidget {
                   ),
                   icon: const Icon(Icons.link, size: 14),
                   label: Text(tr('초대 링크 복사', 'Copy invite link'),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+            if (showJoin) ...[
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                height: 34,
+                child: ElevatedButton.icon(
+                  onPressed: onJoin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.green,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.bolt, size: 14),
+                  label: Text(tr('참여하기', 'Join battle'),
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.bold)),
                 ),

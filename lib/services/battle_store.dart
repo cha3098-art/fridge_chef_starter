@@ -270,11 +270,11 @@ class BattleStore extends ChangeNotifier {
     );
   }
 
-  /// 내 배틀 목록에 호스트/챌린저 닉네임 + 득표수까지 미리 포함한다 — 배틀 목록 화면의 VS 카드용.
-  Future<List<BattleListItem>> fetchMyBattleItems() async {
-    final uid = _client.auth.currentUser?.id;
-    final battles = await fetchMyBattles();
+  /// battles 목록을 호스트/챌린저 닉네임 + 득표수 + 내 참가/투표 상태까지 채운
+  /// BattleListItem으로 변환한다 — 내 배틀 목록, 전체 배틀 목록, 대시보드 티커가 공유한다.
+  Future<List<BattleListItem>> _buildListItems(List<Battle> battles) async {
     if (battles.isEmpty) return [];
+    final uid = _client.auth.currentUser?.id;
 
     final battleIds = battles.map((b) => b.id).toList();
     final participantRows = await _client
@@ -329,6 +329,7 @@ class BattleStore extends ChangeNotifier {
             ? null
             : (nicknames[challenger.userId] ?? tr('냉장고 셰프', 'Chef')),
         challengerParticipantId: challenger?.id,
+        challengerUserId: challenger?.userId,
         challengerVotes: challenger == null
             ? 0
             : battleVotes
@@ -338,6 +339,26 @@ class BattleStore extends ChangeNotifier {
         myVoteParticipantId: myVote,
       );
     }).toList();
+  }
+
+  /// 내 배틀 목록에 호스트/챌린저 닉네임 + 득표수까지 미리 포함한다 — 배틀 목록 화면의 VS 카드용.
+  Future<List<BattleListItem>> fetchMyBattleItems() async {
+    final battles = await fetchMyBattles();
+    return _buildListItems(battles);
+  }
+
+  /// 진행 중인 모든 배틀(호스트/상대 무관) — 누구나 둘러보다 참여하거나 관객으로 투표할 수 있는
+  /// 공개 배틀 목록용. battles 테이블 SELECT는 전체 공개라 참여 여부와 무관하게 조회된다.
+  Future<List<BattleListItem>> fetchOpenBattleItems({int limit = 50}) async {
+    final rows = await _client
+        .from('battles')
+        .select()
+        .inFilter('status', ['waiting_opponent', 'submitted', 'voting'])
+        .order('created_at', ascending: false)
+        .limit(limit);
+    final battles =
+        (rows as List).map((r) => _mapBattle(r as Map<String, dynamic>)).toList();
+    return _buildListItems(battles);
   }
 
   /// 메인 대시보드 라이브 티커용 — submitted/voting 상태인 배틀 최근 N건
@@ -352,39 +373,7 @@ class BattleStore extends ChangeNotifier {
       final battles = (rows as List)
           .map((r) => _mapBattle(r as Map<String, dynamic>))
           .toList();
-      if (battles.isEmpty) return [];
-
-      final battleIds = battles.map((b) => b.id).toList();
-      final participantRows = await _client
-          .from('battle_participants')
-          .select()
-          .inFilter('battle_id', battleIds);
-      final participants = (participantRows as List)
-          .map((r) => _mapParticipant(r as Map<String, dynamic>))
-          .toList();
-
-      final userIds = participants.map((p) => p.userId).toSet().toList();
-      final nicknames = await fetchNicknames(userIds);
-
-      return battles.map((battle) {
-        final parts =
-            participants.where((p) => p.battleId == battle.id).toList();
-        final host = parts
-            .where((p) => p.role == BattleParticipantRole.host)
-            .firstOrNull;
-        final challenger = parts
-            .where((p) => p.role == BattleParticipantRole.opponent)
-            .firstOrNull;
-        return BattleListItem(
-          battle: battle,
-          hostNickname: host == null
-              ? '?'
-              : (nicknames[host.userId] ?? tr('냉장고 셰프', 'Chef')),
-          challengerNickname: challenger == null
-              ? null
-              : (nicknames[challenger.userId] ?? tr('냉장고 셰프', 'Chef')),
-        );
-      }).toList();
+      return _buildListItems(battles);
     } catch (e) {
       debugPrint('BattleStore.fetchActiveBattleItems failed: $e');
       return [];
