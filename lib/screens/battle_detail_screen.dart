@@ -11,6 +11,7 @@ import '../models/battle_participant.dart';
 import '../services/battle_store.dart';
 import '../services/chef_points_store.dart';
 import '../theme/app_theme.dart';
+import '../utils/battle_countdown.dart';
 import '../utils/image_compressor.dart';
 import '../widgets/fridge_mascot.dart';
 
@@ -214,14 +215,15 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
     );
     if (source == null || !mounted) return;
 
+    final picked = await ImagePicker()
+        .pickImage(source: source, maxWidth: 1600, imageQuality: 88);
+    if (picked == null || !mounted) return;
+
+    final comment = await _promptForComment();
+    if (!mounted) return;
+
     setState(() => _busy = true);
     try {
-      final picked = await ImagePicker()
-          .pickImage(source: source, maxWidth: 1600, imageQuality: 88);
-      if (picked == null) {
-        setState(() => _busy = false);
-        return;
-      }
       final compressedFile =
           await ImageCompressor.compressImage(File(picked.path));
       final bytes = await compressedFile.readAsBytes();
@@ -233,7 +235,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
       await BattleStore.instance.submitPhoto(
           battleId: widget.battleId,
           participantId: participant.id,
-          photoUrl: url);
+          photoUrl: url,
+          comment: comment);
       await _load();
     } catch (e) {
       if (!mounted) return;
@@ -244,6 +247,55 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  /// 사진과 함께 남길 짧은 한마디(최대 200자)를 물어본다. 건너뛰기를 누르면 null.
+  Future<String?> _promptForComment() async {
+    final controller = TextEditingController();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(tr('한마디 남기기 (선택)', 'Say something (optional)'),
+            style: const TextStyle(
+                fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.ink)),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLength: battleCommentMaxLength,
+          maxLines: 3,
+          style: const TextStyle(color: AppColors.ink),
+          decoration: InputDecoration(
+            hintText: tr('요리하면서 있었던 일을 짧게 남겨보세요',
+                'Share a quick note about your dish'),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, null),
+            child: Text(tr('건너뛰기', 'Skip'),
+                style: const TextStyle(color: AppColors.inkSoft)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dialogContext, controller.text),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.green,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: Text(tr('완료', 'Done'),
+                style: const TextStyle(fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    return result;
   }
 
   Future<void> _vote(String participantId) async {
@@ -496,8 +548,11 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
         battle.winnerUserId == participant.userId;
     final voteCount = _voteCounts[participant.id] ?? 0;
     final iVotedThis = _myVoteParticipantId == participant.id;
-    final canVote =
-        battle.status == BattleStatus.voting && participant.userId != _myUid;
+    // 매칭이 성사된 순간(status=submitted)부터 배틀이 끝나기 전까지는 본인을 제외한
+    // 누구나 투표할 수 있다 — 사진 제출 여부와 무관하다.
+    final canVote = (battle.status == BattleStatus.submitted ||
+            battle.status == BattleStatus.voting) &&
+        participant.userId != _myUid;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -542,8 +597,18 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                             color: AppColors.inkSoft)),
                   ),
           ),
+          if (participant.comment != null && participant.comment!.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              participant.comment!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  fontSize: 12, color: AppColors.inkSoft, height: 1.4),
+            ),
+          ],
           const SizedBox(height: 10),
-          if (battle.status == BattleStatus.voting ||
+          if (battle.status == BattleStatus.submitted ||
+              battle.status == BattleStatus.voting ||
               battle.status == BattleStatus.completed) ...[
             const SizedBox(height: 8),
             _VoteBar(
@@ -672,13 +737,20 @@ class _StatusBanner extends StatelessWidget {
           AppColors.red
         ),
     };
-    final deadline = battle.status == BattleStatus.voting
-        ? battle.votingEndsAt
-        : battle.status == BattleStatus.submitted
-            ? battle.submissionDeadline
-            : null;
-    final remaining = deadline?.difference(DateTime.now());
     final isSubmissionPhase = battle.status == BattleStatus.submitted;
+    final isWaitingPhase = battle.status == BattleStatus.waitingOpponent;
+
+    // 제출 마감(3시간)은 기존 문구를 그대로 쓰고, 매칭 대기(1일)·투표 종료(2일)는
+    // formatBattleCountdown으로 "N일 N시간 남음" 형태를 공유한다.
+    final Duration? remaining = isSubmissionPhase
+        ? battle.submissionDeadline?.difference(DateTime.now())
+        : isWaitingPhase
+            ? battle.createdAt
+                .add(const Duration(days: 1))
+                .difference(DateTime.now())
+            : battle.status == BattleStatus.voting
+                ? battle.votingEndsAt?.difference(DateTime.now())
+                : null;
 
     return Container(
       width: double.infinity,
@@ -699,17 +771,20 @@ class _StatusBanner extends StatelessWidget {
                   ? (isSubmissionPhase
                       ? tr('곧 자동으로 기권 처리돼요',
                           'Closing out as a forfeit any moment now')
-                      : tr('곧 자동으로 마감돼요',
-                          'Closing automatically any moment now'))
+                      : isWaitingPhase
+                          ? tr('곧 자동으로 삭제돼요',
+                              'This will be deleted any moment now')
+                          : tr('곧 자동으로 마감돼요',
+                              'Closing automatically any moment now'))
                   : isSubmissionPhase
-                      ? tr(
-                          '${remaining.inHours}시간 후 미제출 시 자동 기권',
+                      ? tr('${remaining.inHours}시간 후 미제출 시 자동 기권',
                           'Auto-forfeits if not submitted in ${remaining.inHours}h')
-                      : remaining.inHours >= 1
-                          ? tr('${remaining.inHours}시간 후 자동 마감',
-                              'Closes automatically in ${remaining.inHours}h')
-                          : tr('${remaining.inMinutes}분 후 자동 마감',
-                              'Closes automatically in ${remaining.inMinutes}m'),
+                      : isWaitingPhase
+                          ? tr(
+                              '${formatBattleCountdown(remaining)} 안에 상대가 없으면 자동 삭제돼요',
+                              'Auto-deletes if no one joins within ${formatBattleCountdown(remaining)}')
+                          : tr('${formatBattleCountdown(remaining)} 후 자동 마감',
+                              'Closes automatically in ${formatBattleCountdown(remaining)}'),
               textAlign: TextAlign.center,
               style:
                   TextStyle(color: color.withValues(alpha: 0.8), fontSize: 11),

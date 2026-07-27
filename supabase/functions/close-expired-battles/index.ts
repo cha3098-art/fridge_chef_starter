@@ -1,11 +1,14 @@
 // close-expired-battles
 //
 // pg_cron이 5분마다 호출하는 서버 타이머. 배틀이 어느 단계에서든 무기한 방치되지 않도록
-// 세 가지 타임아웃을 여기서 함께 처리한다:
-//   1) voting_ends_at이 지난 배틀 — 득표수를 세어 승자를 확정한다 (기존 로직)
+// 네 가지 정리를 여기서 함께 처리한다:
+//   1) voting_ends_at이 지난 배틀(투표 시작 후 2일) — 득표수를 세어 승자를 확정한다
 //   2) submission_deadline이 지난 배틀(status=submitted) — 한쪽만 제출했으면 부전승,
 //      아무도 제출 안 했으면 취소 처리한다
-//   3) 초대 링크 배틀에 상대가 24시간 넘게 안 들어온 경우(status=waiting_opponent) — 취소 처리한다
+//   3) 초대 링크 배틀에 상대가 24시간 넘게 안 들어온 경우(status=waiting_opponent) — 매칭이
+//      끝내 안 된 것이므로 취소가 아니라 완전히 삭제한다(참가자/투표는 FK cascade로 함께 삭제됨)
+//   4) 종료(completed)된 배틀이 전체 10건을 넘으면, 오래된 것부터 초과분을 삭제한다
+//      — "전체 배틀" 목록에 끝난 배틀이 무한히 쌓이지 않도록 하는 보관 개수 제한
 // 특정 사용자 세션이 아니라 크론이 호출하므로, service role 키로 RLS를 우회해서 전체를 조회한다.
 //
 // 배포: supabase functions deploy close-expired-battles --no-verify-jwt
@@ -148,7 +151,7 @@ Deno.serve(async (req) => {
       if (submitted.length === 2) {
         await client.from('battles').update({
           status: 'voting',
-          voting_ends_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          voting_ends_at: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
         }).eq('id', battleId);
         submissionResolved++;
       } else if (submitted.length === 1) {
@@ -183,8 +186,9 @@ Deno.serve(async (req) => {
     }
   }
 
-  // 3) 초대 링크 방치(24시간) — 상대가 끝내 안 들어오면 취소.
-  let staleInvitesCancelled = 0;
+  // 3) 초대 링크 방치(24시간) — 상대가 끝내 안 들어오면 매칭 자체가 성립 안 된 것이므로
+  // 완전히 삭제한다(취소 상태로 남겨두지 않음 — 참가자 행은 host 하나뿐이라 cascade로 함께 지워진다).
+  let staleInvitesDeleted = 0;
   {
     const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data: staleInvites, error: fetchError } = await client
@@ -197,19 +201,43 @@ Deno.serve(async (req) => {
     }
     for (const battle of staleInvites ?? []) {
       const battleId = battle.id as string;
-      const { error: updateError } = await client
-        .from('battles')
-        .update({ status: 'cancelled' })
-        .eq('id', battleId);
-      if (updateError) {
-        console.error(`[close-expired-battles] battle ${battleId} 초대 만료 처리 실패:`, updateError);
+      // 알림은 삭제 전에 먼저 보낸다 — battleId를 가리키는 알림은 삭제 후에는 무의미하다.
+      await notifyUsers([battle.host_user_id as string], '초대가 만료됐어요',
+        '상대가 응답하지 않아 배틀이 자동으로 삭제됐어요', battleId);
+      const { error: deleteError } = await client.from('battles').delete().eq('id', battleId);
+      if (deleteError) {
+        console.error(`[close-expired-battles] battle ${battleId} 삭제 실패:`, deleteError);
         continue;
       }
-      staleInvitesCancelled++;
-      await notifyUsers([battle.host_user_id as string], '초대가 만료됐어요',
-        '상대가 응답하지 않아 배틀이 자동으로 취소됐어요', battleId);
+      staleInvitesDeleted++;
     }
   }
 
-  return jsonResponse({ votingClosed, submissionResolved, staleInvitesCancelled });
+  // 4) 종료된 배틀 보관 개수 제한(10건) — "전체 배틀" 목록에 끝난 배틀이 무한정 쌓이지
+  // 않도록, completed 배틀이 10건을 넘으면 오래된 것부터 초과분을 삭제한다.
+  let completedPruned = 0;
+  {
+    const { data: completedBattles, error: fetchError } = await client
+      .from('battles')
+      .select('id')
+      .eq('status', 'completed')
+      .order('created_at', { ascending: false });
+    if (fetchError) {
+      console.error('[close-expired-battles] completed 배틀 조회 실패:', fetchError);
+    }
+    const overflow = (completedBattles ?? []).slice(10);
+    for (const battle of overflow) {
+      const { error: deleteError } = await client
+        .from('battles')
+        .delete()
+        .eq('id', battle.id as string);
+      if (deleteError) {
+        console.error(`[close-expired-battles] battle ${battle.id} 보관 개수 초과 삭제 실패:`, deleteError);
+        continue;
+      }
+      completedPruned++;
+    }
+  }
+
+  return jsonResponse({ votingClosed, submissionResolved, staleInvitesDeleted, completedPruned });
 });

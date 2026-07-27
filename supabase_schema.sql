@@ -481,6 +481,7 @@ create table public.battle_participants (
   user_id uuid not null references public.users(id) on delete cascade,
   role text check (role in ('host','opponent')) not null,
   photo_url text,
+  comment text check (char_length(comment) <= 200),
   submitted_at timestamptz,
   joined_at timestamptz not null default now(),
   unique (battle_id, user_id),
@@ -629,13 +630,17 @@ select cron.schedule(
 );
 
 -- ============================================================
--- 19. 배틀 타임아웃 & 기권 처리 (Phase 2 보완)
--- 지금까지는 "양쪽 다 제출 -> 투표(voting_ends_at)"만 자동 마감이 있었고, 그 앞 단계가
--- 무기한 방치될 수 있었다. 두 케이스를 서버 타이머로 정리한다:
+-- 19. 배틀 타임아웃 & 기권 처리 (Phase 2 보완, 이후 타이밍 정책 개정)
+-- close-expired-battles(5분마다 실행)가 배틀의 각 단계를 서버 타이머로 정리한다:
 --   1) 매칭/참가는 됐는데(status=submitted) 한쪽 또는 양쪽이 사진을 영영 안 올리는 경우
---      -> submission_deadline(3시간)이 지나면 close-expired-battles가 부전승/취소 처리
---   2) 초대 링크 배틀에 상대가 영영 안 들어오는 경우(status=waiting_opponent)
---      -> created_at 24시간이 지나면 close-expired-battles가 자동 취소
+--      -> submission_deadline(3시간)이 지나면 부전승/취소 처리
+--   2) 양쪽 다 사진을 제출하면(status=voting) 그 순간부터 2일 뒤 voting_ends_at에 득표수로
+--      승자를 확정한다 — 단, 투표 자체는 status=submitted 단계(매칭 성사 직후)부터 이미
+--      누구나(자기 자신 제외) 할 수 있다. 사진 제출 여부와 투표 가능 여부는 별개다.
+--   3) 초대 링크 배틀에 상대가 24시간 안 들어오면(status=waiting_opponent) 매칭이 끝내
+--      성립 안 된 것이므로 취소가 아니라 배틀 자체를 삭제한다
+--   4) completed 배틀이 전체 10건을 넘으면 "전체 배틀" 목록이 무한히 쌓이지 않도록
+--      오래된 것부터 초과분을 삭제한다
 -- 수동 포기/취소는 cancel_battle() RPC로 처리한다. battles UPDATE RLS가 "호스트만 배틀
 -- 정보 수정"으로 제한돼 있어서(테마/레시피 등은 호스트만 고쳐야 하므로), 상대방도 기권할
 -- 수 있으려면 참가자 본인 확인만 하는 별도 SECURITY DEFINER 함수로 우회해야 한다.
@@ -752,3 +757,12 @@ begin
 end;
 $$;
 grant execute on function public.register_device_token(text) to authenticated;
+
+-- ============================================================
+-- 21. battle_participants.comment (사진과 함께 남기는 짧은 한마디, 최대 200자)
+-- 이미 배포된 DB는 create table 시점에 이 컬럼이 없었으므로 별도로 추가한다.
+-- 새로 스키마를 처음부터 적용하는 환경에서는 위 18번 create table에 이미 포함돼 있어
+-- 아래 alter는 조용히 아무 일도 하지 않는다(if not exists).
+-- ============================================================
+alter table public.battle_participants
+  add column if not exists comment text check (char_length(comment) <= 200);

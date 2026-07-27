@@ -62,6 +62,7 @@ class BattleStore extends ChangeNotifier {
         userId: row['user_id'] as String,
         role: BattleParticipantRoleDb.fromDbValue(row['role'] as String),
         photoPath: row['photo_url'] as String?,
+        comment: row['comment'] as String?,
         submittedAt: row['submitted_at'] == null
             ? null
             : DateTime.parse(row['submitted_at'] as String),
@@ -197,13 +198,19 @@ class BattleStore extends ChangeNotifier {
     return _client.storage.from('board-photos').getPublicUrl(path);
   }
 
-  /// 내 참가자 행에 완성 사진을 제출한다. 양쪽 다 제출을 마치면 배틀 상태를 voting으로 넘긴다.
+  /// 내 참가자 행에 완성 사진(+선택적으로 한마디)을 제출한다. 양쪽 다 제출을 마치면
+  /// 배틀 상태를 voting으로 넘긴다.
   Future<void> submitPhoto(
       {required String battleId,
       required String participantId,
-      required String photoUrl}) async {
+      required String photoUrl,
+      String? comment}) async {
+    final trimmedComment = comment?.trim();
     await _client.from('battle_participants').update({
       'photo_url': photoUrl,
+      'comment': (trimmedComment == null || trimmedComment.isEmpty)
+          ? null
+          : trimmedComment,
       'submitted_at': DateTime.now().toIso8601String(),
     }).eq('id', participantId);
 
@@ -213,10 +220,10 @@ class BattleStore extends ChangeNotifier {
     if (bothSubmitted) {
       await _client.from('battles').update({
         'status': BattleStatus.voting.dbValue,
-        // 24시간 뒤 close-expired-battles Edge Function이 자동으로 마감하고 승자를 확정한다
+        // 2일 뒤 close-expired-battles Edge Function이 자동으로 마감하고 승자를 확정한다
         // (호스트가 "투표 마감" 버튼을 직접 안 눌러도 배틀이 무기한 방치되지 않는다).
         'voting_ends_at':
-            DateTime.now().add(const Duration(hours: 24)).toIso8601String(),
+            DateTime.now().add(const Duration(days: 2)).toIso8601String(),
       }).eq('id', battleId);
       await _notify(
         userIds: participants.map((p) => p.userId).toList(),
@@ -349,15 +356,27 @@ class BattleStore extends ChangeNotifier {
 
   /// 진행 중인 모든 배틀(호스트/상대 무관) — 누구나 둘러보다 참여하거나 관객으로 투표할 수 있는
   /// 공개 배틀 목록용. battles 테이블 SELECT는 전체 공개라 참여 여부와 무관하게 조회된다.
-  Future<List<BattleListItem>> fetchOpenBattleItems({int limit = 50}) async {
-    final rows = await _client
+  /// 종료(completed)된 배틀도 목록에서 사라지지 않고 최신순으로 계속 보이되, 진행 중인 배틀
+  /// 아래로 밀려나도록 두 그룹을 따로 불러와 이어붙인다 — 보관 개수(최대 10건) 자체는
+  /// close-expired-battles가 서버에서 오래된 것부터 정리한다.
+  Future<List<BattleListItem>> fetchOpenBattleItems(
+      {int activeLimit = 50, int completedLimit = 10}) async {
+    final activeRows = await _client
         .from('battles')
         .select()
         .inFilter('status', ['waiting_opponent', 'submitted', 'voting'])
         .order('created_at', ascending: false)
-        .limit(limit);
-    final battles =
-        (rows as List).map((r) => _mapBattle(r as Map<String, dynamic>)).toList();
+        .limit(activeLimit);
+    final completedRows = await _client
+        .from('battles')
+        .select()
+        .eq('status', 'completed')
+        .order('created_at', ascending: false)
+        .limit(completedLimit);
+    final battles = [
+      ...(activeRows as List).map((r) => _mapBattle(r as Map<String, dynamic>)),
+      ...(completedRows as List).map((r) => _mapBattle(r as Map<String, dynamic>)),
+    ];
     return _buildListItems(battles);
   }
 

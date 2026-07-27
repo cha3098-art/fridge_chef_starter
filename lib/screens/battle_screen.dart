@@ -8,6 +8,7 @@ import '../models/battle.dart';
 import '../models/battle_list_item.dart';
 import '../services/battle_store.dart';
 import '../theme/app_theme.dart';
+import '../utils/battle_countdown.dart';
 import '../widgets/fridge_mascot.dart';
 import 'battle_detail_screen.dart';
 import 'quick_match_screen.dart';
@@ -355,13 +356,35 @@ class _BattleCard extends StatelessWidget {
     required this.onJoin,
   });
 
+  /// 상대를 기다리는 중이면 매칭 만료(1일)까지, 투표가 진행 중이면 배틀 종료(2일)까지
+  /// 남은 시간을 보여준다 — 그 외 상태에서는 표시하지 않는다.
+  String? get _countdownText {
+    final battle = item.battle;
+    if (battle.status == BattleStatus.waitingOpponent) {
+      final remaining =
+          battle.createdAt.add(const Duration(days: 1)).difference(DateTime.now());
+      if (remaining.isNegative) return null;
+      return tr('매칭 마감 ${formatBattleCountdown(remaining)}',
+          'Match closes: ${formatBattleCountdown(remaining)}');
+    }
+    if ((battle.status == BattleStatus.submitted ||
+            battle.status == BattleStatus.voting) &&
+        battle.votingEndsAt != null) {
+      final remaining = battle.votingEndsAt!.difference(DateTime.now());
+      if (remaining.isNegative) return null;
+      return tr('배틀 종료 ${formatBattleCountdown(remaining)}',
+          'Battle ends: ${formatBattleCountdown(remaining)}');
+    }
+    return null;
+  }
+
   (String, Color) get _statusTag => switch (item.battle.status) {
         BattleStatus.waitingOpponent =>
           (tr('매칭 전', 'Finding match'), AppColors.inkSoft),
         BattleStatus.submitted =>
-          (tr('매칭 중', 'In progress'), AppColors.carrot),
+          (tr('매칭 중 · 투표 가능', 'In progress · Votable'), AppColors.carrot),
         BattleStatus.voting =>
-          (tr('매칭 중 · 투표', 'In progress · Voting'), AppColors.gold),
+          (tr('투표 중', 'Voting'), AppColors.gold),
         BattleStatus.completed =>
           (tr('매칭 종료', 'Ended'), AppColors.green),
         BattleStatus.cancelled =>
@@ -373,20 +396,24 @@ class _BattleCard extends StatelessWidget {
     final (statusLabel, statusColor) = _statusTag;
     final battle = item.battle;
     final challenger = item.challengerNickname;
+    final isSubmitted = battle.status == BattleStatus.submitted;
     final isVoting = battle.status == BattleStatus.voting;
     final isCompleted = battle.status == BattleStatus.completed;
     final isWaiting = battle.status == BattleStatus.waitingOpponent;
+    // 매칭이 성사된(상대가 들어온) 순간부터 배틀이 끝나기 전까지는 계속 투표할 수 있다 —
+    // 사진을 아직 안 올렸어도 상관없다. "투표 가능"과 "사진 제출 완료"는 서로 다른 조건이다.
+    final isVotable = isSubmitted || isVoting;
 
     final iAmHost = item.myParticipantId != null &&
         item.myParticipantId == item.hostParticipantId;
 
     // 투표는 참가자 두 명끼리만이 아니라 관객으로 로그인한 누구나 할 수 있다 — 단, 본인
     // 요리에는 투표할 수 없다 (battle_detail_screen.dart의 canVote 규칙과 동일).
-    final canVoteHost = isVoting &&
+    final canVoteHost = isVotable &&
         item.hostParticipantId != null &&
         myUid != null &&
         myUid != battle.hostUserId;
-    final canVoteChallenger = isVoting &&
+    final canVoteChallenger = isVotable &&
         item.challengerParticipantId != null &&
         myUid != null &&
         myUid != item.challengerUserId;
@@ -450,6 +477,21 @@ class _BattleCard extends StatelessWidget {
                 ),
               ],
             ),
+            if (_countdownText != null) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.timer_outlined,
+                      size: 12, color: AppColors.inkSoft),
+                  const SizedBox(width: 3),
+                  Text(_countdownText!,
+                      style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.inkSoft)),
+                ],
+              ),
+            ],
             const SizedBox(height: 12),
             // VS row
             Row(
@@ -461,7 +503,7 @@ class _BattleCard extends StatelessWidget {
                     label: tr('호스트', 'Host'),
                     align: CrossAxisAlignment.start,
                     voteCount: item.hostVotes,
-                    showVoteCount: isVoting || isCompleted,
+                    showVoteCount: isVotable || isCompleted,
                     canVote: canVoteHost,
                     voted: votedHost,
                     onTap: canVoteHost && !votedHost
@@ -489,7 +531,7 @@ class _BattleCard extends StatelessWidget {
                     isPlaceholder: challenger == null,
                     voteCount: item.challengerVotes,
                     showVoteCount:
-                        challenger != null && (isVoting || isCompleted),
+                        challenger != null && (isVotable || isCompleted),
                     canVote: canVoteChallenger,
                     voted: votedChallenger,
                     onTap: canVoteChallenger && !votedChallenger
