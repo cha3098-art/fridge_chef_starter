@@ -110,11 +110,11 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
     if (_activeBattles.isEmpty) return const SizedBox.shrink();
     final item = _activeBattles[_tickerIndex % _activeBattles.length];
     final battle = item.battle;
-    final statusLabel = battle.status == BattleStatus.voting
-        ? tr('투표 중', 'Voting')
-        : tr('진행 중', 'Live');
-    final statusColor =
-        battle.status == BattleStatus.voting ? AppColors.gold : AppColors.carrot;
+    final isVoting = battle.status == BattleStatus.voting;
+    final statusIcon = isVoting ? '🗳️' : '⚔️';
+    final statusLabel =
+        isVoting ? tr('투표 중', 'Voting') : tr('배틀 진행중', 'Battle live');
+    final statusColor = isVoting ? AppColors.gold : AppColors.carrot;
     final challenger = item.challengerNickname ?? tr('대기 중', 'Waiting');
 
     return GestureDetector(
@@ -149,13 +149,19 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
             children: [
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: statusColor,
                   borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                        color: statusColor.withValues(alpha: 0.35),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2)),
+                  ],
                 ),
                 child: Text(
-                  '● $statusLabel',
+                  '$statusIcon $statusLabel',
                   style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
@@ -195,47 +201,55 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
       animation: _tooltipBounce,
       builder: (context, child) => Transform.translate(
           offset: Offset(0, _tooltipBounce.value), child: child),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.ink,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          // 영수증 스캔 탭(재료 추가 화면)으로 바로 이동 — "눌러서 써보기" 안내와 일치.
+          onTap: () => _openAddIngredient(tab: 2),
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withValues(alpha: 0.12),
-                blurRadius: 10,
-                offset: const Offset(0, 4)),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  const Text('💡 ', style: TextStyle(fontSize: 16)),
-                  Expanded(
-                    child: Text(
-                      tr('영수증만 찍으면 식재료 등록 끝! 바로 써보기',
-                          'Snap a receipt and your fridge is stocked instantly!'),
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold),
-                    ),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppColors.ink,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.12),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4)),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      const Text('💡 ', style: TextStyle(fontSize: 16)),
+                      Expanded(
+                        child: Text(
+                          tr('영수증만 찍으면 식재료 등록 끝! 바로 써보기',
+                              'Snap a receipt and your fridge is stocked instantly!'),
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                GestureDetector(
+                  onTap: () => setState(() => _showTooltip = false),
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: Icon(Icons.close, color: Colors.white70, size: 16),
+                  ),
+                ),
+              ],
             ),
-            GestureDetector(
-              onTap: () => setState(() => _showTooltip = false),
-              child: const Padding(
-                padding: EdgeInsets.only(left: 8),
-                child: Icon(Icons.close, color: Colors.white70, size: 16),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

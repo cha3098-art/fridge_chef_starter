@@ -219,6 +219,14 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
         .pickImage(source: source, maxWidth: 1600, imageQuality: 88);
     if (picked == null || !mounted) return;
 
+    // 이미지 피커(카메라/갤러리)가 시스템 액티비티를 열었다 닫으면서 위젯 트리가 아직
+    // 자리를 못 잡은 채로 바로 다이얼로그를 띄우면 Flutter 프레임워크 내부에서
+    // "_dependents.isEmpty" assertion이 튀는 경우가 있다(붉은 에러 화면). 실제 제출
+    // 자체는 이어서 정상 진행되지만 화면이 잠깐 깨져 보이므로, 한 프레임 이상 쉬어서
+    // 트리가 안정된 뒤에 다이얼로그를 연다.
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (!mounted) return;
+
     final comment = await _promptForComment();
     if (!mounted) return;
 
@@ -262,7 +270,6 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                 fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.ink)),
         content: TextField(
           controller: controller,
-          autofocus: true,
           maxLength: battleCommentMaxLength,
           maxLines: 3,
           style: const TextStyle(color: AppColors.ink),
