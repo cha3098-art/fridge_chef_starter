@@ -5150,7 +5150,7 @@ const recipeCatalog = <Recipe>[
     titleEn: 'Mentaiko Butter Avocado Rice Bowl',
     emoji: '🥑',
     photoUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Fresh_Avocado_Toast_with_Egg.jpg/960px-Fresh_Avocado_Toast_with_Egg.jpg',
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Myeongnanjeot_%28pollock_roe%29.jpg/500px-Myeongnanjeot_%28pollock_roe%29.jpg',
     cookTimeMin: 10,
     difficulty: '하',
     cuisineType: '일식',
@@ -5324,7 +5324,8 @@ const recipeCatalog = <Recipe>[
     title: '연어 사케동',
     titleEn: 'Salmon Sake-Don (Raw Salmon Rice Bowl)',
     emoji: '🍣',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Salmon_Poke.jpg/960px-Salmon_Poke.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Salmon_sashimi_slices.jpg/960px-Salmon_sashimi_slices.jpg',
     cookTimeMin: 15,
     difficulty: '중',
     cuisineType: '일식',
@@ -5576,7 +5577,7 @@ const recipeCatalog = <Recipe>[
     titleEn: 'Truffle-Scented Mushroom Gnocchi',
     emoji: '🍝',
     photoUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/f/ff/Baked_Gnocchi_with_Taleggio_Cheese_and_Crispy_Sage_at_Il_Fornaio_in_Kilda.jpg',
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Gnocchis_with_Truffes_cream_-_El_Olivo_2025-03-23.jpg/960px-Gnocchis_with_Truffes_cream_-_El_Olivo_2025-03-23.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '이탈리아식',
@@ -5887,7 +5888,7 @@ const recipeCatalog = <Recipe>[
     titleEn: 'Creamy Chicken Liver Pâté',
     emoji: '🥖',
     photoUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Rillettes_and_toast.JPG/960px-Rillettes_and_toast.JPG',
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Chicken_Liver_P%C3%A2t%C3%A9.jpg/960px-Chicken_Liver_P%C3%A2t%C3%A9.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '프랑스식',
