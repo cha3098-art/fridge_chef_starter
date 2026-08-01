@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../data/kfood_catalog.dart';
+import '../l10n/recipe_i18n.dart';
 import '../l10n/tr.dart';
 import '../models/board_post.dart';
 import '../models/chef_points.dart';
@@ -111,10 +112,15 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
     final item = _activeBattles[_tickerIndex % _activeBattles.length];
     final battle = item.battle;
     final isVoting = battle.status == BattleStatus.voting;
-    final statusIcon = isVoting ? '🗳️' : '⚔️';
-    final statusLabel =
-        isVoting ? tr('투표 중', 'Voting') : tr('배틀 진행중', 'Battle live');
-    final statusColor = isVoting ? AppColors.gold : AppColors.carrot;
+    final isWaiting = battle.status == BattleStatus.waitingOpponent;
+    final statusIcon = isVoting ? '🗳️' : (isWaiting ? '🙋' : '⚔️');
+    final statusLabel = isVoting
+        ? tr('투표 중', 'Voting')
+        : isWaiting
+            ? tr('상대 기다리는 중', 'Waiting for opponent')
+            : tr('배틀 진행중', 'Battle live');
+    final statusColor =
+        isVoting ? AppColors.gold : (isWaiting ? AppColors.inkSoft : AppColors.carrot);
     final challenger = item.challengerNickname ?? tr('대기 중', 'Waiting');
 
     return GestureDetector(
@@ -934,7 +940,8 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                         style: const TextStyle(fontSize: 22)),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text('${item.name} · ${item.ddayLabel}',
+                      child: Text(
+                          '${trIngredientName(item.name)} · ${item.ddayLabel}',
                           style: const TextStyle(
                               color: AppColors.ink,
                               fontWeight: FontWeight.w700,
@@ -1244,7 +1251,7 @@ class _DashboardFridgeRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name,
+                Text(trIngredientName(item.name),
                     style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 14,

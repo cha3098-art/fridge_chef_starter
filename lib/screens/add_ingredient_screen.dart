@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../data/ingredient_catalog.dart';
+import '../l10n/recipe_i18n.dart';
 import '../l10n/tr.dart';
 import '../models/fridge_item.dart';
 import '../models/fridge_photo_analysis.dart';
@@ -242,7 +243,7 @@ class _SearchTabState extends State<_SearchTab> {
                   for (var i = 0; i < widget.cart.length; i++)
                     Chip(
                       label: Text(
-                        '${widget.cart[i].name} ${widget.cart[i].quantityLabel}',
+                        '${trIngredientName(widget.cart[i].name)} ${widget.cart[i].quantityLabel}',
                         style:
                             const TextStyle(fontSize: 11, color: AppColors.ink),
                       ),
@@ -287,7 +288,7 @@ class _SearchTabState extends State<_SearchTab> {
                       title: Padding(
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Text(
-                          entry.name,
+                          trIngredientName(entry.name),
                           style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
@@ -305,7 +306,7 @@ class _SearchTabState extends State<_SearchTab> {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            entry.category,
+                            trTag(entry.category),
                             style: const TextStyle(
                                 fontSize: 11,
                                 color: AppColors.inkSoft,
@@ -393,7 +394,7 @@ class _QuantitySheetState extends State<_QuantitySheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.entry.name,
+          Text(trIngredientName(widget.entry.name),
               style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -644,7 +645,7 @@ class _ReceiptScanTabState extends State<_ReceiptScanTab> {
                     name: _parsedItems[i].name,
                     category: _parsedItems[i].category,
                     size: 36),
-                title: Text(_parsedItems[i].name,
+                title: Text(trIngredientName(_parsedItems[i].name),
                     style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -857,6 +858,7 @@ class _PhotoRecognitionTabState extends State<_PhotoRecognitionTab> {
         ? const <String>[]
         : analysis.recognizedRaw
             .where((name) => !analysis.matched.any((m) => m.name == name))
+            .map(trIngredientName)
             .toList();
 
     return ListView(
@@ -924,7 +926,7 @@ class _PhotoRecognitionTabState extends State<_PhotoRecognitionTab> {
                     name: analysis.matched[i].name,
                     category: analysis.matched[i].category,
                     size: 36),
-                title: Text(analysis.matched[i].name,
+                title: Text(trIngredientName(analysis.matched[i].name),
                     style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 14,

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/recipe_i18n.dart';
+import '../l10n/tr.dart';
 import '../models/fridge_item.dart';
 import '../models/recipe.dart';
 import 'notification_service.dart';
@@ -80,8 +82,8 @@ class FridgeStore extends ChangeNotifier {
       if (!_expiryNotifiedItemIds.add(id)) continue; // 이미 알림을 보낸 재료면 스킵
       NotificationService.instance.showNotification(
         id: id.hashCode,
-        title: '유통기한이 얼마 안 남았어요',
-        body: '${item.name} · ${item.ddayLabel}',
+        title: tr('유통기한이 얼마 안 남았어요', 'Expiry date coming up'),
+        body: '${trIngredientName(item.name)} · ${item.ddayLabel}',
       );
     }
   }

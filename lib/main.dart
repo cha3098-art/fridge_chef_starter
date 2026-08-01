@@ -13,6 +13,7 @@ import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await LocaleStore.instance.init();
   await NotificationService.instance.init();
   try {
     // android/app/google-services.json이 아직 없으면(Firebase 프로젝트 미설정) 여기서 실패하는데,

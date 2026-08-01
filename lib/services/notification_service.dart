@@ -4,6 +4,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../l10n/recipe_i18n.dart';
+import '../l10n/tr.dart';
+
 /// 로컬 알림 배너 초기화/권한 요청/노출을 담당하는 싱글턴.
 /// 즉시 알림(댓글 실시간 구독)과 예약 알림(유통기한 임박) 둘 다 이 서비스를 거쳐 나간다.
 /// 실제 트리거 시점은 각 도메인 쪽(RealtimeNotificationManager, FridgeStore)에서 결정한다.
@@ -101,12 +104,17 @@ class NotificationService {
       presentSound: true,
     );
 
+    final localizedName = trIngredientName(ingredientName);
     await _localNotificationsPlugin.zonedSchedule(
       id,
-      '⏰ 식재료 유통기한 임박!',
+      tr('⏰ 식재료 유통기한 임박!', '⏰ Expiry date coming up!'),
       daysBefore == 0
-          ? "냉장고 속 '$ingredientName'의 유통기한이 오늘까지예요! 얼른 요리해보세요."
-          : "냉장고 속 '$ingredientName'의 유통기한이 $daysBefore일 남았어요.",
+          ? tr(
+              "냉장고 속 '$localizedName'의 유통기한이 오늘까지예요! 얼른 요리해보세요.",
+              "The '$localizedName' in your fridge expires today! Cook it up soon.")
+          : tr(
+              "냉장고 속 '$localizedName'의 유통기한이 $daysBefore일 남았어요.",
+              "The '$localizedName' in your fridge expires in $daysBefore days."),
       scheduled,
       const NotificationDetails(android: androidDetails, iOS: iosDetails),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,

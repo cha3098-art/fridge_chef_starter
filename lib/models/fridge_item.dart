@@ -1,3 +1,5 @@
+import '../l10n/tr.dart';
+
 enum DdayLevel { ok, warn, bad }
 
 /// user_ingredients 테이블에 대응하는 냉장고 재료 모델
@@ -37,8 +39,8 @@ class FridgeItem {
 
   String get ddayLabel {
     final d = daysLeft;
-    if (d == null) return '기한없음';
-    if (d < 0) return '만료';
+    if (d == null) return tr('기한없음', 'No expiry');
+    if (d < 0) return tr('만료', 'Expired');
     if (d == 0) return 'D-day';
     return 'D-$d';
   }
