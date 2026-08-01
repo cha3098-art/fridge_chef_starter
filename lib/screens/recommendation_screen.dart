@@ -71,9 +71,12 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     return matchRate + r.expiryUrgencyScore(daysLeftByName);
   }
 
-  /// onlyFullMatch 조건에서 완전히 일치하는 레시피가 하나도 없으면
-  /// 가장 가까운 상위 [_fallbackCount]개를 대신 보여준다 (isFallback = true)
-  ({List<Recipe> recipes, bool isFallback}) _computeRecipes() {
+  /// 추천(재료 1개 이상 보유) / 미일치(보유 재료 0개) 두 그룹으로 나눠 반환한다.
+  /// onlyFullMatch가 켜져 있으면 미일치 그룹은 숨긴다 — 단, 그 결과 추천 그룹마저
+  /// 텅 비면(보유 재료와 겹치는 레시피가 아예 없으면) 가장 가까운 상위
+  /// [_fallbackCount]개를 대신 보여준다 (isFallback = true).
+  ({List<Recipe> recommended, List<Recipe> unmatched, bool isFallback})
+      _computeRecipes() {
     final daysLeftByName = _daysLeftByName;
     final base = recipeCatalog.where((r) {
       if (_filter.cookTime != '전체') {
@@ -88,28 +91,37 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
       return true;
     }).toList();
 
-    base.sort((a, b) {
+    int byScore(Recipe a, Recipe b) {
       final scoreA = _totalScore(a, daysLeftByName);
       final scoreB = _totalScore(b, daysLeftByName);
       if (scoreA != scoreB) return scoreB.compareTo(scoreA);
       return a.requiredIngredients.length
           .compareTo(b.requiredIngredients.length);
-    });
+    }
 
-    if (!_filter.onlyFullMatch) return (recipes: base, isFallback: false);
+    final recommended = base
+        .where((r) => r.matchedCount(widget.fridgeIngredientNames) > 0)
+        .toList()
+      ..sort(byScore);
 
-    final fullMatches = base
-        .where((r) =>
-            r.matchedCount(widget.fridgeIngredientNames) >=
-            r.requiredIngredients.length)
-        .toList();
-    if (fullMatches.isNotEmpty)
-      return (recipes: fullMatches, isFallback: false);
+    if (_filter.onlyFullMatch) {
+      if (recommended.isNotEmpty) {
+        return (recommended: recommended, unmatched: const [], isFallback: false);
+      }
+      final fallback = List<Recipe>.from(base)..sort(byScore);
+      return (
+        recommended: fallback.take(_fallbackCount).toList(),
+        unmatched: const [],
+        isFallback: base.isNotEmpty,
+      );
+    }
 
-    return (
-      recipes: base.take(_fallbackCount).toList(),
-      isFallback: base.isNotEmpty
-    );
+    final unmatched = base
+        .where((r) => r.matchedCount(widget.fridgeIngredientNames) == 0)
+        .toList()
+      ..sort(byScore);
+
+    return (recommended: recommended, unmatched: unmatched, isFallback: false);
   }
 
   int get _activeFilterCount {
@@ -138,8 +150,15 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
   @override
   Widget build(BuildContext context) {
     final result = _computeRecipes();
-    final recipes = result.recipes;
+    final recommended = result.recommended;
+    final unmatched = result.unmatched;
     final isFallback = result.isFallback;
+    final totalCount = recommended.length + unmatched.length;
+    final items = <Object>[
+      ...recommended,
+      if (unmatched.isNotEmpty) const _UnmatchedSectionMarker(),
+      ...unmatched,
+    ];
 
     return ListenableBuilder(
       listenable: LocaleStore.instance,
@@ -258,7 +277,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
               child: Text(
-                tr('레시피 ${recipes.length}개', '${recipes.length} recipes'),
+                tr('레시피 $totalCount개', '$totalCount recipes'),
                 style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
               ),
             ),
@@ -293,7 +312,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                 ),
               ),
             Expanded(
-              child: recipes.isEmpty
+              child: items.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -307,26 +326,31 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                         ],
                       ),
                     )
-                  : ListView.separated(
+                  : ListView.builder(
                       padding: const EdgeInsets.fromLTRB(
                           AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
-                      itemCount: recipes.length,
-                      separatorBuilder: (_, __) =>
-                          const SizedBox(height: AppSpacing.sm),
+                      itemCount: items.length,
                       itemBuilder: (context, index) {
-                        final recipe = recipes[index];
-                        return _RecipeCard(
-                          recipe: recipe,
-                          fridgeIngredientNames: widget.fridgeIngredientNames,
-                          isUrgent:
-                              recipe.expiryUrgencyScore(_daysLeftByName) > 0,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => RecipeDetailScreen(
-                                recipe: recipe,
-                                fridgeIngredientNames:
-                                    widget.fridgeIngredientNames,
-                                servings: _filter.servings,
+                        final item = items[index];
+                        if (item is _UnmatchedSectionMarker) {
+                          return const _UnmatchedSectionHeader();
+                        }
+                        final recipe = item as Recipe;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                          child: _RecipeCard(
+                            recipe: recipe,
+                            fridgeIngredientNames: widget.fridgeIngredientNames,
+                            isUrgent:
+                                recipe.expiryUrgencyScore(_daysLeftByName) > 0,
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => RecipeDetailScreen(
+                                  recipe: recipe,
+                                  fridgeIngredientNames:
+                                      widget.fridgeIngredientNames,
+                                  servings: _filter.servings,
+                                ),
                               ),
                             ),
                           ),
@@ -404,6 +428,39 @@ class _CuisineCapsuleRow extends StatelessWidget {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+/// items 리스트에서 "여기부터 미일치 레시피 구역" 위치만 표시하는 마커 — 위젯을 그리지 않고
+/// itemBuilder에서 이 타입을 만나면 대신 [_UnmatchedSectionHeader]를 렌더링한다.
+class _UnmatchedSectionMarker {
+  const _UnmatchedSectionMarker();
+}
+
+/// 추천(재료 보유) 그룹과 미일치(보유 재료 0개) 그룹 사이의 구분선 + 안내 헤더.
+/// 미일치 레시피도 삭제하지 않고 이 구역 아래에 계속 보여줘서, 부족한 재료만 채우면
+/// 바로 도전할 수 있다는 걸 알려준다.
+class _UnmatchedSectionHeader extends StatelessWidget {
+  const _UnmatchedSectionHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: AppSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Divider(color: AppColors.line, height: 1),
+          const SizedBox(height: 12),
+          Text(
+            tr('💡 부족한 재료를 채워 도전해 보세요', "💡 Fill in what's missing to try these"),
+            style: const TextStyle(
+                fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.ink),
+          ),
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }
@@ -512,7 +569,7 @@ class _RecipeCard extends StatelessWidget {
                   child: Text(
                     level == RecipeMatchLevel.full
                         ? tr('완성 가능', 'Ready')
-                        : '$percentLabel%',
+                        : tr('재료매칭율 $percentLabel%', 'Match $percentLabel%'),
                     style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
