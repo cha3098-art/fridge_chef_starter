@@ -15,7 +15,7 @@ import 'recipe_detail_screen.dart';
 
 const _cookTimeOptions = ['전체', '15분 이내', '30분 이내', '60분 이내'];
 const _difficultyOptions = ['전체', '하', '중', '상'];
-const _cuisineOptions = ['전체', '한식', '중식', '양식', '분식'];
+const _cuisineOptions = ['전체', '한식', '중식', '양식', '분식', '일식', '이탈리아식', '프랑스식'];
 const _servingsOptions = ['1인분', '2인분', '3인분', '4인분'];
 
 typedef RecommendationFilter = ({
@@ -106,7 +106,11 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
 
     if (_filter.onlyFullMatch) {
       if (recommended.isNotEmpty) {
-        return (recommended: recommended, unmatched: const [], isFallback: false);
+        return (
+          recommended: recommended,
+          unmatched: const [],
+          isFallback: false
+        );
       }
       final fallback = List<Recipe>.from(base)..sort(byScore);
       return (
@@ -383,29 +387,28 @@ class _CuisineCapsuleRow extends StatelessWidget {
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.line, width: 1)),
       ),
-      child: SizedBox(
-        height: 54,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          itemCount: _cuisineOptions.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
-          itemBuilder: (context, index) {
-            final cuisine = _cuisineOptions[index];
-            final isSelected = selected == cuisine;
-            return GestureDetector(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final cuisine in _cuisineOptions)
+            GestureDetector(
               onTap: () => onSelected(cuisine),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.ink : AppColors.paperDeep,
+                  color:
+                      selected == cuisine ? AppColors.ink : AppColors.paperDeep,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isSelected ? AppColors.ink : AppColors.cardBorder,
+                    color: selected == cuisine
+                        ? AppColors.ink
+                        : AppColors.cardBorder,
                   ),
-                  boxShadow: isSelected
+                  boxShadow: selected == cuisine
                       ? [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.12),
@@ -421,13 +424,13 @@ class _CuisineCapsuleRow extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? Colors.white : AppColors.inkSoft,
+                    color:
+                        selected == cuisine ? Colors.white : AppColors.inkSoft,
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+        ],
       ),
     );
   }
@@ -455,9 +458,12 @@ class _UnmatchedSectionHeader extends StatelessWidget {
           const Divider(color: AppColors.line, height: 1),
           const SizedBox(height: 12),
           Text(
-            tr('💡 부족한 재료를 채워 도전해 보세요', "💡 Fill in what's missing to try these"),
+            tr('💡 부족한 재료를 채워 도전해 보세요',
+                "💡 Fill in what's missing to try these"),
             style: const TextStyle(
-                fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.ink),
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppColors.ink),
           ),
           const SizedBox(height: 8),
         ],
@@ -706,7 +712,8 @@ class _BuyIngredientsButtonState extends State<_BuyIngredientsButton>
   }
 
   void _showPurchaseSheet(BuildContext context) {
-    final missingLabel = widget.missingIngredients.map(trIngredientName).join(', ');
+    final missingLabel =
+        widget.missingIngredients.map(trIngredientName).join(', ');
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.card,
@@ -930,105 +937,107 @@ class _FilterSheetState extends State<_FilterSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-          20, 20, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(tr('필터', 'Filter'),
-              style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  color: AppColors.ink)),
-          const SizedBox(height: 16),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            activeThumbColor: AppColors.green,
-            title: Text(
-                tr('냉장고 재료만으로 만들 수 있는 레시피만', 'Only recipes I can fully make'),
-                style: const TextStyle(fontSize: 13, color: AppColors.ink)),
-            value: _draft.onlyFullMatch,
-            onChanged: (v) => setState(() => _draft = (
-                  onlyFullMatch: v,
-                  cookTime: _draft.cookTime,
-                  difficulty: _draft.difficulty,
-                  cuisine: _draft.cuisine,
-                  servings: _draft.servings,
-                )),
-          ),
-          const SizedBox(height: 12),
-          _FilterSection(
-            label: tr('만드는 양', 'Servings'),
-            options: _servingsOptions,
-            selected: '${_draft.servings}인분',
-            onSelected: (v) => setState(() => _draft = (
-                  onlyFullMatch: _draft.onlyFullMatch,
-                  cookTime: _draft.cookTime,
-                  difficulty: _draft.difficulty,
-                  cuisine: _draft.cuisine,
-                  servings: int.parse(v.replaceAll(RegExp(r'[^0-9]'), '')),
-                )),
-          ),
-          const SizedBox(height: 12),
-          _FilterSection(
-            label: tr('조리시간', 'Cook time'),
-            options: _cookTimeOptions,
-            selected: _draft.cookTime,
-            onSelected: (v) => setState(() => _draft = (
-                  onlyFullMatch: _draft.onlyFullMatch,
-                  cookTime: v,
-                  difficulty: _draft.difficulty,
-                  cuisine: _draft.cuisine,
-                  servings: _draft.servings,
-                )),
-          ),
-          const SizedBox(height: 12),
-          _FilterSection(
-            label: tr('난이도', 'Difficulty'),
-            options: _difficultyOptions,
-            selected: _draft.difficulty,
-            onSelected: (v) => setState(() => _draft = (
-                  onlyFullMatch: _draft.onlyFullMatch,
-                  cookTime: _draft.cookTime,
-                  difficulty: v,
-                  cuisine: _draft.cuisine,
-                  servings: _draft.servings,
-                )),
-          ),
-          const SizedBox(height: 12),
-          _FilterSection(
-            label: tr('요리 종류', 'Cuisine'),
-            options: _cuisineOptions,
-            selected: _draft.cuisine,
-            onSelected: (v) => setState(() => _draft = (
-                  onlyFullMatch: _draft.onlyFullMatch,
-                  cookTime: _draft.cookTime,
-                  difficulty: _draft.difficulty,
-                  cuisine: v,
-                  servings: _draft.servings,
-                )),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.pop(context, _defaultFilter),
-                  child: Text(tr('초기화', 'Reset')),
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+            20, 20, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(tr('필터', 'Filter'),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: AppColors.ink)),
+            const SizedBox(height: 16),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              activeThumbColor: AppColors.green,
+              title: Text(
+                  tr('냉장고 재료만으로 만들 수 있는 레시피만', 'Only recipes I can fully make'),
+                  style: const TextStyle(fontSize: 13, color: AppColors.ink)),
+              value: _draft.onlyFullMatch,
+              onChanged: (v) => setState(() => _draft = (
+                    onlyFullMatch: v,
+                    cookTime: _draft.cookTime,
+                    difficulty: _draft.difficulty,
+                    cuisine: _draft.cuisine,
+                    servings: _draft.servings,
+                  )),
+            ),
+            const SizedBox(height: 12),
+            _FilterSection(
+              label: tr('만드는 양', 'Servings'),
+              options: _servingsOptions,
+              selected: '${_draft.servings}인분',
+              onSelected: (v) => setState(() => _draft = (
+                    onlyFullMatch: _draft.onlyFullMatch,
+                    cookTime: _draft.cookTime,
+                    difficulty: _draft.difficulty,
+                    cuisine: _draft.cuisine,
+                    servings: int.parse(v.replaceAll(RegExp(r'[^0-9]'), '')),
+                  )),
+            ),
+            const SizedBox(height: 12),
+            _FilterSection(
+              label: tr('조리시간', 'Cook time'),
+              options: _cookTimeOptions,
+              selected: _draft.cookTime,
+              onSelected: (v) => setState(() => _draft = (
+                    onlyFullMatch: _draft.onlyFullMatch,
+                    cookTime: v,
+                    difficulty: _draft.difficulty,
+                    cuisine: _draft.cuisine,
+                    servings: _draft.servings,
+                  )),
+            ),
+            const SizedBox(height: 12),
+            _FilterSection(
+              label: tr('난이도', 'Difficulty'),
+              options: _difficultyOptions,
+              selected: _draft.difficulty,
+              onSelected: (v) => setState(() => _draft = (
+                    onlyFullMatch: _draft.onlyFullMatch,
+                    cookTime: _draft.cookTime,
+                    difficulty: v,
+                    cuisine: _draft.cuisine,
+                    servings: _draft.servings,
+                  )),
+            ),
+            const SizedBox(height: 12),
+            _FilterSection(
+              label: tr('요리 종류', 'Cuisine'),
+              options: _cuisineOptions,
+              selected: _draft.cuisine,
+              onSelected: (v) => setState(() => _draft = (
+                    onlyFullMatch: _draft.onlyFullMatch,
+                    cookTime: _draft.cookTime,
+                    difficulty: _draft.difficulty,
+                    cuisine: v,
+                    servings: _draft.servings,
+                  )),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context, _defaultFilter),
+                    child: Text(tr('초기화', 'Reset')),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context, _draft),
-                  child: Text(tr('적용하기', 'Apply')),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context, _draft),
+                    child: Text(tr('적용하기', 'Apply')),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1059,8 +1068,8 @@ class _FilterSection extends StatelessWidget {
                 color: AppColors.inkSoft)),
         const SizedBox(height: 8),
         Wrap(
-          spacing: 6,
-          runSpacing: 6,
+          spacing: 8,
+          runSpacing: 8,
           children: [
             for (final option in options)
               ChoiceChip(
