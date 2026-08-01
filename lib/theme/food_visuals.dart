@@ -8,6 +8,9 @@ const _cuisineGradients = <String, List<Color>>{
   '중식': [Color(0xFFD98A78), Color(0xFFB25C4C)],
   '양식': [Color(0xFF8FAD8F), Color(0xFF5E7D5E)],
   '분식': [Color(0xFFD98297), Color(0xFFAD5670)],
+  '일식': [Color(0xFFE3B7A0), Color(0xFFB5806A)],
+  '이탈리아식': [Color(0xFFC9A961), Color(0xFF8F7B3F)],
+  '프랑스식': [Color(0xFFA9A5C9), Color(0xFF716B9E)],
 };
 
 const _defaultCuisineGradient = [Color(0xFFC7B896), Color(0xFF9C8C6B)];
