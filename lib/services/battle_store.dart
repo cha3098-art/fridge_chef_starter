@@ -294,6 +294,7 @@ class BattleStore extends ChangeNotifier {
 
     final userIds = participants.map((p) => p.userId).toSet().toList();
     final nicknames = await fetchNicknames(userIds);
+    final genders = await fetchGenders(userIds);
 
     final voteRows = await _client
         .from('battle_votes')
@@ -332,6 +333,7 @@ class BattleStore extends ChangeNotifier {
         hostVotes: host == null
             ? 0
             : battleVotes.where((v) => v.votedForParticipantId == host.id).length,
+        hostGender: host == null ? null : genders[host.userId],
         challengerNickname: challenger == null
             ? null
             : (nicknames[challenger.userId] ?? tr('냉장고 셰프', 'Chef')),
@@ -342,6 +344,8 @@ class BattleStore extends ChangeNotifier {
             : battleVotes
                 .where((v) => v.votedForParticipantId == challenger.id)
                 .length,
+        challengerGender:
+            challenger == null ? null : genders[challenger.userId],
         myParticipantId: myParticipant?.id,
         myVoteParticipantId: myVote,
       );
@@ -383,10 +387,12 @@ class BattleStore extends ChangeNotifier {
   /// 메인 대시보드 라이브 티커용 — submitted/voting 상태인 배틀 최근 N건
   Future<List<BattleListItem>> fetchActiveBattleItems({int limit = 6}) async {
     try {
+      // 상대를 기다리는 중인 배틀도 "진행 중" 배너에 포함한다 — 방금 만든 배틀이
+      // 매칭 전이라는 이유로 대시보드 배너에서 사라져 보이면 안 되기 때문이다.
       final rows = await _client
           .from('battles')
           .select()
-          .inFilter('status', ['submitted', 'voting'])
+          .inFilter('status', ['waiting_opponent', 'submitted', 'voting'])
           .order('created_at', ascending: false)
           .limit(limit);
       final battles = (rows as List)
@@ -409,6 +415,23 @@ class BattleStore extends ChangeNotifier {
     return {
       for (final r in rows as List)
         r['id'] as String: r['nickname'] as String? ?? '냉장고 셰프'
+    };
+  }
+
+  /// 배틀 카드에 성별 맞춤 마스코트 아바타를 고르기 위한 배치 조회 (users.id → gender).
+  /// hide_gender가 켜져 있으면 본인이 비공개로 설정한 값이라 null로 가려서 돌려준다
+  /// (아바타 선택도 랜덤 폴백으로 처리됨 — profile_view_sheet.dart와 동일한 원칙).
+  Future<Map<String, String?>> fetchGenders(List<String> userIds) async {
+    if (userIds.isEmpty) return {};
+    final rows = await _client
+        .from('users')
+        .select('id, gender, hide_gender')
+        .inFilter('id', userIds);
+    return {
+      for (final r in rows as List)
+        r['id'] as String: (r['hide_gender'] as bool? ?? false)
+            ? null
+            : r['gender'] as String?
     };
   }
 

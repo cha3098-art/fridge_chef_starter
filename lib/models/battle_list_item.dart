@@ -7,10 +7,12 @@ class BattleListItem {
   final String hostNickname;
   final String? hostParticipantId;
   final int hostVotes;
+  final String? hostGender;
   final String? challengerNickname;
   final String? challengerParticipantId;
   final String? challengerUserId;
   final int challengerVotes;
+  final String? challengerGender;
 
   /// 현재 로그인한 유저가 이 배틀의 참가자라면 그 participant id (호스트든 상대든).
   final String? myParticipantId;
@@ -23,10 +25,12 @@ class BattleListItem {
     required this.hostNickname,
     this.hostParticipantId,
     this.hostVotes = 0,
+    this.hostGender,
     this.challengerNickname,
     this.challengerParticipantId,
     this.challengerUserId,
     this.challengerVotes = 0,
+    this.challengerGender,
     this.myParticipantId,
     this.myVoteParticipantId,
   });

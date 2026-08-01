@@ -9,6 +9,7 @@ import '../models/battle_list_item.dart';
 import '../services/battle_store.dart';
 import '../theme/app_theme.dart';
 import '../utils/battle_countdown.dart';
+import '../widgets/battle_split_banner.dart';
 import '../widgets/fridge_mascot.dart';
 import 'battle_detail_screen.dart';
 import 'quick_match_screen.dart';
@@ -436,13 +437,32 @@ class _BattleCard extends StatelessWidget {
       // 상대가 없는 배틀은 카드 어디를 눌러도 바로 참여된다 — "리스트를 누르면 참여"라는
       // 요청을 그대로 반영. 그 외 상태에서는 기존대로 상세 화면으로 이동한다.
       onTap: showJoin ? onJoin : onTap,
-      borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
-        decoration: cardDecoration(radius: AppSpacing.radiusLg),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 썸네일 중심 배틀 카드 — 두 참가자의 마스코트를 대각선으로 슬래시 컷해서
+            // 붙이고 가운데 ⚔️ VS 배지를 겹쳐서, 한눈에 "요리 대결"임을 알 수 있게 한다.
+            BattleSplitBanner(
+              hostUserId: battle.hostUserId,
+              hostGender: item.hostGender,
+              challengerUserId: item.challengerUserId,
+              challengerGender: item.challengerGender,
+            ),
+            const SizedBox(height: 12),
             // Title + status badge
             Row(
               children: [
@@ -462,10 +482,15 @@ class _BattleCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                   decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.12),
+                    color: statusColor.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                        color: statusColor.withValues(alpha: 0.3), width: 1),
+                        color: statusColor.withValues(alpha: 0.4), width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                          color: statusColor.withValues(alpha: 0.25),
+                          blurRadius: 6),
+                    ],
                   ),
                   child: Text(
                     statusLabel,
@@ -482,13 +507,13 @@ class _BattleCard extends StatelessWidget {
               Row(
                 children: [
                   const Icon(Icons.timer_outlined,
-                      size: 12, color: AppColors.inkSoft),
+                      size: 12, color: AppColors.greenDeep),
                   const SizedBox(width: 3),
                   Text(_countdownText!,
                       style: const TextStyle(
                           fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.inkSoft)),
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.greenDeep)),
                 ],
               ),
             ],
@@ -549,15 +574,15 @@ class _BattleCard extends StatelessWidget {
                 child: OutlinedButton.icon(
                   onPressed: onCopyInvite,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.green,
-                    side: const BorderSide(color: AppColors.green),
+                    foregroundColor: AppColors.greenDeep,
+                    side: const BorderSide(color: AppColors.green, width: 1.6),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
-                  icon: const Icon(Icons.link, size: 14),
+                  icon: const Icon(Icons.link, size: 15),
                   label: Text(tr('초대 링크 복사', 'Copy invite link'),
                       style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.bold)),
+                          fontSize: 12.5, fontWeight: FontWeight.w800)),
                 ),
               ),
             ],
@@ -743,7 +768,9 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    // 키보드가 올라오거나 작은 화면에서 드롭다운+입력폼+버튼 전체 높이가 뷰포트를
+    // 넘기면 오버플로우가 나므로, 시트 전체를 스크롤 가능하게 감싼다.
+    return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
           20, 20, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
       child: Column(
@@ -782,6 +809,12 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
             elevation: 2,
             dropdownColor: AppColors.card,
             style: const TextStyle(color: AppColors.ink, fontSize: 14),
+            // 긴 레시피 제목이 기본 itemHeight(48)를 넘어 두 줄로 감기면서
+            // RenderFlex가 "BOTTOM OVERFLOWED BY 13 PIXELS"를 내던 문제 수정:
+            // isExpanded로 남는 폭을 다 쓰게 하고, itemHeight를 null로 풀어
+            // 각 항목이 내용에 맞는 높이를 스스로 갖게 한다(Flutter 권장 해결책).
+            isExpanded: true,
+            itemHeight: null,
             decoration: InputDecoration(
               labelText: tr('레시피 주제 (선택)', 'Recipe theme (optional)'),
               border:
@@ -794,12 +827,17 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
             ),
             items: [
               DropdownMenuItem<String?>(
-                  value: null, child: Text(tr('자유 주제', 'Freestyle'))),
+                  value: null,
+                  child: Text(tr('자유 주제', 'Freestyle'),
+                      maxLines: 1, overflow: TextOverflow.ellipsis)),
               ...allRecipes.map((r) => DropdownMenuItem<String?>(
                   value: r.title,
-                  child: Text(r.isKFood
-                      ? '🇰🇷 ${tr(r.title, r.titleEn)}'
-                      : tr(r.title, r.titleEn)))),
+                  child: Text(
+                      r.isKFood
+                          ? '🇰🇷 ${tr(r.title, r.titleEn)}'
+                          : tr(r.title, r.titleEn),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis))),
             ],
             onChanged: (v) => setState(() {
               _selectedRecipe = v;

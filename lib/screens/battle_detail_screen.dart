@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,8 +12,10 @@ import '../models/battle_participant.dart';
 import '../services/battle_store.dart';
 import '../services/chef_points_store.dart';
 import '../theme/app_theme.dart';
+import '../theme/battle_avatars.dart';
 import '../utils/battle_countdown.dart';
 import '../utils/image_compressor.dart';
+import '../widgets/battle_split_banner.dart';
 import '../widgets/fridge_mascot.dart';
 
 
@@ -33,6 +36,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   Map<String, int> _voteCounts = {};
   String? _myVoteParticipantId;
   Map<String, String> _nicknames = {};
+  Map<String, String?> _genders = {};
   bool _loaded = false;
   bool _busy = false;
   String? _errorMessage;
@@ -115,8 +119,9 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
     final participants =
         await BattleStore.instance.fetchParticipants(widget.battleId);
     final votes = await BattleStore.instance.fetchVotes(widget.battleId);
-    final nicknames = await BattleStore.instance
-        .fetchNicknames(participants.map((p) => p.userId).toList());
+    final userIds = participants.map((p) => p.userId).toList();
+    final nicknames = await BattleStore.instance.fetchNicknames(userIds);
+    final genders = await BattleStore.instance.fetchGenders(userIds);
 
     final tally = <String, int>{for (final p in participants) p.id: 0};
     for (final v in votes) {
@@ -153,6 +158,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
       _voteCounts = tally;
       _myVoteParticipantId = myVote;
       _nicknames = nicknames;
+      _genders = genders;
       _loaded = true;
     });
   }
@@ -432,7 +438,29 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                       child: ListView(
                         padding: const EdgeInsets.all(AppSpacing.md),
                         children: [
+                          if (battle.status != BattleStatus.cancelled) ...[
+                            BattleSplitBanner(
+                              hostUserId: battle.hostUserId,
+                              hostGender: _genders[battle.hostUserId],
+                              challengerUserId: _opponentParticipant?.userId,
+                              challengerGender: _opponentParticipant == null
+                                  ? null
+                                  : _genders[_opponentParticipant!.userId],
+                              height: 160,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                          ],
                           _StatusBanner(battle: battle),
+                          if (battle.status == BattleStatus.submitted ||
+                              battle.status == BattleStatus.voting ||
+                              battle.status == BattleStatus.completed) ...[
+                            const SizedBox(height: AppSpacing.md),
+                            _TugOfWarBar(
+                              hostVotes: _voteCounts[_hostParticipant?.id] ?? 0,
+                              challengerVotes:
+                                  _voteCounts[_opponentParticipant?.id] ?? 0,
+                            ),
+                          ],
                           const SizedBox(height: AppSpacing.md),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -440,7 +468,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                               Expanded(
                                   child: _buildParticipantCard(_hostParticipant,
                                       isHostSlot: true)),
-                              const SizedBox(width: AppSpacing.sm),
+                              const SizedBox(width: 4),
                               Expanded(
                                   child: _buildParticipantCard(
                                       _opponentParticipant,
@@ -493,32 +521,39 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: SizedBox(
         width: double.infinity,
-        height: 48,
+        height: 52,
         child: isDestructive
-            ? OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.red,
-                  side: const BorderSide(color: AppColors.red),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+            ? Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: onPressed == null
+                      ? null
+                      : [
+                          BoxShadow(
+                              color: AppColors.red.withValues(alpha: 0.18),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4)),
+                        ],
                 ),
-                onPressed: onPressed,
-                child: Text(label,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 14)),
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.red,
+                    backgroundColor: AppColors.card,
+                    side: const BorderSide(color: AppColors.red, width: 1.5),
+                    shape: const StadiumBorder(),
+                  ),
+                  onPressed: onPressed,
+                  child: Text(label,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w800, fontSize: 15)),
+                ),
               )
-            : ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.green,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  elevation: 0,
-                ),
+            // 최하단 메인 CTA까지 민트색이면 화면 위아래가 온통 민트로 붕 뜬다 —
+            // 다크 슬레이트 톤으로 화면 전체의 무게감/균형을 잡는다.
+            : _PillShadowButton(
+                color: AppColors.ink,
                 onPressed: onPressed,
-                child: Text(label,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 14)),
+                label: label,
               ),
       ),
     );
@@ -528,10 +563,11 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
       {required bool isHostSlot}) {
     final battle = _battle!;
     final roleLabel = isHostSlot ? tr('호스트', 'Host') : tr('상대', 'Opponent');
+    final sideColor = isHostSlot ? AppColors.green : AppColors.carrot;
     if (participant == null) {
       return Container(
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: cardDecoration(radius: AppSpacing.radiusLg),
+        decoration: cardDecoration(radius: 20),
         child: Column(
           children: [
             Text(roleLabel,
@@ -551,9 +587,10 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
     }
 
     final nickname = _nicknames[participant.userId] ?? tr('냉장고 셰프', 'Chef');
+    final avatarAsset =
+        battleAvatarFor(participant.userId, _genders[participant.userId]);
     final isWinner = battle.status == BattleStatus.completed &&
         battle.winnerUserId == participant.userId;
-    final voteCount = _voteCounts[participant.id] ?? 0;
     final iVotedThis = _myVoteParticipantId == participant.id;
     // 매칭이 성사된 순간(status=submitted)부터 배틀이 끝나기 전까지는 본인을 제외한
     // 누구나 투표할 수 있다 — 사진 제출 여부와 무관하다.
@@ -561,50 +598,92 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
             battle.status == BattleStatus.voting) &&
         participant.userId != _myUid;
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+    final isMine = participant.userId == _myUid;
+    final canSubmitHere = isMine &&
+        !participant.hasSubmitted &&
+        battle.status != BattleStatus.completed &&
+        battle.status != BattleStatus.cancelled;
+
+    final card = Container(
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: AppColors.card,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(
-            color: isWinner ? AppColors.gold : AppColors.cardBorder,
-            width: isWinner ? 2 : 1),
+        borderRadius: BorderRadius.circular(20),
+        border: isWinner
+            ? Border.all(color: AppColors.gold, width: 2)
+            : null,
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
+        ],
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (isWinner) const Text('🏆 ', style: TextStyle(fontSize: 14)),
-              Text(roleLabel,
-                  style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.inkSoft)),
+              if (isWinner) const Text('👑 ', style: TextStyle(fontSize: 12)),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: sideColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(roleLabel,
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: sideColor)),
+              ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(nickname,
-              style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.ink)),
-          const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            child: participant.photoPath != null
-                ? Image.network(participant.photoPath!,
-                    width: double.infinity, height: 120, fit: BoxFit.cover)
-                : Container(
-                    width: double.infinity,
-                    height: 120,
-                    color: AppColors.paperDeep,
-                    child: const Center(
-                        child: Icon(Icons.restaurant_outlined,
-                            color: AppColors.inkSoft)),
-                  ),
+          const SizedBox(height: 8),
+          // 완성작 전시 프레임 — 세로 비율(0.85)의 깔끔한 라운드 프레임으로 통일하고,
+          // 사진이 아직 없으면 점선 테두리의 제출 유도 버튼을, 있으면 실제 음식 사진을
+          // 보여준다. 아바타+닉네임은 사진 위에 얹는 글래스모피즘 칩으로 이동.
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: AspectRatio(
+                  aspectRatio: 0.85,
+                  child: participant.photoPath != null
+                      ? Image.network(
+                          participant.photoPath!,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, progress) {
+                            if (progress == null) return child;
+                            return Container(
+                              color: AppColors.paperDeep,
+                              alignment: Alignment.center,
+                              child: const CircularProgressIndicator(
+                                  color: AppColors.green, strokeWidth: 2.5),
+                            );
+                          },
+                        )
+                      : _SubmitPhotoPlaceholder(
+                          canSubmit: canSubmitHere,
+                          onTap: canSubmitHere ? _submitPhoto : null,
+                        ),
+                ),
+              ),
+              Positioned(
+                left: 6,
+                right: 6,
+                bottom: 6,
+                child: _GlassInfoChip(avatarAsset: avatarAsset, nickname: nickname),
+              ),
+              if (isWinner)
+                const Positioned(
+                  top: -6,
+                  left: 0,
+                  right: 0,
+                  child: Center(child: _WinnerRibbon()),
+                ),
+            ],
           ),
-          if (participant.comment != null && participant.comment!.isNotEmpty) ...[
+          if (participant.comment != null &&
+              participant.comment!.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
               participant.comment!,
@@ -613,108 +692,406 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                   fontSize: 12, color: AppColors.inkSoft, height: 1.4),
             ),
           ],
-          const SizedBox(height: 10),
-          if (battle.status == BattleStatus.submitted ||
-              battle.status == BattleStatus.voting ||
-              battle.status == BattleStatus.completed) ...[
-            const SizedBox(height: 8),
-            _VoteBar(
-              voteCount: voteCount,
-              totalVotes: _voteCounts.values.fold(0, (a, b) => a + b),
-              iVotedThis: iVotedThis,
-            ),
-          ],
           if (canVote) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
-              height: 36,
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: iVotedThis ? Colors.white : AppColors.green,
-                  backgroundColor:
-                      iVotedThis ? AppColors.green : Colors.transparent,
-                  side: const BorderSide(color: AppColors.green),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                onPressed: _busy ? null : () => _vote(participant.id),
-                child: Text(
-                  iVotedThis ? tr('투표함 ✓', 'Voted ✓') : tr('투표하기', 'Vote'),
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.bold),
-                ),
-              ),
+              height: 40,
+              child: iVotedThis
+                  // 이미 투표한 카드까지 쨍한 면 채우기로 강조하면 화면이 온통 색으로
+                  // 도배되어 산만해진다 — 소프트 틴트 배경 + 얇은 테두리로 톤을 낮춘다.
+                  ? OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: sideColor,
+                        backgroundColor: sideColor.withValues(alpha: 0.12),
+                        side: BorderSide(color: sideColor, width: 1.5),
+                        shape: const StadiumBorder(),
+                      ),
+                      onPressed: null,
+                      child: Text(tr('투표함 ✓', 'Voted ✓'),
+                          style: const TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w800)),
+                    )
+                  : _PillShadowButton(
+                      color: sideColor,
+                      onPressed: _busy ? null : () => _vote(participant.id),
+                      label: tr('투표하기', 'Vote'),
+                    ),
             ),
           ],
+        ],
+      ),
+    );
+
+    if (!isWinner) return card;
+    return _PulseGlow(color: AppColors.gold, child: card);
+  }
+}
+
+/// 소프트 섀도우 + 굵은 폰트의 알약(pill) 버튼 — 투표/제출 등 주요 액션에 쓴다.
+class _PillShadowButton extends StatelessWidget {
+  final Color color;
+  final String label;
+  final VoidCallback? onPressed;
+  const _PillShadowButton(
+      {required this.color, required this.label, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: onPressed == null
+            ? null
+            : [
+                BoxShadow(
+                    color: color.withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4)),
+              ],
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: color.withValues(alpha: 0.4),
+          elevation: 0,
+          shape: const StadiumBorder(),
+        ),
+        onPressed: onPressed,
+        child:
+            Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
+      ),
+    );
+  }
+}
+
+/// 완성 사진이 아직 없을 때 보여주는 자리표시자 — 소프트 민트 그라데이션 배경 +
+/// 은은하게 빛나는 카메라 아이콘. 내 참가자 카드라면 탭해서 바로 사진 제출로 들어간다.
+class _SubmitPhotoPlaceholder extends StatelessWidget {
+  final bool canSubmit;
+  final VoidCallback? onTap;
+  const _SubmitPhotoPlaceholder({required this.canSubmit, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    // 이 카드가 민트로 진하게 물들면 정작 옆의 실제 요리 사진보다 시선을 더 끌어버린다
+    // — 옅은 오프화이트 배경 + 미세한 테두리 선으로 톤을 낮추고, 존재감은 카메라
+    // 아이콘의 작은 글로우 정도로만 남긴다.
+    final content = Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: AppColors.paper,
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+      ),
+      alignment: Alignment.center,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.card,
+                boxShadow: canSubmit
+                    ? [
+                        BoxShadow(
+                            color: AppColors.green.withValues(alpha: 0.4),
+                            blurRadius: 16,
+                            spreadRadius: 1),
+                      ]
+                    : null,
+              ),
+              alignment: Alignment.center,
+              child: Icon(Icons.camera_alt_outlined,
+                  size: 26,
+                  color: canSubmit ? AppColors.green : AppColors.inkSoft),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              canSubmit
+                  ? tr('📸 완성된 요리\n사진 올리기', '📸 Upload your\nfinished dish')
+                  : tr('요리 준비 중...🔥', 'Cooking...🔥'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                  height: 1.3,
+                  color: canSubmit ? AppColors.greenDeep : AppColors.inkSoft),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (onTap == null) return content;
+    return InkWell(
+        borderRadius: BorderRadius.circular(16), onTap: onTap, child: content);
+  }
+}
+
+/// 사진 하단에 얹는 글래스모피즘(반투명 블러) 칩 — 마스코트 아바타 + 닉네임을
+/// 보여줘서 "이게 누구 요리인지" 사진 위에서 바로 알아볼 수 있게 한다.
+class _GlassInfoChip extends StatelessWidget {
+  final String avatarAsset;
+  final String nickname;
+  const _GlassInfoChip({required this.avatarAsset, required this.nickname});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(30),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.32),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 1.4),
+                  image: DecorationImage(
+                      image: AssetImage(avatarAsset), fit: BoxFit.cover),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(nickname,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 승자 카드 상단에 살짝 기울여 얹는 입체적인 골드 리본 배지.
+class _WinnerRibbon extends StatelessWidget {
+  const _WinnerRibbon();
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: -0.06,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+              colors: [AppColors.gold, Color(0xFFFFE08A)]),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+                color: AppColors.gold.withValues(alpha: 0.7), blurRadius: 12),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 4),
+          ],
+        ),
+        child: Text(tr('🎉 승리 🏆', 'WINNER 🏆'),
+            style: const TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.ink)),
+      ),
+    );
+  }
+}
+
+/// 승자 카드를 은은하게 계속 반짝이게 만드는 골드 글로우 래퍼
+class _PulseGlow extends StatefulWidget {
+  final Color color;
+  final Widget child;
+  const _PulseGlow({required this.color, required this.child});
+
+  @override
+  State<_PulseGlow> createState() => _PulseGlowState();
+}
+
+class _PulseGlowState extends State<_PulseGlow>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1400))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final blur = 10 + _controller.value * 14;
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+            boxShadow: [
+              BoxShadow(
+                  color: widget.color.withValues(alpha: 0.55), blurRadius: blur),
+            ],
+          ),
+          child: child,
+        );
+      },
+      child: widget.child,
+    );
+  }
+}
+
+/// 두 참가자의 득표율이 서로 밀고 당기는 통합 대결 게이지 바.
+/// 왼쪽(민트)=호스트, 오른쪽(카로트오렌지)=상대. 숫자가 바뀔 때마다 팝 애니메이션.
+class _TugOfWarBar extends StatelessWidget {
+  final int hostVotes;
+  final int challengerVotes;
+
+  const _TugOfWarBar({required this.hostVotes, required this.challengerVotes});
+
+  @override
+  Widget build(BuildContext context) {
+    final total = hostVotes + challengerVotes;
+    final hostRatio = total == 0 ? 0.0 : hostVotes / total;
+    final hostPct = total == 0 ? 0 : (hostRatio * 100).round();
+    final challengerPct = total == 0 ? 0 : 100 - hostPct;
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: cardDecoration(radius: AppSpacing.radiusMd),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _VoteSideLabel(
+                  pct: hostPct, count: hostVotes, color: AppColors.green),
+              Text(tr('🗳️ 실시간 득표', '🗳️ Live Votes'),
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.inkSoft)),
+              _VoteSideLabel(
+                  pct: challengerPct,
+                  count: challengerVotes,
+                  color: AppColors.carrot,
+                  alignEnd: true),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              height: 26,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final w = constraints.maxWidth;
+                  // 득표가 없으면 차분한 Cool Grey 트랙만 보여주고, 득표가 생기면
+                  // 그때부터 host(민트)/opponent(캐롯)가 각자 비율만큼 양쪽에서 채워진다.
+                  return Stack(
+                    children: [
+                      Container(width: w, color: const Color(0xFFE2E8F0)),
+                      if (total > 0) ...[
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 450),
+                            curve: Curves.easeOutCubic,
+                            width: w * hostRatio,
+                            color: AppColors.green,
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 450),
+                            curve: Curves.easeOutCubic,
+                            width: w * (1 - hostRatio),
+                            color: AppColors.carrot,
+                          ),
+                        ),
+                      ],
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-// ── 투표 수 + 프로그레스 바 ──────────────────────────────────────────────────────
-
-class _VoteBar extends StatelessWidget {
-  final int voteCount;
-  final int totalVotes;
-  final bool iVotedThis;
-
-  const _VoteBar({
-    required this.voteCount,
-    required this.totalVotes,
-    required this.iVotedThis,
-  });
+/// 득표 측 라벨 — 퍼센트(볼드, 팝 애니메이션)와 표 수를 함께 보여준다.
+class _VoteSideLabel extends StatelessWidget {
+  final int pct;
+  final int count;
+  final Color color;
+  final bool alignEnd;
+  const _VoteSideLabel(
+      {required this.pct,
+      required this.count,
+      required this.color,
+      this.alignEnd = false});
 
   @override
   Widget build(BuildContext context) {
-    final ratio = totalVotes > 0 ? voteCount / totalVotes : 0.0;
-    final pct = (ratio * 100).round();
     return Column(
+      crossAxisAlignment:
+          alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                const Text('🗳️', style: TextStyle(fontSize: 13)),
-                const SizedBox(width: 4),
-                Text(
-                  '$voteCount',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: iVotedThis ? AppColors.green : AppColors.ink,
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              '$pct%',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: iVotedThis ? AppColors.green : AppColors.inkSoft,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 5),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: ratio,
-            minHeight: 6,
-            backgroundColor: AppColors.paperDeep,
-            color: iVotedThis ? AppColors.green : AppColors.carrot,
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) => ScaleTransition(
+            scale: Tween<double>(begin: 1.4, end: 1.0)
+                .chain(CurveTween(curve: Curves.elasticOut))
+                .animate(animation),
+            child: child,
+          ),
+          child: Text(
+            '$pct%',
+            key: ValueKey(pct),
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.w900, color: color),
           ),
         ),
+        Text('($count${tr('표', count == 1 ? ' vote' : ' votes')})',
+            style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: color.withValues(alpha: 0.85))),
       ],
     );
   }
 }
 
-// ── 상태 배너 ──────────────────────────────────────────────────────────────────
+
+// ── 상태 배너 (VS 글로우 배지 + 불꽃 타이머) ────────────────────────────────────
 
 class _StatusBanner extends StatelessWidget {
   final Battle battle;
@@ -746,6 +1123,7 @@ class _StatusBanner extends StatelessWidget {
     };
     final isSubmissionPhase = battle.status == BattleStatus.submitted;
     final isWaitingPhase = battle.status == BattleStatus.waitingOpponent;
+    final isVotingPhase = battle.status == BattleStatus.voting;
 
     // 제출 마감(3시간)은 기존 문구를 그대로 쓰고, 매칭 대기(1일)·투표 종료(2일)는
     // formatBattleCountdown으로 "N일 N시간 남음" 형태를 공유한다.
@@ -755,46 +1133,44 @@ class _StatusBanner extends StatelessWidget {
             ? battle.createdAt
                 .add(const Duration(days: 1))
                 .difference(DateTime.now())
-            : battle.status == BattleStatus.voting
+            : isVotingPhase
                 ? battle.votingEndsAt?.difference(DateTime.now())
                 : null;
+    // 진행률 바 계산용 각 단계의 총 길이 — 실제 자동 마감 정책(3시간/1일/2일)과 동일하게 맞춘다.
+    final Duration? totalForPhase = isSubmissionPhase
+        ? const Duration(hours: 3)
+        : isWaitingPhase
+            ? const Duration(days: 1)
+            : isVotingPhase
+                ? const Duration(days: 2)
+                : null;
 
+    final phaseKeyword = switch (battle.status) {
+      BattleStatus.waitingOpponent => tr('🙋 상대 찾는 중', '🙋 FINDING OPPONENT'),
+      BattleStatus.submitted => tr('📸 지금 제출하세요', '📸 SUBMIT NOW'),
+      BattleStatus.voting => tr('🔥 실시간 투표 중', '🔥 LIVE VOTING'),
+      _ => '',
+    };
+
+    // 위쪽에 이미 대형 스플릿 배너(BattleSplitBanner)가 대결 구도를 보여주므로,
+    // 여기는 순수 화이트 배경 위에 안내 문구 + 타이머 캡슐만 컴팩트하게 정리한다
+    // — 탁한 파스텔 카드 배경은 쓰지 않는다.
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(
         children: [
           Text(label,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: color, fontWeight: FontWeight.w700, fontSize: 13)),
-          if (remaining != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              remaining.isNegative
-                  ? (isSubmissionPhase
-                      ? tr('곧 자동으로 기권 처리돼요',
-                          'Closing out as a forfeit any moment now')
-                      : isWaitingPhase
-                          ? tr('곧 자동으로 삭제돼요',
-                              'This will be deleted any moment now')
-                          : tr('곧 자동으로 마감돼요',
-                              'Closing automatically any moment now'))
-                  : isSubmissionPhase
-                      ? tr('${remaining.inHours}시간 후 미제출 시 자동 기권',
-                          'Auto-forfeits if not submitted in ${remaining.inHours}h')
-                      : isWaitingPhase
-                          ? tr(
-                              '${formatBattleCountdown(remaining)} 안에 상대가 없으면 자동 삭제돼요',
-                              'Auto-deletes if no one joins within ${formatBattleCountdown(remaining)}')
-                          : tr('${formatBattleCountdown(remaining)} 후 자동 마감',
-                              'Closes automatically in ${formatBattleCountdown(remaining)}'),
-              textAlign: TextAlign.center,
-              style:
-                  TextStyle(color: color.withValues(alpha: 0.8), fontSize: 11),
+              style: const TextStyle(
+                  color: AppColors.ink, fontWeight: FontWeight.w800, fontSize: 16)),
+          if (remaining != null && totalForPhase != null) ...[
+            const SizedBox(height: 10),
+            _LiveStatusPill(
+              text: remaining.isNegative
+                  ? tr('곧 자동 처리돼요', 'Closing any moment')
+                  : '$phaseKeyword · ${formatBattleCountdown(remaining)}',
+              color: color,
             ),
           ],
         ],
@@ -802,3 +1178,36 @@ class _StatusBanner extends StatelessWidget {
     );
   }
 }
+
+/// "🔥 LIVE VOTING · 23h 45m left" 형태의 캡슐형 네온 상태 바.
+class _LiveStatusPill extends StatelessWidget {
+  final String text;
+  final Color color;
+  const _LiveStatusPill({required this.text, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    // "다크 민트/카로트" 캡슐 — 진한 잉크 베이스에 단계별 포인트 컬러를 살짝 섞어
+    // 순수 검정이 아니라 은은하게 그 색을 머금은 다크 톤으로 보이게 한다.
+    final darkTinted = Color.lerp(AppColors.ink, color, 0.22)!;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+      decoration: BoxDecoration(
+        color: darkTinted,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: color, width: 1.4),
+        boxShadow: [
+          BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 12),
+        ],
+      ),
+      child: Text(text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 12.5,
+              letterSpacing: 0.2)),
+    );
+  }
+}
+

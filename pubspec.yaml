@@ -59,6 +59,12 @@ flutter:
     - assets/icon/menu_expiring.png
     - assets/icon/menu_battle.png
     - assets/icon/menu_board.png
+    - assets/battle_avatars/male_1.jpg
+    - assets/battle_avatars/male_2.jpg
+    - assets/battle_avatars/male_3.jpg
+    - assets/battle_avatars/female_1.jpg
+    - assets/battle_avatars/female_2.jpg
+    - assets/battle_avatars/female_3.jpg
   fonts:
     - family: Pretendard
       fonts:
