@@ -751,6 +751,38 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
     super.dispose();
   }
 
+  Future<void> _deletePost(BoardPost post) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(tr('글을 삭제할까요?', 'Delete this post?')),
+        content: Text(tr('삭제하면 되돌릴 수 없어요. 댓글과 좋아요도 함께 삭제됩니다.',
+            'This cannot be undone. Its comments and likes will also be deleted.')),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text(tr('취소', 'Cancel'))),
+          TextButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: Text(tr('삭제', 'Delete'),
+                  style: const TextStyle(color: AppColors.red))),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await BoardStore.instance.deletePost(post.id);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(tr('삭제에 실패했어요', 'Could not delete the post'))),
+        );
+      }
+    }
+  }
+
   Future<void> _submitComment() async {
     final text = _commentController.text.trim();
     if (text.isEmpty || _submitting) return;
@@ -823,6 +855,14 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
               style: const TextStyle(
                   fontWeight: FontWeight.w800, letterSpacing: -0.3),
             ),
+            actions: [
+              if (myId != null && myId == post.authorId)
+                IconButton(
+                  icon: const Icon(Icons.delete_outline, color: AppColors.inkSoft),
+                  tooltip: tr('삭제', 'Delete'),
+                  onPressed: () => _deletePost(post),
+                ),
+            ],
           ),
           body: Column(
             children: [

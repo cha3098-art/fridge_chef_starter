@@ -387,10 +387,10 @@ class _CuisineCapsuleRow extends StatelessWidget {
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.line, width: 1)),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
+        spacing: 6,
+        runSpacing: 6,
         children: [
           for (final cuisine in _cuisineOptions)
             GestureDetector(
@@ -398,11 +398,11 @@ class _CuisineCapsuleRow extends StatelessWidget {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color:
                       selected == cuisine ? AppColors.ink : AppColors.paperDeep,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: selected == cuisine
                         ? AppColors.ink
@@ -412,18 +412,17 @@ class _CuisineCapsuleRow extends StatelessWidget {
                       ? [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.12),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                            blurRadius: 6,
+                            offset: const Offset(0, 1),
                           ),
                         ]
                       : null,
                 ),
-                alignment: Alignment.center,
                 child: Text(
                   trTag(cuisine),
                   style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                     color:
                         selected == cuisine ? Colors.white : AppColors.inkSoft,
                   ),

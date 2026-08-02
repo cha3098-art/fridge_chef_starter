@@ -345,7 +345,8 @@ class _QuantitySheetState extends State<_QuantitySheet> {
   void initState() {
     super.initState();
     _qtyController = TextEditingController(text: '1');
-    _unitController = TextEditingController(text: widget.entry.unitDefault);
+    _unitController =
+        TextEditingController(text: localizedFridgeUnit(widget.entry.unitDefault));
     final shelfLife = widget.entry.defaultShelfLifeDays;
     _expiryDate = shelfLife != null
         ? DateTime.now().add(Duration(days: shelfLife))
@@ -372,7 +373,7 @@ class _QuantitySheetState extends State<_QuantitySheet> {
 
   void _confirm() {
     final qty = double.tryParse(_qtyController.text) ?? 1;
-    final unit = _unitController.text.trim();
+    final unit = canonicalFridgeUnit(_unitController.text.trim());
     Navigator.pop(
       context,
       FridgeItem(

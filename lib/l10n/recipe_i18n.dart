@@ -208,6 +208,70 @@ extension RecipeIngredientI18n on RecipeIngredient {
       localizedQuantity(quantity * servings, unit);
 }
 
+/// 냉장고 재료의 "단위" 입력란은 수량과 분리된 독립 필드라, localizedQuantity처럼
+/// 개수 단위(개/마리)를 생략해버리면 필드가 텅 비어 보인다. 그래서 실제 단위 텍스트(ea 등)로 보여준다.
+const _fridgeUnitDictionary = <String, String>{
+  '단': 'bunch',
+  '개': 'ea',
+  '마리': 'ea',
+  '포기': 'head',
+  '봉': 'pack',
+  '봉지': 'pack',
+  '병': 'bottle',
+  '줄기': 'stalk',
+  '팩': 'pack',
+  '줄': 'pack',
+  '장': 'sheet',
+  '모': 'block',
+  '조각': 'slice',
+  '컵': 'cup',
+  '공기': 'bowl',
+  '큰술': 'tbsp',
+  '작은술': 'tsp',
+  '꼬집': 'pinch',
+};
+
+/// 영문 단위 입력란을 다시 저장용 한글 단위로 되돌리기 위한 역방향 사전.
+/// 여러 한글 단위가 같은 영문으로 매핑되는 경우(봉/봉지/줄→pack 등) 카탈로그에서 실제로
+/// 쓰이는 대표 단어 하나만 남긴다 — 완벽한 왕복은 아니지만 표시용이라 문제되지 않는다.
+const _fridgeUnitReverseDictionary = <String, String>{
+  'bunch': '단',
+  'ea': '개',
+  'head': '포기',
+  'pack': '봉',
+  'bottle': '병',
+  'stalk': '줄기',
+  'sheet': '장',
+  'block': '모',
+  'slice': '조각',
+  'cup': '컵',
+  'bowl': '공기',
+  'tbsp': '큰술',
+  'tsp': '작은술',
+  'pinch': '꼬집',
+};
+
+/// 냉장고 재료 단위를 현재 언어에 맞게 보여준다(g/kg/ml/L은 이미 만국 공통 표기라 그대로 둔다).
+String localizedFridgeUnit(String koUnit) {
+  if (LocaleStore.instance.isKorean) return koUnit;
+  return _fridgeUnitDictionary[koUnit] ?? koUnit;
+}
+
+/// 영문 모드에서 사용자가 "단위" 입력란에 입력한 텍스트를 저장용 한글 단위로 되돌린다.
+/// 사전에 없는 값(직접 입력한 커스텀 단위)은 입력한 그대로 저장한다.
+String canonicalFridgeUnit(String displayedUnit) {
+  if (LocaleStore.instance.isKorean) return displayedUnit;
+  return _fridgeUnitReverseDictionary[displayedUnit] ?? displayedUnit;
+}
+
+/// 냉장고 재료 카드의 "수량+단위" 표시(예: "1단" / "1 bunch")를 언어별로 만든다.
+String localizedFridgeQuantityLabel(double quantity, String unit) {
+  final isWhole = quantity == quantity.roundToDouble();
+  final q = isWhole ? quantity.toInt().toString() : quantity.toString();
+  if (LocaleStore.instance.isKorean) return '$q$unit';
+  return '$q ${localizedFridgeUnit(unit)}';
+}
+
 /// RecipeStep의 타이머를 현재 언어에 맞게 "1분 30초" / "1m 30s" 형태로 표시한다.
 String? localizedTimerLabel(int? timerSec) {
   if (timerSec == null) return null;

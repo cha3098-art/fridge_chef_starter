@@ -364,6 +364,9 @@ create policy "본인 알림만 읽음 처리" on public.notifications
 
 create policy "게시글 전체 공개 조회" on public.board_posts for select using (true);
 create policy "본인 글만 작성" on public.board_posts for insert with check (auth.uid() = author_id);
+-- board_post_likes/board_comments는 board_posts에 on delete cascade로 걸려 있어
+-- 게시글 삭제 시 좋아요/댓글도 함께 정리된다.
+create policy "본인 글만 삭제" on public.board_posts for delete using (auth.uid() = author_id);
 
 create policy "좋아요 전체 공개 조회" on public.board_post_likes for select using (true);
 create policy "본인 좋아요만 추가" on public.board_post_likes for insert with check (auth.uid() = user_id);

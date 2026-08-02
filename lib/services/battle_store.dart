@@ -384,20 +384,37 @@ class BattleStore extends ChangeNotifier {
     return _buildListItems(battles);
   }
 
-  /// 메인 대시보드 라이브 티커용 — submitted/voting 상태인 배틀 최근 N건
-  Future<List<BattleListItem>> fetchActiveBattleItems({int limit = 6}) async {
+  /// 메인 대시보드 라이브 티커용 — 진행 중인 배틀(대기/제출/투표)을 우선 보여주되,
+  /// 그 수가 [limit]에 못 미치면(전부 종료돼 있는 경우 포함) 최근 종료된 배틀로 채워서
+  /// 배틀이 하나라도 존재하면 항상 상위 [limit]개가 배너에 나타나도록 한다.
+  Future<List<BattleListItem>> fetchActiveBattleItems({int limit = 5}) async {
     try {
       // 상대를 기다리는 중인 배틀도 "진행 중" 배너에 포함한다 — 방금 만든 배틀이
       // 매칭 전이라는 이유로 대시보드 배너에서 사라져 보이면 안 되기 때문이다.
-      final rows = await _client
+      final activeRows = await _client
           .from('battles')
           .select()
           .inFilter('status', ['waiting_opponent', 'submitted', 'voting'])
           .order('created_at', ascending: false)
           .limit(limit);
-      final battles = (rows as List)
+      var battles = (activeRows as List)
           .map((r) => _mapBattle(r as Map<String, dynamic>))
           .toList();
+      if (battles.length < limit) {
+        // 진행 중인 배틀이 부족하면(전부 종료/취소된 경우 포함) 최근 종료·취소된
+        // 배틀로 나머지 자리를 채워 항상 상위 [limit]개가 보이도록 한다.
+        final endedRows = await _client
+            .from('battles')
+            .select()
+            .inFilter('status', ['completed', 'cancelled'])
+            .order('created_at', ascending: false)
+            .limit(limit - battles.length);
+        battles = [
+          ...battles,
+          ...(endedRows as List)
+              .map((r) => _mapBattle(r as Map<String, dynamic>)),
+        ];
+      }
       return _buildListItems(battles);
     } catch (e) {
       debugPrint('BattleStore.fetchActiveBattleItems failed: $e');

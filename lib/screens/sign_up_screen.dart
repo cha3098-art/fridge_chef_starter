@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/tr.dart';
 import '../models/user_profile.dart';
@@ -10,6 +11,7 @@ import '../services/auth_service.dart';
 import '../services/locale_store.dart';
 import '../services/profile_store.dart';
 import '../theme/app_theme.dart';
+import '../utils/image_compressor.dart';
 import '../widgets/language_toggle.dart';
 
 const _genderOptions = ['남성', '여성', '선택 안 함'];
@@ -134,6 +136,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  /// 선택한 프로필 사진을 board-photos 버킷에 업로드하고 공개 URL을 반환한다.
+  /// 업로드는 로그인(인증) 상태에서만 허용되므로, 이메일 인증 대기 중이라 세션이 없는 경우엔 호출하지 않는다.
+  Future<String?> _uploadProfilePhoto(String uid) async {
+    if (_photo == null) return null;
+    try {
+      final compressed = await ImageCompressor.compressImage(File(_photo!.path));
+      final bytes = await compressed.readAsBytes();
+      final ext = compressed.path.contains('.') ? compressed.path.split('.').last.toLowerCase() : 'jpg';
+      final path = 'avatars/$uid/${DateTime.now().millisecondsSinceEpoch}.$ext';
+      await Supabase.instance.client.storage.from('board-photos').uploadBinary(
+            path,
+            bytes,
+            fileOptions: FileOptions(contentType: 'image/$ext', upsert: false),
+          );
+      return Supabase.instance.client.storage.from('board-photos').getPublicUrl(path);
+    } catch (_) {
+      return null; // 업로드 실패해도 가입 자체는 막지 않는다
+    }
+  }
+
   bool get _canSubmit =>
       _idController.text.trim().isNotEmpty &&
       _idAvailable == true &&
@@ -155,6 +177,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (userId == null) {
         throw Exception(tr('가입 처리 중 문제가 발생했어요', 'Something went wrong while signing up'));
       }
+      // 업로드는 인증된 사용자만 가능하므로, 가입과 동시에 세션이 생긴 경우에만 시도한다
+      final photoUrl = authResponse.session != null ? await _uploadProfilePhoto(userId) : null;
       final profile = UserProfile(
         id: userId,
         username: _idController.text.trim(),
@@ -164,7 +188,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         city: _cityController.text.trim().isEmpty ? tr('미입력', 'Not entered') : _cityController.text.trim(),
         email: _emailController.text.trim(),
         bio: _bioController.text.trim(),
-        // TODO: Supabase Storage 연동 시 _photo를 업로드하고 반환된 URL을 photoPath로 저장
+        photoPath: photoUrl,
         hideGender: _hideGender,
         hidePhoto: _hidePhoto,
         hideNationality: _hideNationality,

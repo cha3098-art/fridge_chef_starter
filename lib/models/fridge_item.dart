@@ -1,3 +1,4 @@
+import '../l10n/recipe_i18n.dart';
 import '../l10n/tr.dart';
 
 enum DdayLevel { ok, warn, bad }
@@ -22,11 +23,7 @@ class FridgeItem {
     this.category = '기타',
   });
 
-  String get quantityLabel {
-    final isWhole = quantity == quantity.roundToDouble();
-    final q = isWhole ? quantity.toInt().toString() : quantity.toString();
-    return '$q$unit';
-  }
+  String get quantityLabel => localizedFridgeQuantityLabel(quantity, unit);
 
   int? get daysLeft {
     final expiry = expiryDate;

@@ -113,14 +113,26 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
     final battle = item.battle;
     final isVoting = battle.status == BattleStatus.voting;
     final isWaiting = battle.status == BattleStatus.waitingOpponent;
-    final statusIcon = isVoting ? '🗳️' : (isWaiting ? '🙋' : '⚔️');
+    final isCompleted = battle.status == BattleStatus.completed;
+    final isCancelled = battle.status == BattleStatus.cancelled;
+    final isEnded = isCompleted || isCancelled;
+    final statusIcon = isVoting
+        ? '🗳️'
+        : (isWaiting ? '🙋' : (isCancelled ? '🚫' : (isCompleted ? '🏆' : '⚔️')));
     final statusLabel = isVoting
         ? tr('투표 중', 'Voting')
         : isWaiting
             ? tr('상대 기다리는 중', 'Waiting for opponent')
-            : tr('배틀 진행중', 'Battle live');
-    final statusColor =
-        isVoting ? AppColors.gold : (isWaiting ? AppColors.inkSoft : AppColors.carrot);
+            : isCancelled
+                ? tr('취소된 배틀', 'Battle cancelled')
+                : isCompleted
+                    ? tr('종료된 배틀', 'Battle ended')
+                    : tr('배틀 진행중', 'Battle live');
+    final statusColor = isVoting
+        ? AppColors.gold
+        : (isWaiting
+            ? AppColors.inkSoft
+            : (isEnded ? AppColors.inkSoft : AppColors.carrot));
     final challenger = item.challengerNickname ?? tr('대기 중', 'Waiting');
 
     return GestureDetector(
@@ -129,11 +141,14 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
       ),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
-        transitionBuilder: (child, anim) => SlideTransition(
-          position:
-              Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
-                  .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
-          child: FadeTransition(opacity: anim, child: child),
+        // 오른쪽에서 들어와 왼쪽으로 흘러가는 티커 느낌을 주기 위해 가로 슬라이드를 쓴다.
+        transitionBuilder: (child, anim) => ClipRect(
+          child: SlideTransition(
+            position:
+                Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+                    .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
+            child: FadeTransition(opacity: anim, child: child),
+          ),
         ),
         child: Container(
           key: ValueKey(_tickerIndex),

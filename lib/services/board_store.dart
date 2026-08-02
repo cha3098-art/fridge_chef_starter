@@ -149,6 +149,27 @@ class BoardStore extends ChangeNotifier {
     });
   }
 
+  /// 게시글을 삭제한다 — RLS 정책상 본인 글만 삭제 가능하며, 좋아요/댓글은 DB에서 cascade로 함께 삭제된다.
+  /// 첨부 사진이 있으면 board-photos 버킷에서도 함께 지운다(고아 파일 방지).
+  Future<void> deletePost(String postId) async {
+    final photoUrl = findById(postId)?.photoPath;
+    await _client.from('board_posts').delete().eq('id', postId);
+    _posts.removeWhere((p) => p.id == postId);
+    notifyListeners();
+    if (photoUrl != null) {
+      const marker = '/board-photos/';
+      final idx = photoUrl.indexOf(marker);
+      if (idx != -1) {
+        final storagePath = photoUrl.substring(idx + marker.length);
+        try {
+          await _client.storage.from('board-photos').remove([storagePath]);
+        } catch (_) {
+          // DB 행 삭제는 이미 끝났으므로 스토리지 정리 실패는 조용히 무시한다
+        }
+      }
+    }
+  }
+
   Future<void> toggleLike(String postId, String likerUserId) async {
     final post = _posts.firstWhere((p) => p.id == postId);
     if (post.likedByUserIds.contains(likerUserId)) {
