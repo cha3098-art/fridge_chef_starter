@@ -9,6 +9,7 @@ import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
+import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import 'recipe_detail_screen.dart';
@@ -169,6 +170,8 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
       builder: (context, _) => Scaffold(
         backgroundColor: AppColors.paper,
         appBar: AppBar(
+          leading: const LabeledBackButton(),
+          leadingWidth: 96,
           backgroundColor: AppColors.paper,
           elevation: 0,
           toolbarHeight: 76,
@@ -364,6 +367,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
             ),
           ],
         ),
+        extendBody: true,
         bottomNavigationBar: MainBottomNav(
           currentIndex: 1,
           fridgeIngredientNames: widget.fridgeIngredientNames,

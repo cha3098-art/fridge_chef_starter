@@ -11,6 +11,8 @@ import '../theme/app_theme.dart';
 import '../utils/battle_countdown.dart';
 import '../widgets/battle_split_banner.dart';
 import '../widgets/fridge_mascot.dart';
+import '../widgets/labeled_back_button.dart';
+import '../widgets/main_return_button.dart';
 import 'battle_detail_screen.dart';
 import 'quick_match_screen.dart';
 
@@ -148,6 +150,8 @@ class _BattleScreenState extends State<BattleScreen>
     return Scaffold(
       backgroundColor: AppColors.paper,
       appBar: AppBar(
+        leading: const LabeledBackButton(),
+        leadingWidth: 96,
         backgroundColor: AppColors.paper,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -231,6 +235,8 @@ class _BattleScreenState extends State<BattleScreen>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          const MainReturnButton(),
+          const SizedBox(height: 12),
           FloatingActionButton.extended(
             heroTag: 'quickMatch',
             elevation: 0,

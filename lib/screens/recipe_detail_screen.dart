@@ -7,7 +7,9 @@ import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/chef_tier_badge.dart';
+import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
+import '../widgets/main_return_button.dart';
 
 /// 레시피 상세 화면 — 영양정보, 재료(보유 여부 표시), 조리순서를 보여준다
 class RecipeDetailScreen extends StatefulWidget {
@@ -116,6 +118,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       listenable: LocaleStore.instance,
       builder: (context, _) => Scaffold(
         backgroundColor: const Color(0xFFF8FAFC), // Slate 50
+        floatingActionButton: const MainReturnButton(),
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -123,6 +126,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               expandedHeight: 180,
               backgroundColor: gradient.last,
               foregroundColor: Colors.white,
+              leading: const LabeledBackButton(color: Colors.white),
+              leadingWidth: 96,
               iconTheme: const IconThemeData(
                 color: Colors.white,
                 shadows: [Shadow(color: Colors.black45, blurRadius: 6)],

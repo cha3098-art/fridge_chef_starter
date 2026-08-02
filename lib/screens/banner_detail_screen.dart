@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../l10n/tr.dart';
 import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
+import '../widgets/labeled_back_button.dart';
+import '../widgets/main_return_button.dart';
 
 typedef _BannerSection = ({String icon, String headlineKo, String headlineEn, String bodyKo, String bodyEn});
 typedef _BannerDetail = ({
@@ -156,7 +158,10 @@ class BannerDetailScreen extends StatelessWidget {
       listenable: LocaleStore.instance,
       builder: (context, _) => Scaffold(
         backgroundColor: AppColors.paper,
+        floatingActionButton: const MainReturnButton(),
         appBar: AppBar(
+          leading: const LabeledBackButton(),
+          leadingWidth: 96,
           backgroundColor: AppColors.paper,
           elevation: 0,
           scrolledUnderElevation: 0,

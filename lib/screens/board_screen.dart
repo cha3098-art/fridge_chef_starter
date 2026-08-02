@@ -16,8 +16,10 @@ import '../utils/image_compressor.dart';
 import '../widgets/chef_badge.dart';
 import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
+import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
+import '../widgets/main_return_button.dart';
 import 'profile_view_sheet.dart';
 import 'sign_up_screen.dart';
 
@@ -28,17 +30,6 @@ String _timeAgoLabel(DateTime dateTime) {
     return tr('${diff.inMinutes}분 전', '${diff.inMinutes}m ago');
   if (diff.inDays < 1) return tr('${diff.inHours}시간 전', '${diff.inHours}h ago');
   return tr('${diff.inDays}일 전', '${diff.inDays}d ago');
-}
-
-/// 라이트 배경 위 카드 — 헤어라인 보더 + 드롭 섀도우로 구분한다.
-/// 피드 카드는 사진·본문이 섞여 있어 다른 카드보다 살짝 더 또렷한 테두리로 경계를 잡는다.
-BoxDecoration _cardDeco({double radius = 16}) {
-  return BoxDecoration(
-    color: AppColors.card,
-    borderRadius: BorderRadius.circular(radius),
-    border: Border.all(color: AppColors.line, width: 1.2),
-    boxShadow: cardDropShadow(),
-  );
 }
 
 /// "게시판" — 뽐내기 게시판 / 챌린지 게시판 두 하위 게시판을 오가며 글을 쓰고 좋아요를 누른다.
@@ -121,6 +112,8 @@ class _BoardScreenState extends State<BoardScreen> {
         return Scaffold(
           backgroundColor: AppColors.paper,
           appBar: AppBar(
+            leading: const LabeledBackButton(),
+            leadingWidth: 96,
             backgroundColor: AppColors.paper,
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -217,14 +210,16 @@ class _BoardScreenState extends State<BoardScreen> {
                               ],
                             ),
                           )
-                        : ListView.separated(
-                            padding: const EdgeInsets.fromLTRB(
-                                AppSpacing.md, 0, AppSpacing.md, 96),
-                            itemCount: posts.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: AppSpacing.sm),
-                            itemBuilder: (context, index) =>
-                                _PostCard(post: posts[index]),
+                        : Container(
+                            color: Colors.white,
+                            child: ListView.separated(
+                              padding: const EdgeInsets.only(bottom: 96),
+                              itemCount: posts.length,
+                              separatorBuilder: (_, __) => const Divider(
+                                  color: Color(0xFFE2E8F0), height: 1),
+                              itemBuilder: (context, index) =>
+                                  _PostCard(post: posts[index]),
+                            ),
                           ),
               ),
             ],
@@ -241,6 +236,7 @@ class _BoardScreenState extends State<BoardScreen> {
             label: Text(tr('글쓰기', 'Write'),
                 style: const TextStyle(fontWeight: FontWeight.w700)),
           ),
+          extendBody: true,
           bottomNavigationBar: const MainBottomNav(currentIndex: 4),
         );
       },
@@ -360,167 +356,157 @@ class _PostCard extends StatelessWidget {
     final liked = myId != null && post.likedByUserIds.contains(myId);
 
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => BoardDetailScreen(post: post)),
       ),
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: _cardDeco(),
-        child: Column(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                InkWell(
-                  onTap: () async {
-                    final profile =
-                        await ProfileStore.instance.fetchById(post.authorId);
-                    if (profile != null && context.mounted)
-                      showProfileView(context, profile);
-                  },
-                  child: Row(
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: post.photoPath != null
+                  ? GestureDetector(
+                      onTap: () => _openPhotoViewer(context, post.photoPath!),
+                      child: Image.network(
+                        post.photoPath!,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Container(
+                      width: 80,
+                      height: 80,
+                      color: AppColors.paperDeep,
+                      alignment: Alignment.center,
+                      child: const FridgeMascot(size: 40),
+                    ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        letterSpacing: -0.2,
+                        color: Color(0xFF0F172A)),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    post.content,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 13, height: 1.4, color: AppColors.inkSoft),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
                     children: [
-                      Text(
-                        post.authorNickname,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                            letterSpacing: -0.1,
-                            color: AppColors.ink),
+                      Flexible(
+                        child: Text(
+                          post.authorNickname,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11,
+                              color: AppColors.ink),
+                        ),
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        '@${post.authorUsername}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.inkSoft,
-                          decoration: TextDecoration.underline,
-                        ),
+                      ChefBadge(
+                        generalTier: post.authorTier,
+                        isKFoodMaster: post.authorIsKFoodMaster,
+                        showLabel: false,
+                        medalSize: 13,
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 6),
-                ChefBadge(
-                  generalTier: post.authorTier,
-                  isKFoodMaster: post.authorIsKFoodMaster,
-                  showLabel: false,
-                  medalSize: 15,
-                ),
-                const Spacer(),
-                Text(_timeAgoLabel(post.createdAt),
-                    style: const TextStyle(
-                        fontSize: 11, color: AppColors.inkSoft)),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              post.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                  letterSpacing: -0.2,
-                  color: AppColors.ink),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              post.content,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  fontSize: 13, height: 1.5, color: AppColors.ink),
-            ),
-            if (post.photoPath != null) ...[
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: () => _openPhotoViewer(context, post.photoPath!),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.03),
-                          blurRadius: 4),
-                    ],
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.network(
-                    post.photoPath!,
-                    width: double.infinity,
-                    height: 180,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(height: 14),
-            const Divider(color: Color(0xFFE2E8F0), height: 1),
-            Container(
-              padding: const EdgeInsets.only(top: 12),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: myId == null
-                        ? null
-                        : () => BoardStore.instance.toggleLike(post.id, myId),
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: liked ? AppColors.redSoft : AppColors.paperDeep,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            liked ? Icons.favorite : Icons.favorite_border,
-                            size: 18,
-                            color: liked ? AppColors.red : AppColors.inkSoft,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            '${post.likeCount}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: liked ? AppColors.red : AppColors.inkSoft,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 6, horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: AppColors.paperDeep,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.chat_bubble_outline,
-                            size: 16, color: AppColors.inkSoft),
-                        const SizedBox(width: 5),
-                        Text(
-                          '${post.commentCount}',
+                      const SizedBox(width: 6),
+                      Text('·',
                           style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.inkSoft,
+                              fontSize: 11, color: AppColors.inkSoft)),
+                      const SizedBox(width: 6),
+                      Text(_timeAgoLabel(post.createdAt),
+                          style: const TextStyle(
+                              fontSize: 11, color: AppColors.inkSoft)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: myId == null
+                            ? null
+                            : () =>
+                                BoardStore.instance.toggleLike(post.id, myId),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 4, horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: liked
+                                ? AppColors.redSoft
+                                : AppColors.paperDeep,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                liked ? Icons.favorite : Icons.favorite_border,
+                                size: 14,
+                                color:
+                                    liked ? AppColors.red : AppColors.inkSoft,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${post.likeCount}',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: liked
+                                      ? AppColors.red
+                                      : AppColors.inkSoft,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.paperDeep,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.chat_bubble_outline,
+                                size: 13, color: AppColors.inkSoft),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${post.commentCount}',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.inkSoft,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -922,7 +908,10 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
 
         return Scaffold(
           backgroundColor: const Color(0xFFF8FAFC),
+          floatingActionButton: const MainReturnButton(),
           appBar: AppBar(
+            leading: const LabeledBackButton(),
+            leadingWidth: 96,
             backgroundColor: const Color(0xFFF8FAFC),
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -947,73 +936,100 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                   padding: const EdgeInsets.fromLTRB(AppSpacing.md,
                       AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
                   children: [
+                    // 1. 헤더 섹션 — 작성자 아바타 + 닉네임(@username) + 작성 시간
                     Row(
                       children: [
-                        InkWell(
-                          onTap: () async {
-                            final profile = await ProfileStore.instance
-                                .fetchById(post.authorId);
-                            if (profile != null && context.mounted)
-                              showProfileView(context, profile);
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                post.authorNickname,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    letterSpacing: -0.1),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '@${post.authorUsername}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.inkSoft,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ],
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: AppColors.greenSoft,
+                          child: Text(
+                            post.authorNickname.isEmpty
+                                ? '?'
+                                : post.authorNickname.characters.first,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                                color: AppColors.greenDeep),
                           ),
                         ),
-                        const SizedBox(width: 6),
-                        ChefBadge(
-                          generalTier: post.authorTier,
-                          isKFoodMaster: post.authorIsKFoodMaster,
-                          showLabel: false,
-                          medalSize: 16,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              final profile = await ProfileStore.instance
+                                  .fetchById(post.authorId);
+                              if (profile != null && context.mounted)
+                                showProfileView(context, profile);
+                            },
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    post.authorNickname,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 14,
+                                        letterSpacing: -0.1),
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    '@${post.authorUsername}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.inkSoft,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                ChefBadge(
+                                  generalTier: post.authorTier,
+                                  isKFoodMaster: post.authorIsKFoodMaster,
+                                  showLabel: false,
+                                  medalSize: 16,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        const Spacer(),
                         Text(_timeAgoLabel(post.createdAt),
                             style: const TextStyle(
                                 fontSize: 12, color: AppColors.inkSoft)),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    const Divider(
+                        color: Color(0xFFE2E8F0), height: 20, thickness: 1),
+
+                    // 2. 제목 & 본문 섹션 — 사진보다 먼저 배치해 글이 사진 밑에 깔리지 않게 한다
                     Text(
                       post.title,
                       style: const TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 20,
-                          letterSpacing: -0.3,
-                          height: 1.3),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0F172A)),
                     ),
+                    const SizedBox(height: 12),
+                    Text(
+                      post.content,
+                      style: const TextStyle(
+                          fontSize: 15, height: 1.5, color: Color(0xFF334155)),
+                    ),
+                    const Divider(
+                        color: Color(0xFFE2E8F0), height: 24, thickness: 1),
+
+                    // 3. 첨부 사진 섹션 — 독립된 카드 프레임으로 텍스트와 명확히 분리
                     if (post.photoPath != null) ...[
-                      const SizedBox(height: 14),
                       GestureDetector(
                         onTap: () => _openPhotoViewer(context, post.photoPath!),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF8FAFC),
-                            borderRadius: BorderRadius.circular(16),
-                            border:
-                                Border.all(color: const Color(0xFFE2E8F0)),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.03),
-                                  blurRadius: 4),
-                            ],
+                            border: Border.all(
+                                color: const Color(0xFFE2E8F0), width: 1),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           clipBehavior: Clip.antiAlias,
                           child: Image.network(
@@ -1023,22 +1039,17 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                           ),
                         ),
                       ),
+                      const Divider(
+                          color: Color(0xFFE2E8F0), height: 24, thickness: 1),
                     ],
-                    const SizedBox(height: 14),
-                    Text(post.content,
-                        style: const TextStyle(
-                            fontSize: 14, height: 1.6, letterSpacing: 0.1)),
-                    const SizedBox(height: 18),
-                    const Divider(color: Color(0xFFE2E8F0), height: 1),
-                    Container(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: InkWell(
-                        onTap: myId == null
-                            ? null
-                            : () =>
-                                BoardStore.instance.toggleLike(post.id, myId),
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
+
+                    // 4. 반응 & 댓글 섹션
+                    InkWell(
+                      onTap: myId == null
+                          ? null
+                          : () => BoardStore.instance.toggleLike(post.id, myId),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
                           padding: const EdgeInsets.symmetric(
                               vertical: 8, horizontal: 14),
                           decoration: BoxDecoration(
@@ -1071,10 +1082,7 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    const Divider(color: Color(0xFFE2E8F0), height: 1),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
                     FutureBuilder<List<BoardComment>>(
                       future: _commentsFuture,
                       builder: (context, snapshot) {

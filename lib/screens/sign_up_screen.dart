@@ -12,6 +12,7 @@ import '../services/locale_store.dart';
 import '../services/profile_store.dart';
 import '../theme/app_theme.dart';
 import '../utils/image_compressor.dart';
+import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 
 const _genderOptions = ['남성', '여성', '선택 안 함'];
@@ -233,6 +234,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       builder: (context, _) => Scaffold(
       backgroundColor: AppColors.paper,
       appBar: AppBar(
+        leading: const LabeledBackButton(),
+        leadingWidth: 96,
         backgroundColor: AppColors.paper,
         elevation: 0,
         title: Text(tr('회원가입', 'Sign Up')),

@@ -14,7 +14,9 @@ import '../services/ocr_parser_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/fridge_mascot.dart';
+import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
+import '../widgets/main_return_button.dart';
 
 /// "재료 등록" 화면 — 검색 / 사진인식 / 영수증스캔 / 냉장고 전체촬영 네 가지 방법을 탭으로 제공.
 /// 네 탭 모두 실제로 동작하며, 담은 재료를 냉장고 화면으로 반환한다.
@@ -49,7 +51,10 @@ class _AddIngredientScreenState extends State<AddIngredientScreen> {
         initialIndex: widget.initialTabIndex,
         child: Scaffold(
           backgroundColor: AppColors.paper,
+          floatingActionButton: const MainReturnButton(),
           appBar: AppBar(
+            leading: const LabeledBackButton(),
+            leadingWidth: 96,
             backgroundColor: AppColors.paper,
             elevation: 0,
             title: Text(tr('재료 등록', 'Add Ingredients')),

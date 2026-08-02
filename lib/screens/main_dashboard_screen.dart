@@ -403,6 +403,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
               ],
             ),
           ),
+          extendBody: true,
           bottomNavigationBar: MainBottomNav(
               currentIndex: 0, fridgeIngredientNames: names, dark: false),
         );

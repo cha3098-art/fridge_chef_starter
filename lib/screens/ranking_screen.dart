@@ -10,6 +10,7 @@ import '../services/locale_store.dart';
 import '../services/profile_store.dart';
 import '../theme/app_theme.dart';
 import '../widgets/fridge_mascot.dart';
+import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import 'profile_view_sheet.dart';
@@ -108,6 +109,8 @@ class _RankingScreenState extends State<RankingScreen> {
       builder: (context, _) => Scaffold(
         backgroundColor: AppColors.paper,
         appBar: AppBar(
+          leading: const LabeledBackButton(),
+          leadingWidth: 96,
           backgroundColor: AppColors.paper,
           elevation: 0,
           scrolledUnderElevation: 0,
@@ -200,6 +203,7 @@ class _RankingScreenState extends State<RankingScreen> {
             );
           },
         ),
+        extendBody: true,
         bottomNavigationBar: const MainBottomNav(currentIndex: 3),
       ),
     );

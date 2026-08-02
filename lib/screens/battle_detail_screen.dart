@@ -16,6 +16,8 @@ import '../theme/battle_avatars.dart';
 import '../utils/battle_countdown.dart';
 import '../utils/image_compressor.dart';
 import '../widgets/battle_split_banner.dart';
+import '../widgets/labeled_back_button.dart';
+import '../widgets/main_return_button.dart';
 import '../widgets/fridge_mascot.dart';
 
 
@@ -388,7 +390,10 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
     final battle = _battle;
     return Scaffold(
       backgroundColor: AppColors.paper,
+      floatingActionButton: const MainReturnButton(),
       appBar: AppBar(
+        leading: const LabeledBackButton(),
+        leadingWidth: 96,
         backgroundColor: AppColors.paper,
         elevation: 0,
         scrolledUnderElevation: 0,

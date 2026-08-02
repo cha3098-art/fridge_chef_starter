@@ -6,6 +6,8 @@ import '../l10n/tr.dart';
 import '../services/battle_store.dart';
 import '../theme/app_theme.dart';
 import '../widgets/fridge_mascot.dart';
+import '../widgets/labeled_back_button.dart';
+import '../widgets/main_return_button.dart';
 import 'battle_detail_screen.dart';
 
 /// 빠른 매칭 대기 화면 — battle_queue에 들어가서 실시간으로 상대가 잡히길 기다린다.
@@ -76,7 +78,10 @@ class _QuickMatchScreenState extends State<QuickMatchScreen> {
       },
       child: Scaffold(
         backgroundColor: AppColors.paper,
+        floatingActionButton: const MainReturnButton(),
         appBar: AppBar(
+          leading: const LabeledBackButton(),
+          leadingWidth: 96,
           backgroundColor: AppColors.paper,
           elevation: 0,
           scrolledUnderElevation: 0,
