@@ -44,7 +44,8 @@ class BoardStore extends ChangeNotifier {
         .select(
           'id, category, author_id, title, content, photo_url, created_at, '
           'users!board_posts_author_id_fkey(username, nickname), '
-          'board_post_likes(user_id)',
+          'board_post_likes(user_id), '
+          'board_comments(count)',
         )
         .order('created_at');
     final pointsByUser = await ChefPointsStore.fetchAllUserPoints();
@@ -53,6 +54,10 @@ class BoardStore extends ChangeNotifier {
       final points = pointsByUser[authorId];
       final userRow = row['users'] as Map<String, dynamic>?;
       final likeRows = row['board_post_likes'] as List;
+      final commentCountRows = row['board_comments'] as List?;
+      final commentCount = (commentCountRows != null && commentCountRows.isNotEmpty)
+          ? commentCountRows.first['count'] as int
+          : 0;
       return BoardPost(
         id: row['id'] as String,
         category: BoardCategory.values.byName(row['category'] as String),
@@ -66,6 +71,7 @@ class BoardStore extends ChangeNotifier {
         photoPath: row['photo_url'] as String?,
         createdAt: DateTime.parse(row['created_at'] as String),
         likedByUserIds: {for (final l in likeRows) l['user_id'] as String},
+        commentCount: commentCount,
       );
     }).toList();
     _loaded = true;
@@ -133,7 +139,8 @@ class BoardStore extends ChangeNotifier {
     }).toList();
   }
 
-  /// 댓글을 작성한다 — 작성자 닉네임/등급은 현재 시점 값을 그대로 저장한다(비정규화)
+  /// 댓글을 작성한다 — 작성자 닉네임/등급은 현재 시점 값을 그대로 저장한다(비정규화).
+  /// 게시판 목록 카드의 댓글 수 표시도 최신으로 맞추기 위해 posts를 다시 불러온다.
   Future<void> addComment({required String postId, required String content}) async {
     final uid = _client.auth.currentUser?.id;
     final profile = ProfileStore.instance.currentProfile;
@@ -147,6 +154,14 @@ class BoardStore extends ChangeNotifier {
       'author_is_kfood_master': ChefPointsStore.instance.isKFoodMaster,
       'content': content,
     });
+    await loadPosts();
+  }
+
+  /// 댓글을 삭제한다 — RLS 정책상 본인 댓글만 삭제 가능하다. addComment와 마찬가지로
+  /// 목록 카드의 댓글 수를 맞추기 위해 posts를 다시 불러온다.
+  Future<void> deleteComment(String commentId) async {
+    await _client.from('board_comments').delete().eq('id', commentId);
+    await loadPosts();
   }
 
   /// 게시글을 삭제한다 — RLS 정책상 본인 글만 삭제 가능하며, 좋아요/댓글은 DB에서 cascade로 함께 삭제된다.

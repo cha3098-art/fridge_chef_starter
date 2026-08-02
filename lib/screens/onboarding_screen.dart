@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/tr.dart';
+import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
+import '../widgets/language_toggle.dart';
 import 'auth_gate.dart';
 
 /// 앱을 처음 켰을 때만 한 번 보여주는 3장짜리 소개 슬라이드.
@@ -25,23 +28,32 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  final List<Map<String, String>> _onboardingData = [
-    {
-      'emoji': '⏰',
-      'title': '버려지는 재료 없이\n똑똑한 냉장고 구출 작전',
-      'subtitle': '냉장고에 재료를 등록하면 유통기한 임박 시점에 맞춰 기기가 알아서 알림을 울려줘요. 상해서 버리는 아까운 식재료를 제로(0)로 만들어 보세요!',
-    },
-    {
-      'emoji': '🍳',
-      'title': '있는 재료만 콕 집어\n맞춤형 레시피 추천',
-      'subtitle': '새로 장 볼 필요 없이 지금 냉장고에 있는 재료를 기반으로 매칭률(%)이 가장 높은 레시피를 제안합니다. 터치 한 번으로 저녁 고민 끝!',
-    },
-    {
-      'emoji': '✉️',
-      'title': '오늘 저녁은 홈파티!\n식사 초대장 공유',
-      'subtitle': '오늘 만든 근사한 요리를 초대장 링크로 친구들에게 빠르게 공유해 보세요. 링크를 누르면 친구도 앱으로 바로 연결되어 소중한 한 끼를 함께 나눌 수 있어요.',
-    },
-  ];
+  List<Map<String, String>> get _onboardingData => [
+        {
+          'emoji': '⏰',
+          'title': tr('버려지는 재료 없이\n똑똑한 냉장고 구출 작전',
+              'Smart fridge rescue —\nno more wasted ingredients'),
+          'subtitle': tr(
+              '냉장고에 재료를 등록하면 유통기한 임박 시점에 맞춰 기기가 알아서 알림을 울려줘요. 상해서 버리는 아까운 식재료를 제로(0)로 만들어 보세요!',
+              "Register ingredients and your phone alerts you right before they expire. Let's get food waste down to zero!"),
+        },
+        {
+          'emoji': '🍳',
+          'title': tr('있는 재료만 콕 집어\n맞춤형 레시피 추천',
+              'Recipes picked from\nwhat you already have'),
+          'subtitle': tr(
+              '새로 장 볼 필요 없이 지금 냉장고에 있는 재료를 기반으로 매칭률(%)이 가장 높은 레시피를 제안합니다. 터치 한 번으로 저녁 고민 끝!',
+              'No need to go shopping — we suggest recipes with the highest match rate based on what\'s already in your fridge. One tap and dinner is sorted!'),
+        },
+        {
+          'emoji': '✉️',
+          'title': tr('오늘 저녁은 홈파티!\n식사 초대장 공유',
+              'Tonight, a home party!\nShare a meal invite'),
+          'subtitle': tr(
+              '오늘 만든 근사한 요리를 초대장 링크로 친구들에게 빠르게 공유해 보세요. 링크를 누르면 친구도 앱으로 바로 연결되어 소중한 한 끼를 함께 나눌 수 있어요.',
+              "Share today's dish with friends via an invite link. One tap and they're right in the app with you, ready to enjoy the meal together."),
+        },
+      ];
 
   @override
   void dispose() {
@@ -51,6 +63,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) => _buildScaffold(context),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     final isLast = _currentPage == _onboardingData.length - 1;
 
     return Scaffold(
@@ -59,20 +78,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.md, top: AppSpacing.sm),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                  onPressed: _completeOnboarding,
-                  child: Text(
-                    '건너뛰기',
-                    style: const TextStyle(
-                      color: AppColors.inkSoft,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const LanguageToggle(),
+                  TextButton(
+                    onPressed: _completeOnboarding,
+                    child: Text(
+                      tr('건너뛰기', 'Skip'),
+                      style: const TextStyle(
+                        color: AppColors.inkSoft,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
             Expanded(
@@ -165,7 +188,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
                       child: Text(
-                        isLast ? '냉장고 털러 가기' : '다음 단계',
+                        isLast
+                            ? tr('냉장고 털러 가기', 'Raid the fridge')
+                            : tr('다음 단계', 'Next'),
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),

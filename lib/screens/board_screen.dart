@@ -437,8 +437,18 @@ class _PostCard extends StatelessWidget {
               const SizedBox(height: 12),
               GestureDetector(
                 onTap: () => _openPhotoViewer(context, post.photoPath!),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 4),
+                    ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
                   child: Image.network(
                     post.photoPath!,
                     width: double.infinity,
@@ -448,38 +458,71 @@ class _PostCard extends StatelessWidget {
                 ),
               ),
             ],
-            const SizedBox(height: 10),
-            InkWell(
-              onTap: myId == null
-                  ? null
-                  : () => BoardStore.instance.toggleLike(post.id, myId),
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                decoration: BoxDecoration(
-                  color: liked ? AppColors.redSoft : AppColors.paperDeep,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      liked ? Icons.favorite : Icons.favorite_border,
-                      size: 18,
-                      color: liked ? AppColors.red : AppColors.inkSoft,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '${post.likeCount}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: liked ? AppColors.red : AppColors.inkSoft,
+            const SizedBox(height: 14),
+            const Divider(color: Color(0xFFE2E8F0), height: 1),
+            Container(
+              padding: const EdgeInsets.only(top: 12),
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: myId == null
+                        ? null
+                        : () => BoardStore.instance.toggleLike(post.id, myId),
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 6, horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: liked ? AppColors.redSoft : AppColors.paperDeep,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            liked ? Icons.favorite : Icons.favorite_border,
+                            size: 18,
+                            color: liked ? AppColors.red : AppColors.inkSoft,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            '${post.likeCount}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: liked ? AppColors.red : AppColors.inkSoft,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6, horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.paperDeep,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.chat_bubble_outline,
+                            size: 16, color: AppColors.inkSoft),
+                        const SizedBox(width: 5),
+                        Text(
+                          '${post.commentCount}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.inkSoft,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -783,6 +826,39 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
     }
   }
 
+  Future<void> _deleteComment(BoardComment comment) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(tr('댓글을 삭제할까요?', 'Delete this comment?')),
+        content: Text(tr('삭제하면 되돌릴 수 없어요.', 'This cannot be undone.')),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text(tr('취소', 'Cancel'))),
+          TextButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: Text(tr('삭제', 'Delete'),
+                  style: const TextStyle(color: AppColors.red))),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await BoardStore.instance.deleteComment(comment.id);
+      final refreshed = BoardStore.instance.fetchComments(widget.post.id);
+      if (!mounted) return;
+      setState(() => _commentsFuture = refreshed);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(tr('삭제에 실패했어요', 'Could not delete the comment'))),
+        );
+      }
+    }
+  }
+
   Future<void> _submitComment() async {
     final text = _commentController.text.trim();
     if (text.isEmpty || _submitting) return;
@@ -927,8 +1003,19 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                       const SizedBox(height: 14),
                       GestureDetector(
                         onTap: () => _openPhotoViewer(context, post.photoPath!),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(16),
+                            border:
+                                Border.all(color: const Color(0xFFE2E8F0)),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.03),
+                                  blurRadius: 4),
+                            ],
+                          ),
+                          clipBehavior: Clip.antiAlias,
                           child: Image.network(
                             post.photoPath!,
                             width: double.infinity,
@@ -941,44 +1028,53 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                     Text(post.content,
                         style: const TextStyle(
                             fontSize: 14, height: 1.6, letterSpacing: 0.1)),
-                    const SizedBox(height: 16),
-                    InkWell(
-                      onTap: myId == null
-                          ? null
-                          : () => BoardStore.instance.toggleLike(post.id, myId),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 14),
-                        decoration: BoxDecoration(
-                          color: liked
-                              ? const Color(0xFFFFE1E6)
-                              : const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              liked ? Icons.favorite : Icons.favorite_border,
-                              size: 18,
-                              color: liked ? AppColors.red : AppColors.inkSoft,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              '${post.likeCount}',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
+                    const SizedBox(height: 18),
+                    const Divider(color: Color(0xFFE2E8F0), height: 1),
+                    Container(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: InkWell(
+                        onTap: myId == null
+                            ? null
+                            : () =>
+                                BoardStore.instance.toggleLike(post.id, myId),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 14),
+                          decoration: BoxDecoration(
+                            color: liked
+                                ? const Color(0xFFFFE1E6)
+                                : const Color(0xFFF1F5F9),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                liked ? Icons.favorite : Icons.favorite_border,
+                                size: 18,
                                 color:
                                     liked ? AppColors.red : AppColors.inkSoft,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 6),
+                              Text(
+                                '${post.likeCount}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: liked
+                                      ? AppColors.red
+                                      : AppColors.inkSoft,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 24),
+                    const Divider(color: Color(0xFFE2E8F0), height: 1),
+                    const SizedBox(height: 20),
                     FutureBuilder<List<BoardComment>>(
                       future: _commentsFuture,
                       builder: (context, snapshot) {
@@ -1019,14 +1115,18 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                      color: const Color(0xFFF1F5F9), width: 1),
+                                      color: const Color(0xFFE2E8F0), width: 1),
                                 ),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: AppSpacing.md),
                                 child: Column(
                                   children: [
                                     for (final c in comments)
-                                      _CommentTile(comment: c)
+                                      _CommentTile(
+                                        comment: c,
+                                        isMine: myId == c.authorId,
+                                        onDelete: () => _deleteComment(c),
+                                      )
                                   ],
                                 ),
                               ),
@@ -1103,7 +1203,10 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
 
 class _CommentTile extends StatelessWidget {
   final BoardComment comment;
-  const _CommentTile({required this.comment});
+  final bool isMine;
+  final VoidCallback onDelete;
+  const _CommentTile(
+      {required this.comment, required this.isMine, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -1135,6 +1238,18 @@ class _CommentTile extends StatelessWidget {
               Text(_timeAgoLabel(comment.createdAt),
                   style:
                       const TextStyle(fontSize: 11, color: AppColors.inkSoft)),
+              if (isMine) ...[
+                const Spacer(),
+                InkWell(
+                  onTap: onDelete,
+                  borderRadius: BorderRadius.circular(12),
+                  child: const Padding(
+                    padding: EdgeInsets.all(2),
+                    child: Icon(Icons.delete_outline,
+                        size: 15, color: AppColors.inkSoft),
+                  ),
+                ),
+              ],
             ],
           ),
           const SizedBox(height: 4),

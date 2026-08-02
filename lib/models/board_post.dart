@@ -23,6 +23,7 @@ class BoardPost {
   final String? photoPath;
   final DateTime createdAt;
   final Set<String> likedByUserIds;
+  final int commentCount;
 
   BoardPost({
     required this.id,
@@ -36,6 +37,7 @@ class BoardPost {
     required this.content,
     required this.createdAt,
     this.photoPath,
+    this.commentCount = 0,
     Set<String>? likedByUserIds,
   }) : likedByUserIds = likedByUserIds ?? <String>{};
 

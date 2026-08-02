@@ -374,6 +374,7 @@ create policy "본인 좋아요만 삭제" on public.board_post_likes for delete
 
 create policy "댓글 전체 공개 조회" on public.board_comments for select using (true);
 create policy "로그인한 사용자만 댓글 작성" on public.board_comments for insert with check (auth.uid() = author_id);
+create policy "본인 댓글만 삭제" on public.board_comments for delete using (auth.uid() = author_id);
 
 create policy "포인트 내역 전체 공개 조회" on public.chef_point_events for select using (true);
 create policy "본인 포인트 내역만 추가" on public.chef_point_events for insert with check (auth.uid() = user_id);
