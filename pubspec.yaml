@@ -65,6 +65,13 @@ flutter:
     - assets/battle_avatars/female_1.jpg
     - assets/battle_avatars/female_2.jpg
     - assets/battle_avatars/female_3.jpg
+    - assets/frames/han-sik-frame.png
+    - assets/frames/Joon-sik-frame.png
+    - assets/frames/il-sik-frame.png
+    - assets/frames/yang-sik-frame.png
+    - assets/frames/bun-sik-frame.png
+    - assets/frames/italy-frame.png
+    - assets/frames/france-frame.png
   fonts:
     - family: Pretendard
       fonts:

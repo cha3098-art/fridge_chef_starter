@@ -24,6 +24,8 @@ class BoardPost {
   final DateTime createdAt;
   final Set<String> likedByUserIds;
   final int commentCount;
+  /// 글쓰기 화면에서 고른 장식 프레임 카테고리 — food_visuals.dart의 bragFrameAsset() 키
+  final String frameCategory;
 
   BoardPost({
     required this.id,
@@ -38,6 +40,7 @@ class BoardPost {
     required this.createdAt,
     this.photoPath,
     this.commentCount = 0,
+    this.frameCategory = '한식',
     Set<String>? likedByUserIds,
   }) : likedByUserIds = likedByUserIds ?? <String>{};
 

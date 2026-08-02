@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../data/recipe_catalog.dart';
@@ -17,6 +16,7 @@ import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
+import '../widgets/framed_post_card.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_return_button.dart';
@@ -109,9 +109,11 @@ class _ShareScreenState extends State<ShareScreen>
 
   final List<CookingBrag> _brags = [
     CookingBrag(
+      title: '계란볶음밥',
       recipeTitle: '계란볶음밥',
       caption: '10분 만에 완성! 생각보다 훨씬 맛있었어요',
       completedAt: DateTime.now().subtract(const Duration(hours: 5)),
+      frameCategory: '한식',
     ),
   ];
 
@@ -216,7 +218,7 @@ class _ShareScreenState extends State<ShareScreen>
     final bragLink = 'https://fridgechef.app/brag/$bragId';
     await Clipboard.setData(ClipboardData(text: bragLink));
     if (!mounted) return;
-    _showBragLinkDialog(bragLink, result.recipeTitle);
+    _showBragLinkDialog(bragLink, result.title);
   }
 
   void _showBragLinkDialog(String link, String recipeTitle) {
@@ -526,7 +528,7 @@ class _BragTab extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          brag.recipeTitle,
+                          brag.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -603,40 +605,7 @@ class _BragThumbnail extends StatelessWidget {
   }
 }
 
-/// 요리 자랑 상세 — "카드형 초대장" 캔버스. 쿨 슬레이트 배경 위에 워프화이트 카드 패널을 올리고
-/// [제목 → 구분선 → 본문 → 구분선 → 사진] 3단 구획을 또렷한 라인으로 나눈다.
-/// 카드 안 구획 사이에 넣는 장식용 구분선 — 얇은 실선 가운데 작은 다이아 포인트를 둔
-/// 초대장풍 오너먼트. 밋밋한 Divider 대신 사용한다.
-class _OrnamentDivider extends StatelessWidget {
-  const _OrnamentDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        children: [
-          const Expanded(
-              child: Divider(color: Color(0xFFE2E8F0), thickness: 1)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Transform.rotate(
-              angle: 0.785398,
-              child: Container(
-                width: 6,
-                height: 6,
-                color: const Color(0xFFCBB273),
-              ),
-            ),
-          ),
-          const Expanded(
-              child: Divider(color: Color(0xFFE2E8F0), thickness: 1)),
-        ],
-      ),
-    );
-  }
-}
-
+/// 요리 자랑 상세 — 업로드해주신 장식 프레임(FramedPostCard)이 곧 카드 틀이 된다.
 class CookingBragDetailScreen extends StatelessWidget {
   final CookingBrag brag;
   const CookingBragDetailScreen({super.key, required this.brag});
@@ -645,162 +614,100 @@ class CookingBragDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final recipe = findRecipeByTitle(brag.recipeTitle);
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       floatingActionButton: const MainReturnButton(),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFCBD9EA), Color(0xFFE4EAE3)],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(4, 4, 16, 4),
-                child: Row(
-                  children: [
-                    const LabeledBackButton(color: Color(0xFF0F172A)),
-                    const SizedBox(width: 10),
-                    Text(tr('요리 자랑', 'Cooking Brag'),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF0F172A))),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFFDF8),
-                      borderRadius: BorderRadius.circular(22),
-                      border: Border.all(
-                          color: const Color(0xFFE2E8F0), width: 1.2),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.12),
-                            blurRadius: 28,
-                            offset: const Offset(0, 12)),
-                      ],
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Column(
-                      children: [
-                        // 상단 워터컬러풍 헤더 밴드 위에 제목을 올려 초대장 느낌을 낸다
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFFEFF3E8), Color(0xFFDCE7EF)],
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                tr('오늘의 요리', "TODAY'S DISH"),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 3,
-                                  color: Color(0xFF6B7A6E),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                brag.recipeTitle,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.notoSerifKr(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.2,
-                                  color: const Color(0xFF1E2A22),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                _timeAgoLabel(brag.completedAt),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontSize: 12, color: Color(0xFF7C8A7F)),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              // 2구획 — 본문
-                              Text(
-                                brag.caption,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.notoSerifKr(
-                                  fontSize: 15,
-                                  height: 1.8,
-                                  color: const Color(0xFF334155),
-                                ),
-                              ),
-                              const _OrnamentDivider(),
-
-                              // 3구획 — 사진
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(14),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: const Color(0xFFE2E8F0),
-                                        width: 1),
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: AspectRatio(
-                                    aspectRatio: 4 / 3,
-                                    child: brag.photoPath != null
-                                        ? Image.file(File(brag.photoPath!),
-                                            fit: BoxFit.cover)
-                                        : RecipePhoto(
-                                            photoUrl: recipe?.photoUrl ?? '',
-                                            emoji: recipe?.emoji ?? '🍽️',
-                                            cuisineType:
-                                                recipe?.cuisineType ?? '',
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            emojiSize: 44,
-                                          ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 18),
-                              Text(
-                                tr('by 나 ✨', 'by me ✨'),
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontStyle: FontStyle.italic,
-                                  color: Color(0xFF94A3B8),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+      appBar: AppBar(
+        leading: const LabeledBackButton(),
+        leadingWidth: 96,
+        backgroundColor: const Color(0xFFF8FAFC),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: Text(tr('요리 자랑', 'Cooking Brag'),
+            style: const TextStyle(
+                fontWeight: FontWeight.w800, letterSpacing: -0.3)),
+      ),
+      body: ListView(
+        padding:
+            const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
+        children: [
+          // 액자 틀 — 사진만 내경 창 안에 고정. 글씨는 액자 밖(아래) 패널로 분리한다.
+          FramedPostCard(
+            frameCategory: brag.frameCategory,
+            onPhotoTap: brag.photoPath == null
+                ? null
+                : () => _openBragPhotoViewer(context, brag.photoPath!),
+            photo: brag.photoPath != null
+                ? Image.file(File(brag.photoPath!), fit: BoxFit.cover)
+                : RecipePhoto(
+                    photoUrl: recipe?.photoUrl ?? '',
+                    emoji: recipe?.emoji ?? '🍽️',
+                    cuisineType: recipe?.cuisineType ?? '',
+                    width: double.infinity,
+                    height: double.infinity,
+                    emojiSize: 44,
                   ),
-                ),
-              ),
-            ],
           ),
-        ),
+          const SizedBox(height: 16),
+          // 액자 바로 아래 독립된 글 패널 — 뽐내기 게시판과 동일한 톤
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+            ),
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  brag.title,
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0F172A)),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  brag.caption,
+                  style: const TextStyle(
+                      fontSize: 14, height: 1.4, color: Color(0xFF334155)),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _timeAgoLabel(brag.completedAt),
+                  style: const TextStyle(
+                      fontSize: 12, color: Color(0xFF94A3B8)),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
+}
+
+void _openBragPhotoViewer(BuildContext context, String path) {
+  Navigator.of(context).push(
+    PageRouteBuilder(
+      opaque: false,
+      barrierColor: Colors.black,
+      pageBuilder: (_, __, ___) => GestureDetector(
+        onTap: () => Navigator.of(context).pop(),
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: SafeArea(
+            child: Center(
+              child: InteractiveViewer(
+                child: Image.file(File(path), fit: BoxFit.contain),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 class _CreateInviteSheet extends StatefulWidget {
@@ -945,21 +852,32 @@ class _CreateBragSheet extends StatefulWidget {
   State<_CreateBragSheet> createState() => _CreateBragSheetState();
 }
 
+/// "만든 레시피" 드롭다운 맨 위에 두는 직접입력 옵션의 값
+const _customRecipeValue = '직접입력';
+
 class _CreateBragSheetState extends State<_CreateBragSheet> {
   late String _selectedRecipe;
+  late String _selectedFrame;
+  late final TextEditingController _titleController;
   late final TextEditingController _captionController;
+  late final TextEditingController _customRecipeController;
   XFile? _pickedImage;
 
   @override
   void initState() {
     super.initState();
     _selectedRecipe = allRecipes.first.title;
+    _selectedFrame = bragFrameCategories.first;
+    _titleController = TextEditingController();
     _captionController = TextEditingController();
+    _customRecipeController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _titleController.dispose();
     _captionController.dispose();
+    _customRecipeController.dispose();
     super.dispose();
   }
 
@@ -1009,14 +927,22 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
   }
 
   void _confirm() {
+    final recipeTitle = _selectedRecipe == _customRecipeValue
+        ? _customRecipeController.text.trim()
+        : _selectedRecipe;
+    final title = _titleController.text.trim().isEmpty
+        ? recipeTitle
+        : _titleController.text.trim();
     Navigator.pop(
       context,
       CookingBrag(
-        recipeTitle: _selectedRecipe,
+        title: title,
+        recipeTitle: recipeTitle,
         caption: _captionController.text.trim().isEmpty
-            ? tr('$_selectedRecipe 완성했어요!', 'Finished making $_selectedRecipe!')
+            ? tr('$recipeTitle 완성했어요!', 'Finished making $recipeTitle!')
             : _captionController.text.trim(),
         completedAt: DateTime.now(),
+        frameCategory: _selectedFrame,
         photoPath: _pickedImage?.path,
       ),
     );
@@ -1052,6 +978,83 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
             ],
           ),
           const SizedBox(height: 20),
+          Text(
+            tr('테마 액자 프레임 고르기', 'Choose a theme frame'),
+            style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+                color: AppColors.inkSoft),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 78,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: bragFrameCategories.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, index) {
+                final category = bragFrameCategories[index];
+                final selected = _selectedFrame == category;
+                return InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () => setState(() => _selectedFrame = category),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 52,
+                        height: 52,
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: selected
+                                ? AppColors.green
+                                : AppColors.cardBorder,
+                            width: selected ? 2 : 1,
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(11),
+                          child: Image.asset(
+                            bragFrameAsset(category),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        category,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: selected
+                              ? AppColors.green
+                              : AppColors.inkSoft,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _titleController,
+            style: const TextStyle(color: AppColors.ink),
+            decoration: InputDecoration(
+              labelText: tr('제목', 'Title'),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide:
+                    const BorderSide(color: AppColors.green, width: 1.5),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             initialValue: _selectedRecipe,
             elevation: 2,
@@ -1067,18 +1070,42 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
                     const BorderSide(color: AppColors.green, width: 1.5),
               ),
             ),
-            items: allRecipes
-                .map((r) => DropdownMenuItem(
-                      value: r.title,
-                      child: Text(r.isKFood
-                          ? '🇰🇷 ${tr(r.title, r.titleEn)}'
-                          : tr(r.title, r.titleEn)),
-                    ))
-                .toList(),
+            items: [
+              DropdownMenuItem(
+                value: _customRecipeValue,
+                child: Text(
+                  tr('✏️ 직접입력', '✏️ Type my own'),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              ...allRecipes.map((r) => DropdownMenuItem(
+                    value: r.title,
+                    child: Text(r.isKFood
+                        ? '🇰🇷 ${tr(r.title, r.titleEn)}'
+                        : tr(r.title, r.titleEn)),
+                  )),
+            ],
             onChanged: (v) {
               if (v != null) setState(() => _selectedRecipe = v);
             },
           ),
+          if (_selectedRecipe == _customRecipeValue) ...[
+            const SizedBox(height: 12),
+            TextField(
+              controller: _customRecipeController,
+              style: const TextStyle(color: AppColors.ink),
+              decoration: InputDecoration(
+                labelText: tr('레시피 이름 직접 입력', 'Type the recipe name'),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide:
+                      const BorderSide(color: AppColors.green, width: 1.5),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           if (_pickedImage != null)
             Stack(
@@ -1128,10 +1155,19 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
                 ),
               ),
             ),
+          const SizedBox(height: 8),
+          Text(
+            tr(
+                '💡 안내: 사진은 1:1 권장 비율 / 10MB 이하 파일이 적합하며, 자동으로 액자 틀에 맞춰 고정됩니다. (본문은 200자까지 작성 가능)',
+                '💡 Tip: a 1:1 photo under 10MB fits best — it will be auto-fit to the frame window. (Caption up to 200 characters)'),
+            style: const TextStyle(
+                fontSize: 11, color: AppColors.inkSoft, height: 1.4),
+          ),
           const SizedBox(height: 16),
           TextField(
             controller: _captionController,
             maxLines: 3,
+            maxLength: 200,
             style: const TextStyle(color: AppColors.ink),
             decoration: InputDecoration(
               labelText: tr('요리 한마디 남기기', 'Say a few words'),

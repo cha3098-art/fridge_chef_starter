@@ -18,6 +18,33 @@ const _defaultCuisineGradient = [Color(0xFFC7B896), Color(0xFF9C8C6B)];
 List<Color> cuisineGradient(String cuisineType) =>
     _cuisineGradients[cuisineType] ?? _defaultCuisineGradient;
 
+/// 요리자랑 글쓰기에서 고르는 테마 액자 프레임 이미지 — 요리 종류별 샘플 음식 일러스트가
+/// 테두리에 둘려 있다. 총 7종을 제공한다.
+const bragFrameCategories = <String>[
+  '한식',
+  '중식',
+  '일식',
+  '양식',
+  '분식',
+  '이탈리아식',
+  '프랑스식',
+];
+
+// 원본은 JPG라 투명 배경이 없어서, 체커보드(불투명)를 실제 알파 투명으로 되돌린
+// PNG 버전을 만들어 assets/frames/에 함께 저장해두고 그걸 참조한다.
+const _bragFrameAssets = <String, String>{
+  '한식': 'assets/frames/han-sik-frame.png',
+  '중식': 'assets/frames/Joon-sik-frame.png',
+  '일식': 'assets/frames/il-sik-frame.png',
+  '양식': 'assets/frames/yang-sik-frame.png',
+  '분식': 'assets/frames/bun-sik-frame.png',
+  '이탈리아식': 'assets/frames/italy-frame.png',
+  '프랑스식': 'assets/frames/france-frame.png',
+};
+
+String bragFrameAsset(String frameCategory) =>
+    _bragFrameAssets[frameCategory] ?? _bragFrameAssets['한식']!;
+
 const _categoryGradients = <String, List<Color>>{
   '채소': [Color(0xFFA3BE92), Color(0xFF74945F)],
   '육류': [Color(0xFFCC9284), Color(0xFF9F6659)],

@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../l10n/tr.dart';
@@ -20,7 +20,6 @@ import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import '../widgets/main_return_button.dart';
-import 'profile_view_sheet.dart';
 import 'sign_up_screen.dart';
 
 String _timeAgoLabel(DateTime dateTime) {
@@ -722,6 +721,7 @@ class _CreatePostSheetState extends State<_CreatePostSheet> {
           TextField(
             controller: _contentController,
             maxLines: 4,
+            maxLength: 200,
             style: const TextStyle(color: AppColors.ink),
             decoration: InputDecoration(labelText: tr('내용', 'Content')),
           ),
@@ -778,6 +778,15 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
   void dispose() {
     _commentController.dispose();
     super.dispose();
+  }
+
+  Future<void> _sharePost(BoardPost post) async {
+    final link = 'https://fridgechef.app/board/${post.id}';
+    await Clipboard.setData(ClipboardData(text: link));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(tr('링크를 복사했어요', 'Link copied'))),
+    );
   }
 
   Future<void> _deletePost(BoardPost post) async {
@@ -906,6 +915,9 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
         final myId = ProfileStore.instance.currentProfile?.id;
         final liked = myId != null && post.likedByUserIds.contains(myId);
 
+        final adopted =
+            post.category == BoardCategory.showoff && post.likeCount >= 10;
+
         return Scaffold(
           backgroundColor: const Color(0xFFF8FAFC),
           floatingActionButton: const MainReturnButton(),
@@ -923,7 +935,8 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
             actions: [
               if (myId != null && myId == post.authorId)
                 IconButton(
-                  icon: const Icon(Icons.delete_outline, color: AppColors.inkSoft),
+                  icon: const Icon(Icons.delete_outline,
+                      color: AppColors.inkSoft),
                   tooltip: tr('삭제', 'Delete'),
                   onPressed: () => _deletePost(post),
                 ),
@@ -936,152 +949,226 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                   padding: const EdgeInsets.fromLTRB(AppSpacing.md,
                       AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
                   children: [
-                    // 1. 헤더 섹션 — 작성자 아바타 + 닉네임(@username) + 작성 시간
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 18,
-                          backgroundColor: AppColors.greenSoft,
-                          child: Text(
-                            post.authorNickname.isEmpty
-                                ? '?'
-                                : post.authorNickname.characters.first,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 14,
-                                color: AppColors.greenDeep),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              final profile = await ProfileStore.instance
-                                  .fetchById(post.authorId);
-                              if (profile != null && context.mounted)
-                                showProfileView(context, profile);
-                            },
+                    // 인스타그램 피드 카드 — 흰 배경 [프로필 바 → 1:1 사진 → 제목/본문] 세로 배치.
+                    // 사진 위에는 어떤 텍스트도 겹쳐 올리지 않는다.
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color: const Color(0xFFE2E8F0), width: 1),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.03),
+                              blurRadius: 8),
+                        ],
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 1단 — 상단 프로필 바 (원형 아바타 + 아이디 + 옵션 아이콘)
+                          Container(
+                            color: Colors.white,
+                            padding:
+                                const EdgeInsets.fromLTRB(14, 12, 14, 12),
                             child: Row(
                               children: [
-                                Flexible(
+                                Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xFF833AB4),
+                                        Color(0xFFFD1D1D),
+                                        Color(0xFFF12711),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                    ),
+                                    child: CircleAvatar(
+                                      radius: 16,
+                                      backgroundColor: AppColors.greenSoft,
+                                      child: const FridgeMascot(size: 18),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
                                   child: Text(
-                                    post.authorNickname,
+                                    post.authorUsername,
+                                    maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 14,
-                                        letterSpacing: -0.1),
+                                        color: Color(0xFF0F172A)),
                                   ),
                                 ),
-                                const SizedBox(width: 4),
-                                Flexible(
-                                  child: Text(
-                                    '@${post.authorUsername}',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: AppColors.inkSoft,
-                                      decoration: TextDecoration.underline,
+                                if (adopted) ...[
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.gold,
+                                      borderRadius:
+                                          BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      tr('🏅 채택 레시피', '🏅 Adopted'),
+                                      style: const TextStyle(
+                                          fontSize: 10.5,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                ],
+                                const Icon(Icons.more_horiz,
+                                    color: Color(0xFF94A3B8), size: 20),
+                              ],
+                            ),
+                          ),
+                          // 2단 — 정사각형 사진, 오버레이 없이 사진만 온전히 보여준다
+                          AspectRatio(
+                            aspectRatio: 1,
+                            child: post.photoPath != null
+                                ? GestureDetector(
+                                    onTap: () => _openPhotoViewer(
+                                        context, post.photoPath!),
+                                    child: Image.network(
+                                      post.photoPath!,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
+                                  )
+                                : Container(
+                                    color: AppColors.paperDeep,
+                                    alignment: Alignment.center,
+                                    child: const FridgeMascot(size: 64),
+                                  ),
+                          ),
+                          // 인스타 스타일 액션 바 — 하트(좋아요 토글)/댓글/공유 아이콘 + "좋아요 N개"
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                            child: Row(
+                              children: [
+                                InkWell(
+                                  onTap: myId == null
+                                      ? null
+                                      : () => BoardStore.instance
+                                          .toggleLike(post.id, myId),
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Icon(
+                                      liked
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      size: 24,
+                                      color: liked
+                                          ? AppColors.red
+                                          : const Color(0xFF0F172A),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 6),
-                                ChefBadge(
-                                  generalTier: post.authorTier,
-                                  isKFoodMaster: post.authorIsKFoodMaster,
-                                  showLabel: false,
-                                  medalSize: 16,
+                                const SizedBox(width: 10),
+                                const Icon(Icons.chat_bubble_outline,
+                                    size: 22, color: Color(0xFF0F172A)),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${post.commentCount}',
+                                  style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF0F172A)),
+                                ),
+                                const SizedBox(width: 10),
+                                InkWell(
+                                  onTap: () => _sharePost(post),
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(4),
+                                    child: Icon(Icons.send_outlined,
+                                        size: 22, color: Color(0xFF0F172A)),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                        Text(_timeAgoLabel(post.createdAt),
-                            style: const TextStyle(
-                                fontSize: 12, color: AppColors.inkSoft)),
-                      ],
-                    ),
-                    const Divider(
-                        color: Color(0xFFE2E8F0), height: 20, thickness: 1),
-
-                    // 2. 제목 & 본문 섹션 — 사진보다 먼저 배치해 글이 사진 밑에 깔리지 않게 한다
-                    Text(
-                      post.title,
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF0F172A)),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      post.content,
-                      style: const TextStyle(
-                          fontSize: 15, height: 1.5, color: Color(0xFF334155)),
-                    ),
-                    const Divider(
-                        color: Color(0xFFE2E8F0), height: 24, thickness: 1),
-
-                    // 3. 첨부 사진 섹션 — 독립된 카드 프레임으로 텍스트와 명확히 분리
-                    if (post.photoPath != null) ...[
-                      GestureDetector(
-                        onTap: () => _openPhotoViewer(context, post.photoPath!),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: const Color(0xFFE2E8F0), width: 1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: Image.network(
-                            post.photoPath!,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const Divider(
-                          color: Color(0xFFE2E8F0), height: 24, thickness: 1),
-                    ],
-
-                    // 4. 반응 & 댓글 섹션
-                    InkWell(
-                      onTap: myId == null
-                          ? null
-                          : () => BoardStore.instance.toggleLike(post.id, myId),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 14),
-                          decoration: BoxDecoration(
-                            color: liked
-                                ? const Color(0xFFFFE1E6)
-                                : const Color(0xFFF1F5F9),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                liked ? Icons.favorite : Icons.favorite_border,
-                                size: 18,
-                                color:
-                                    liked ? AppColors.red : AppColors.inkSoft,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                '${post.likeCount}',
-                                style: TextStyle(
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(14, 6, 14, 0),
+                            child: Text(
+                              tr('좋아요 ${post.likeCount}개',
+                                  '${post.likeCount} likes'),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: liked
-                                      ? AppColors.red
-                                      : AppColors.inkSoft,
-                                ),
-                              ),
-                            ],
+                                  color: Color(0xFF0F172A)),
+                            ),
                           ),
+                          // 3단 — 제목 & 본문(200자 제한은 글쓰기에서 적용)
+                          Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.all(14),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  post.title,
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF0F172A)),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  post.content,
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      height: 1.4,
+                                      color: Color(0xFF334155)),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _timeAgoLabel(post.createdAt),
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Color(0xFF94A3B8)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 명예의 전당 안내 — 뽐내기 게시판 글에만 해당(챌린지 게시판은 별개 랭킹 체계)
+                    if (post.category == BoardCategory.showoff) ...[
+                      const SizedBox(height: 14),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: AppColors.goldSoft,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          tr(
+                              '💡 안내: 좋아요 10개가 넘으면 랭킹 메뉴의 \'명예의 전당\'에 등록됩니다.',
+                              "💡 Tip: posts with 10+ likes get featured in the Ranking screen's Hall of Fame."),
+                          style: const TextStyle(
+                              fontSize: 11.5,
+                              color: Color(0xFF8A6D1F),
+                              height: 1.4),
                         ),
                       ),
+                    ],
                     const SizedBox(height: 16),
                     FutureBuilder<List<BoardComment>>(
                       future: _commentsFuture,
@@ -1147,7 +1234,7 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(
-                  AppSpacing.md,
+              AppSpacing.md,
                   AppSpacing.sm,
                   AppSpacing.md,
                   AppSpacing.sm + MediaQuery.of(context).viewInsets.bottom,

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/tr.dart';
+import '../models/board_post.dart';
 import '../models/user_profile.dart';
+import '../services/board_store.dart';
 import '../services/chef_points_store.dart';
 import '../services/locale_store.dart';
 import '../services/profile_store.dart';
@@ -13,6 +15,7 @@ import '../widgets/fridge_mascot.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
+import 'board_screen.dart';
 import 'profile_view_sheet.dart';
 
 typedef _RankRow = ({
@@ -83,6 +86,14 @@ class RankingScreen extends StatefulWidget {
 
 class _RankingScreenState extends State<RankingScreen> {
   late final Future<List<_RankRow>> _rowsFuture = _loadRows();
+  bool _showHallOfFame = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // "명예의 전당" 탭은 뽐내기 게시판(board_posts, category=showoff) 좋아요 10개 이상 글을 보여준다.
+    if (!BoardStore.instance.isLoaded) BoardStore.instance.loadPosts();
+  }
 
   Future<List<_RankRow>> _loadRows() async {
     final myUid = Supabase.instance.client.auth.currentUser?.id;
@@ -105,7 +116,7 @@ class _RankingScreenState extends State<RankingScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: LocaleStore.instance,
+      listenable: Listenable.merge([LocaleStore.instance, BoardStore.instance]),
       builder: (context, _) => Scaffold(
         backgroundColor: AppColors.paper,
         appBar: AppBar(
@@ -139,7 +150,46 @@ class _RankingScreenState extends State<RankingScreen> {
                 padding: EdgeInsets.only(right: 12), child: LanguageToggle()),
           ],
         ),
-        body: FutureBuilder<List<_RankRow>>(
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _RankTabButton(
+                      label: tr('전체 랭킹', 'Overall'),
+                      selected: !_showHallOfFame,
+                      onTap: () => setState(() => _showHallOfFame = false),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _RankTabButton(
+                      label: tr('명예의 전당', 'Hall of Fame'),
+                      selected: _showHallOfFame,
+                      onTap: () => setState(() => _showHallOfFame = true),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: _showHallOfFame
+                  ? const _HallOfFameView()
+                  : _buildOverallRanking(),
+            ),
+          ],
+        ),
+        extendBody: true,
+        bottomNavigationBar: const MainBottomNav(currentIndex: 3),
+      ),
+    );
+  }
+
+  Widget _buildOverallRanking() {
+    return FutureBuilder<List<_RankRow>>(
           future: _rowsFuture,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
@@ -202,11 +252,7 @@ class _RankingScreenState extends State<RankingScreen> {
               ],
             );
           },
-        ),
-        extendBody: true,
-        bottomNavigationBar: const MainBottomNav(currentIndex: 3),
-      ),
-    );
+        );
   }
 }
 
@@ -577,6 +623,378 @@ class _PodiumSpot extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// "전체 랭킹" / "명예의 전당" 전환 필(pill) 버튼 — board_screen.dart의 _CategoryButton과 동일한 톤
+class _RankTabButton extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  const _RankTabButton(
+      {required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 11),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? AppColors.ink : AppColors.paperDeep,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+              color: selected ? AppColors.ink : AppColors.cardBorder),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.1,
+            color: selected ? Colors.white : AppColors.inkSoft,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "명예의 전당" — 뽐내기 게시판 글 중 좋아요 10개 이상을 받아 채택된 글들의 랭킹.
+/// 전체 랭킹과 같은 포디움 구조를 재사용하되, 골드/딥 네이비 톤으로 톤을 달리해 구분한다.
+class _HallOfFameView extends StatelessWidget {
+  const _HallOfFameView();
+
+  @override
+  Widget build(BuildContext context) {
+    if (!BoardStore.instance.isLoaded) {
+      return const Center(child: CircularProgressIndicator(color: _gold));
+    }
+    final hof = BoardStore.instance
+        .postsFor(BoardCategory.showoff)
+        .where((p) => p.likeCount >= 10)
+        .toList()
+      ..sort((a, b) => b.likeCount.compareTo(a.likeCount));
+
+    if (hof.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const FridgeMascot(size: 84),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                tr('아직 명예의 전당에 오른 요리자랑이 없어요\n좋아요 10개를 모아보세요!',
+                    'No posts in the Hall of Fame yet\nCollect 10 likes to get featured!'),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.inkSoft, height: 1.5),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final podiumCount = hof.length < 3 ? hof.length : 3;
+    final rest = hof.skip(podiumCount).toList();
+
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.md),
+            child: _BragPodium(posts: hof.take(podiumCount).toList()),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md, 0, AppSpacing.md, 120),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, i) =>
+                  _BragRankingRow(post: rest[i], rank: podiumCount + i + 1),
+              childCount: rest.length,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// 명예의 전당 상위 3개 글 — 딥 네이비 카드 위 골드 포디움
+class _BragPodium extends StatelessWidget {
+  final List<BoardPost> posts;
+  const _BragPodium({required this.posts});
+
+  static const _heights = [96.0, 68.0, 52.0];
+  static const _avatarSizes = [68.0, 52.0, 48.0];
+  static const _standColors = [
+    [Color(0xFFFFE9A8), Color(0xFFFFD666)], // 1위 — 골드
+    [Color(0xFF3A4A63), Color(0xFF2C3A50)], // 2위 — 네이비
+    [Color(0xFF2C3A50), Color(0xFF1E293B)], // 3위 — 딥 네이비
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    if (posts.isEmpty) return const SizedBox.shrink();
+    final order = posts.length == 1
+        ? [0]
+        : posts.length == 2
+            ? [1, 0]
+            : [1, 0, 2];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.lg, AppSpacing.md, 0),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        boxShadow: [
+          BoxShadow(
+              color: _gold.withValues(alpha: 0.22),
+              blurRadius: 28,
+              spreadRadius: 2,
+              offset: const Offset(0, 6)),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          for (final i in order)
+            if (i < posts.length)
+              Expanded(
+                child: _BragPodiumSpot(
+                  post: posts[i],
+                  rank: i + 1,
+                  standHeight: _heights[i],
+                  avatarSize: _avatarSizes[i],
+                  standColors: _standColors[i],
+                ),
+              ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BragPodiumSpot extends StatelessWidget {
+  final BoardPost post;
+  final int rank;
+  final double standHeight;
+  final double avatarSize;
+  final List<Color> standColors;
+
+  const _BragPodiumSpot({
+    required this.post,
+    required this.rank,
+    required this.standHeight,
+    required this.avatarSize,
+    required this.standColors,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => BoardDetailScreen(post: post)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (rank == 1) const Text('👑', style: TextStyle(fontSize: 24)),
+          if (rank != 1) const SizedBox(height: 24),
+          const SizedBox(height: 4),
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: rank == 1 ? _gold : Colors.white24,
+                width: rank == 1 ? 2.5 : 1.5,
+              ),
+              boxShadow: rank == 1
+                  ? [
+                      BoxShadow(
+                          color: _gold.withValues(alpha: 0.4), blurRadius: 12)
+                    ]
+                  : null,
+            ),
+            child: ClipOval(
+              child: Container(
+                width: avatarSize,
+                height: avatarSize,
+                color: const Color(0xFF1E293B),
+                child: post.photoPath == null
+                    ? Icon(Icons.restaurant,
+                        size: avatarSize * 0.42, color: Colors.white54)
+                    : Image.network(post.photoPath!,
+                        fit: BoxFit.cover,
+                        width: avatarSize,
+                        height: avatarSize),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          SizedBox(
+            width: avatarSize + 20,
+            child: Text(
+              post.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12,
+                  letterSpacing: -0.2),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.favorite, size: 11, color: _gold),
+              const SizedBox(width: 3),
+              Text(
+                '${post.likeCount}',
+                style: const TextStyle(
+                    color: _gold, fontSize: 10.5, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Container(
+            height: standHeight,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: standColors,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(AppSpacing.radiusSm)),
+            ),
+            child: Text(
+              '$rank',
+              style: TextStyle(
+                fontSize: rank == 1 ? 30 : 22,
+                fontWeight: FontWeight.w900,
+                color: rank == 1
+                    ? Colors.black.withValues(alpha: 0.35)
+                    : Colors.white.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 4위 이하 명예의 전당 리스트 행 — 딥 네이비 카드로 전체 랭킹의 화이트 카드와 톤을 구분한다
+class _BragRankingRow extends StatelessWidget {
+  final BoardPost post;
+  final int rank;
+  const _BragRankingRow({required this.post, required this.rank});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => BoardDetailScreen(post: post)),
+        ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F172A),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+            border: Border.all(color: Colors.white10, width: 1),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 32,
+                child: Text(
+                  '$rank',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 17,
+                      color: Colors.white,
+                      letterSpacing: -0.5),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  color: const Color(0xFF1E293B),
+                  child: post.photoPath == null
+                      ? const Icon(Icons.restaurant,
+                          size: 18, color: Colors.white54)
+                      : Image.network(post.photoPath!,
+                          fit: BoxFit.cover, width: 40, height: 40),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      post.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          letterSpacing: -0.2,
+                          color: Colors.white),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      post.authorNickname,
+                      style: const TextStyle(fontSize: 11, color: Colors.white54),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.favorite, size: 13, color: _gold),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${post.likeCount}',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                        color: _gold,
+                        letterSpacing: -0.1),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

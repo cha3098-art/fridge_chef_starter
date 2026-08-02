@@ -157,6 +157,9 @@ create table public.board_posts (
   title text not null,
   content text not null,
   photo_url text,
+  -- 글쓰기 화면에서 고른 장식 프레임 카테고리(한식/중식/일식/이탈리아식/프랑스식/양식/분식) —
+  -- 상세화면에서 food_visuals.dart의 bragFrameAsset()으로 실제 프레임 이미지를 찾는 키로 쓰인다.
+  frame_category text not null default '한식',
   points_awarded integer not null default 0,
   created_at timestamptz not null default now()
 );

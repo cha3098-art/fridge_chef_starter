@@ -42,7 +42,7 @@ class BoardStore extends ChangeNotifier {
     final rows = await _client
         .from('board_posts')
         .select(
-          'id, category, author_id, title, content, photo_url, created_at, '
+          'id, category, author_id, title, content, photo_url, frame_category, created_at, '
           'users!board_posts_author_id_fkey(username, nickname), '
           'board_post_likes(user_id), '
           'board_comments(count)',
@@ -69,6 +69,7 @@ class BoardStore extends ChangeNotifier {
         title: row['title'] as String,
         content: row['content'] as String,
         photoPath: row['photo_url'] as String?,
+        frameCategory: row['frame_category'] as String? ?? '한식',
         createdAt: DateTime.parse(row['created_at'] as String),
         likedByUserIds: {for (final l in likeRows) l['user_id'] as String},
         commentCount: commentCount,
@@ -99,6 +100,7 @@ class BoardStore extends ChangeNotifier {
     required String title,
     required String content,
     String? photoPath,
+    String frameCategory = '한식',
   }) async {
     final uid = _client.auth.currentUser?.id;
     if (uid == null) return null;
@@ -109,6 +111,7 @@ class BoardStore extends ChangeNotifier {
           'author_id': uid,
           'title': title,
           'content': content,
+          'frame_category': frameCategory,
           if (photoPath != null) 'photo_url': photoPath,
         })
         .select('id')
