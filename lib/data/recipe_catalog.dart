@@ -5634,6 +5634,7 @@ const recipeCatalog = <Recipe>[
     ],
   ),
   Recipe(
+    id: 'recipe_87',
     title: '스타 셰프 비법 스테이크',
     titleEn: "Star Chef's Secret Steak",
     emoji: '🥩',
@@ -5661,6 +5662,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Let 250g beef sirloin sit at room temperature for 20 minutes, then season with 1 tsp salt.',
         timerSec: 1200,
+        imageAsset: 'assets/images/steps/recipe_87_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -5668,6 +5670,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Heat 3 tbsp oil in a pan and sear the beef over high heat on both sides for a strong Maillard crust.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_87_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -5675,6 +5678,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add 20g butter and 15g garlic, then continuously spoon the melted butter over the meat (butter basting).',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_87_3.png',
       ),
       RecipeStep(
         order: 4,
@@ -5682,15 +5686,18 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Turn off the heat, remove the steak, and let it rest for 5 minutes.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_87_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '원하는 두께로 썰어 접시에 담는다.',
         descriptionEn: 'Slice to the desired thickness and plate.',
+        imageAsset: 'assets/images/steps/recipe_87_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_88',
     title: '셰프의 간장 양파 돼지덮밥',
     titleEn: "Chef's Soy-Onion Pork Rice Bowl (Butadon Style)",
     emoji: '🍚',
@@ -5722,6 +5729,7 @@ const recipeCatalog = <Recipe>[
         description: '양파 1/2개는 결대로 채 썰고 대파 3/10단은 얇게 송송 썬다.',
         descriptionEn:
             'Cut 1/2 onion into strips along the grain and thinly slice 3/10 bunch of green onion.',
+        imageAsset: 'assets/images/steps/recipe_88_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -5729,12 +5737,14 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Heat 1 tsp cooking oil in a pan and stir-fry the onion over medium heat until translucent.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_88_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '삼겹살 150g을 넣고 핏기가 사라질 때까지 볶는다.',
         descriptionEn: 'Add 150g pork belly and stir-fry until no longer pink.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_88_3.png',
       ),
       RecipeStep(
         order: 4,
@@ -5743,16 +5753,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Pour in 3 tbsp soy sauce, 3 tbsp mirin, 1.5 tbsp sugar, and 3g minced ginger, then simmer over high heat until the sauce thickens.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_88_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '밥 위에 고기와 볶은 양파를 얹은 뒤 중앙에 달걀노른자와 송송 썬 대파를 올려 완성한다.',
         descriptionEn:
             'Top a bowl of rice with the meat and sautéed onion, then finish with the egg yolk and sliced green onion in the center.',
+        imageAsset: 'assets/images/steps/recipe_88_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_89',
     title: '일식당 풍 진한 소고기덮밥',
     titleEn: 'Rich Izakaya-Style Beef Rice Bowl (Gyudon Style)',
     emoji: '🍚',
@@ -5784,6 +5797,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'In a pot, combine 100ml water with 3 tbsp soy sauce, 3 tbsp mirin, 1.5 tbsp sugar, and 1/2 tbsp tuna seasoning sauce, then bring to a boil to make the sauce.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_89_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -5791,6 +5805,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Once the sauce boils, add 1/2 thinly sliced onion and cook until softened.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_89_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -5798,6 +5813,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Lay 150g beef brisket in without overlapping, cook through, and skim off any impurities that rise to the surface.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_89_3.png',
       ),
       RecipeStep(
         order: 4,
@@ -5805,10 +5821,12 @@ const recipeCatalog = <Recipe>[
             '소고기가 부드럽게 익으면 다진 생강 3g을 더해 향을 낸 뒤 불을 끄고 밥 위에 소스째 부어 마무리한다.',
         descriptionEn:
             'Once the beef is tender, stir in 3g minced ginger for aroma, then turn off the heat and pour it all over a bowl of rice.',
+        imageAsset: 'assets/images/steps/recipe_89_4.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_90',
     title: '레몬 버터 파슬리 파스타',
     titleEn: 'Lemon Butter Parsley Pasta',
     emoji: '🍝',
@@ -5838,6 +5856,7 @@ const recipeCatalog = <Recipe>[
         description: '마늘 15g은 얇게 편 썰고, 파슬리 5g은 잎만 골라 곱게 다진다.',
         descriptionEn:
             'Thinly slice 15g garlic and finely chop 5g parsley leaves.',
+        imageAsset: 'assets/images/steps/recipe_90_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -5845,6 +5864,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Cook 90g spaghetti in salted water until slightly firmer than al dente.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_90_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -5852,6 +5872,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Heat 3 tbsp olive oil in a pan and cook the sliced garlic over low heat until golden and fragrant.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_90_3.png',
       ),
       RecipeStep(
         order: 4,
@@ -5860,16 +5881,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Once fragrant, add the pepper flakes, cooked pasta, and 1.5 ladles of pasta water, then toss quickly to emulsify the oil and water.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_90_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '불을 끄고 버터 25g과 다진 파슬리, 레몬 1/2개의 즙을 짜 넣어 비빈 뒤 그릇에 담는다.',
         descriptionEn:
             'Turn off the heat, mix in 25g butter, the chopped parsley, and the juice of 1/2 lemon, then plate.',
+        imageAsset: 'assets/images/steps/recipe_90_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_91',
     title: '정통 로마식 계란 카르보나라',
     titleEn: 'Classic Roman Egg Carbonara',
     emoji: '🍝',
@@ -5897,12 +5921,14 @@ const recipeCatalog = <Recipe>[
             '볼에 달걀노른자 2개, 파르메산 치즈 20g, 굵게 빻은 통후추를 넣고 섞어 크림 형태의 소스를 만들어 둔다.',
         descriptionEn:
             'In a bowl, mix 2 egg yolks, 20g grated Parmesan, and coarsely ground whole peppercorns into a creamy sauce.',
+        imageAsset: 'assets/images/steps/recipe_91_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '소금물에 스파게티면 90g을 삶는다.',
         descriptionEn: 'Cook 90g spaghetti in salted water.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_91_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -5911,6 +5937,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'In a dry pan, fry 50g bacon until crisp to render fat, add the cooked pasta, then turn off the heat and let it cool slightly.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_91_3.png',
       ),
       RecipeStep(
         order: 4,
@@ -5918,10 +5945,12 @@ const recipeCatalog = <Recipe>[
             '팬의 열기가 식으면 준비한 달걀노른자 치즈 소스를 넣고 비벼 매끄러운 농도로 만든다 (열이 세면 계란이 익으므로 주의).',
         descriptionEn:
             'Once the pan has cooled slightly, add the egg yolk and cheese sauce and toss to a smooth consistency (be careful — too much heat will scramble the eggs).',
+        imageAsset: 'assets/images/steps/recipe_91_4.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_92',
     title: '프렌치 버터 마늘 스테이크',
     titleEn: 'French Butter Garlic Steak (Bistro Style)',
     emoji: '🥩',
@@ -5950,6 +5979,7 @@ const recipeCatalog = <Recipe>[
             '소고기 등심 200g 표면의 수분을 키친타월로 완전히 제거하고 소금 1/2작은술, 후추 한 꼬집으로 밑간한다.',
         descriptionEn:
             'Thoroughly pat 200g beef sirloin dry with paper towels, then season with 1/2 tsp salt and a pinch of pepper.',
+        imageAsset: 'assets/images/steps/recipe_92_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -5957,6 +5987,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Heat oil in a very hot pan and sear the surface of the steak until crisp (searing).',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_92_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -5965,6 +5996,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'When flipping, add 30g butter, 10g crushed garlic, and 1 sprig of rosemary, then continuously spoon the melted butter over the meat (arroser).',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_92_3.png',
       ),
       RecipeStep(
         order: 4,
@@ -5972,10 +6004,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Once cooked to your liking, remove the steak, let it rest for 5 minutes, then slice.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_92_4.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_93',
     title: '클래식 프렌치 어니언 수프',
     titleEn: 'Classic French Onion Soup',
     emoji: '🍲',
@@ -6008,6 +6042,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Thinly slice 2 onions, then cook in 20g butter over low heat for at least 25 minutes until deep golden brown (caramelizing).',
         timerSec: 1500,
+        imageAsset: 'assets/images/steps/recipe_93_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6015,6 +6050,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Once the onions turn deep brown, add 400ml beef stock and 1 bay leaf, then simmer for 15 minutes to deepen the flavor.',
         timerSec: 900,
+        imageAsset: 'assets/images/steps/recipe_93_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6023,10 +6059,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Ladle the soup into an oven-safe bowl, top with 2 slices of baguette and 40g Gruyère cheese, then bake at 200°C (or air-fry) until the cheese melts.',
         timerSec: 600,
+        imageAsset: 'assets/images/steps/recipe_93_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_94',
     title: '백셰프 스타일 양파 볶음 짜장라면',
     titleEn: 'Chef-Style Pan-Fried Onion Jjajang Ramyeon',
     emoji: '🍜',
@@ -6055,6 +6093,7 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '양파 1/2개는 큼직하게 깍둑썰기한다.',
         descriptionEn: 'Cut 1/2 onion into large cubes.',
+        imageAsset: 'assets/images/steps/recipe_94_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6062,6 +6101,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Heat 1 tbsp cooking oil in a pan, stir-fry the onion over high heat, then drizzle 1/2 tbsp soy sauce around the pan edge for a smoky aroma.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_94_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6069,6 +6109,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Boil 350ml water in a pot and, without draining, add the noodles and dried vegetable packet directly into it.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_94_3.png',
       ),
       RecipeStep(
         order: 4,
@@ -6077,16 +6118,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Once the noodles are half-cooked, add the sautéed onion, jjajang powder packet, 1/2 tsp oyster sauce, and 1/2 tsp sugar, then reduce and toss until well coated.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_94_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '불을 끄고 유성스프와 고춧가루 1/2작은술을 살짝 뿌려 마무리한다.',
         descriptionEn:
             'Turn off the heat and finish with the flavored oil packet and 1/2 tsp gochugaru.',
+        imageAsset: 'assets/images/steps/recipe_94_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_95',
     title: '분식집 스타일 푹 삶은 라볶이',
     titleEn: 'Korean Street-Style Simmered Rabokki',
     emoji: '🍢',
@@ -6119,6 +6163,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Pour 500ml water into a pot and dissolve 1 tbsp gochujang, 1/2 tbsp soy sauce, 1.5 tbsp sugar, 1/2 tbsp gochugaru, and 1/2 packet of ramyeon seasoning to make the broth.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_95_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6126,6 +6171,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Once boiling, add 200g rice cake, 1 sheet of fish cake, and 1/2 bunch of green onion, then boil for 2 minutes to let the flavors soak in.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_95_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6133,10 +6179,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add 1 portion of ramyeon noodles and simmer, stirring, until the broth reduces and the noodles turn chewy.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_95_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_96',
     title: '바삭 촉촉 타마고산도',
     titleEn: 'Crispy-Fluffy Tamago Sando (Japanese Egg Sandwich)',
     emoji: '🥪',
@@ -6167,6 +6215,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Boil 3 eggs for 9 minutes, cool in cold water, then peel.',
         timerSec: 540,
+        imageAsset: 'assets/images/steps/recipe_96_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6174,16 +6223,19 @@ const recipeCatalog = <Recipe>[
             '삶은 계란을 포크로 부드럽게 으깬 뒤 마요네즈 2.5큰술, 연유 0.5큰술, 소금 1꼬집, 고추냉이 0.3작은술을 섞는다.',
         descriptionEn:
             'Gently mash the boiled eggs with a fork, then mix in 2.5 tbsp mayonnaise, 0.5 tbsp condensed milk, a pinch of salt, and 0.3 tsp wasabi.',
+        imageAsset: 'assets/images/steps/recipe_96_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '식빵 2장 한 면에 버터 10g을 바르고 으깬 계란을 채운 후 테두리를 잘라낸다.',
         descriptionEn:
             'Spread 10g butter on one side of 2 slices of bread, fill with the mashed egg, and trim off the crusts.',
+        imageAsset: 'assets/images/steps/recipe_96_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_97',
     title: '바삭한 에비동',
     titleEn: 'Crispy Ebi Don (Shrimp Tempura Rice Bowl)',
     emoji: '🍤',
@@ -6215,6 +6267,7 @@ const recipeCatalog = <Recipe>[
         description: '새우튀김 3개는 에어프라이어에 바삭하게 데운다.',
         descriptionEn: 'Warm 3 fried shrimp in an air fryer until crispy.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_97_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6223,6 +6276,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'In a pan, combine 80ml water, 2 tbsp soy sauce, 2 tbsp mirin, 1 tbsp sugar, 0.3 tsp hondashi, and 1/2 sliced onion, then bring to a boil.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_97_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6230,10 +6284,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add the fried shrimp to the sauce, drizzle with beaten egg, cook briefly, then serve over a bowl of rice.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_97_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_98',
     title: '명란 버터 아보카도 덮밥',
     titleEn: 'Mentaiko Butter Avocado Rice Bowl',
     emoji: '🥑',
@@ -6264,6 +6320,7 @@ const recipeCatalog = <Recipe>[
         description: '명란젓은 알만 긁어내고 아보카도 1/2개는 얇게 슬라이스한다.',
         descriptionEn:
             'Scrape the roe out of the mentaiko and thinly slice 1/2 avocado.',
+        imageAsset: 'assets/images/steps/recipe_98_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6271,16 +6328,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Top a bowl of rice with 10g butter, the avocado, and the mentaiko, then add a soft fried egg.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_98_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '조미김을 부숴 얹고 참기름 1큰술과 통깨 1/2큰술, 간장 1/2큰술을 둘러 마무리한다.',
         descriptionEn:
             'Crumble seasoned seaweed snack on top, then drizzle with 1 tbsp sesame oil, 1/2 tbsp sesame seeds, and 1/2 tbsp soy sauce.',
+        imageAsset: 'assets/images/steps/recipe_98_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_99',
     title: '야키소바',
     titleEn: 'Yakisoba (Japanese Stir-Fried Noodles)',
     emoji: '🍜',
@@ -6314,6 +6374,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Stir-fry 80g pork belly and 100g shredded cabbage in a pan.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_99_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6322,16 +6383,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add the cooked noodles, 50g bean sprouts, 2 tbsp Worcestershire sauce, 1 tbsp oyster sauce, 1/2 tbsp soy sauce, and 1/2 tbsp sugar, then stir-fry quickly over high heat.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_99_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '그릇에 담고 마요네즈와 가쓰오부시를 올려 완성한다.',
         descriptionEn:
             'Plate and finish with a drizzle of mayonnaise and a sprinkle of bonito flakes.',
+        imageAsset: 'assets/images/steps/recipe_99_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_100',
     title: '치킨 가라아게',
     titleEn: 'Chicken Karaage (Japanese Fried Chicken)',
     emoji: '🍗',
@@ -6362,21 +6426,25 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Massage 250g bite-sized chicken thigh with 1.5 tbsp soy sauce, 1 tbsp mirin, 5g minced garlic, and 1g minced ginger, then marinate for 15 minutes.',
         timerSec: 900,
+        imageAsset: 'assets/images/steps/recipe_100_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '재운 닭고기에 전분가루 4큰술을 고르게 입힌다.',
         descriptionEn: 'Coat the marinated chicken evenly with 4 tbsp starch.',
+        imageAsset: 'assets/images/steps/recipe_100_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '170도 기름에 두 번 바삭하게 튀겨낸다.',
         descriptionEn: 'Deep-fry twice in 170°C oil until crispy.',
         timerSec: 360,
+        imageAsset: 'assets/images/steps/recipe_100_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_101',
     title: '카레 우동',
     titleEn: 'Curry Udon',
     emoji: '🍛',
@@ -6405,6 +6473,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'In a pot, stir-fry 50g beef brisket and 1/2 onion, then add 300ml water and bring to a boil.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_101_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6413,6 +6482,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Lower the heat, dissolve 1 block of curry roux, then stir in 1/2 tbsp tuna seasoning sauce and 50ml milk for smoothness.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_101_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6420,10 +6490,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add the cooked udon noodles and simmer for 1 minute so the sauce soaks in.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_101_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_102',
     title: '연어 사케동',
     titleEn: 'Salmon Sake-Don (Raw Salmon Rice Bowl)',
     emoji: '🍣',
@@ -6453,6 +6525,7 @@ const recipeCatalog = <Recipe>[
         description: '양파 1/4개는 채 썰어 찬물에 담가 매운맛을 뺀다.',
         descriptionEn:
             'Thinly slice 1/4 onion and soak in cold water to mellow its sharpness.',
+        imageAsset: 'assets/images/steps/recipe_102_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6460,16 +6533,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Bring 2 tbsp soy sauce, 1 tbsp mirin, 1 tbsp water, and 1/2 tbsp sugar to a brief boil, then let cool.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_102_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '밥 위에 소스를 뿌리고 양파와 두툼하게 썬 연어 120g, 고추냉이를 올린다.',
         descriptionEn:
             'Drizzle the sauce over a bowl of rice, then top with the onion, 120g thickly sliced salmon, and wasabi.',
+        imageAsset: 'assets/images/steps/recipe_102_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_103',
     title: '오코노미야키',
     titleEn: 'Okonomiyaki (Japanese Cabbage Pancake)',
     emoji: '🥘',
@@ -6498,6 +6574,7 @@ const recipeCatalog = <Recipe>[
         description: '채 썬 양배추 150g, 부침가루 5큰술, 물 50ml, 계란 1개를 섞어 반죽을 만든다.',
         descriptionEn:
             'Mix 150g shredded cabbage, 5 tbsp pancake mix, 50ml water, and 1 egg into a batter.',
+        imageAsset: 'assets/images/steps/recipe_103_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6505,16 +6582,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Pour the batter thickly into a pan, top with 40g bacon, and cook golden brown on both sides.',
         timerSec: 360,
+        imageAsset: 'assets/images/steps/recipe_103_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '돈까스소스 2큰술과 마요네즈 1.5큰술을 지그재그로 뿌리고 가쓰오부시를 얹어 마무리한다.',
         descriptionEn:
             'Drizzle 2 tbsp tonkatsu sauce and 1.5 tbsp mayonnaise in a zigzag, then top with bonito flakes.',
+        imageAsset: 'assets/images/steps/recipe_103_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_104',
     title: '버섯 크림 리소토',
     titleEn: 'Creamy Mushroom Risotto',
     emoji: '🍚',
@@ -6545,6 +6625,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Sauté 1/4 onion and 4 sliced mushrooms in 2 tbsp olive oil, then add 1 cup rice and stir-fry together.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_104_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6552,16 +6633,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Gradually add 300ml warm chicken stock a little at a time, stirring continuously until the rice is cooked.',
         timerSec: 900,
+        imageAsset: 'assets/images/steps/recipe_104_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '불을 끄고 버터 20g, 파르메산 치즈 15g, 생크림 50ml를 넣고 농도를 잡아 완성한다.',
         descriptionEn:
             'Turn off the heat and stir in 20g butter, 15g Parmesan, and 50ml heavy cream to finish the creamy texture.',
+        imageAsset: 'assets/images/steps/recipe_104_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_105',
     title: '알리오 올리오 파스타',
     titleEn: 'Aglio e Olio Pasta',
     emoji: '🍝',
@@ -6590,6 +6674,7 @@ const recipeCatalog = <Recipe>[
         description: '마늘 20g은 편으로 썰고 페페론치노 3개는 쪼갠다.',
         descriptionEn:
             'Thinly slice 20g garlic and break apart 3 dried chili peppers.',
+        imageAsset: 'assets/images/steps/recipe_105_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6597,6 +6682,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Cook the garlic in 4 tbsp olive oil over low heat until golden, then add the chili peppers.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_105_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6604,10 +6690,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add the cooked pasta and 2 ladles of pasta water, then toss quickly over high heat to emulsify.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_105_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_106',
     title: '바질 토마토 카프레제',
     titleEn: 'Basil Tomato Caprese',
     emoji: '🍅',
@@ -6637,22 +6725,26 @@ const recipeCatalog = <Recipe>[
         description: '토마토 1개와 모짜렐라 치즈 100g을 같은 두께로 슬라이스한다.',
         descriptionEn:
             'Slice 1 tomato and 100g mozzarella to the same thickness.',
+        imageAsset: 'assets/images/steps/recipe_106_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '토마토, 치즈, 바질 잎을 교차로 겹쳐 담는다.',
         descriptionEn:
             'Arrange the tomato, cheese, and basil leaves alternately, overlapping each other.',
+        imageAsset: 'assets/images/steps/recipe_106_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '올리브유 2큰술과 발사믹글레이즈 1큰술, 소금, 후추를 뿌려 마무리한다.',
         descriptionEn:
             'Finish with a drizzle of 2 tbsp olive oil, 1 tbsp balsamic glaze, salt, and pepper.',
+        imageAsset: 'assets/images/steps/recipe_106_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_107',
     title: '바질 페스토 냉파스타',
     titleEn: 'Cold Basil Pesto Pasta',
     emoji: '🍝',
@@ -6681,22 +6773,26 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Cook the pasta, rinse in cold water, and drain thoroughly.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_107_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '볼에 면, 반으로 썬 방울토마토 4개, 모짜렐라 치즈 40g을 담는다.',
         descriptionEn:
             'In a bowl, combine the pasta, 4 halved cherry tomatoes, and 40g mozzarella.',
+        imageAsset: 'assets/images/steps/recipe_107_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '바질페스토 2큰술, 올리브유 1큰술, 레몬 1/5개의 즙을 넣고 차갑게 버무린다.',
         descriptionEn:
             'Toss with 2 tbsp basil pesto, 1 tbsp olive oil, and the juice of 1/5 lemon, then serve chilled.',
+        imageAsset: 'assets/images/steps/recipe_107_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_108',
     title: '트러플 풍미 버섯 뇨끼',
     titleEn: 'Truffle-Scented Mushroom Gnocchi',
     emoji: '🍝',
@@ -6728,6 +6824,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Boil 150g gnocchi, then pan-fry in 10g butter until the surface turns crispy.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_108_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6735,16 +6832,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add 3 sliced mushrooms, 150ml heavy cream, and 1 tbsp chicken stock to the pan and simmer down the sauce.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_108_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '구운 뇨끼를 소스에 넣고 섞은 뒤 트러플오일 0.5작은술로 향을 입힌다.',
         descriptionEn:
             'Toss the fried gnocchi in the sauce, then finish with 0.5 tsp truffle oil for aroma.',
+        imageAsset: 'assets/images/steps/recipe_108_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_109',
     title: '해산물 토마토 페스카토레',
     titleEn: 'Seafood Tomato Pescatore',
     emoji: '🍝',
@@ -6777,6 +6877,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Sauté 8g garlic and 2 chili peppers in 2 tbsp olive oil, then add 8 clams, 3 shrimp, 50g squid, and 2 tbsp white wine, and cook through.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_109_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6784,6 +6885,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add 200g tomato sauce and 1 ladle of pasta water, then simmer to build a seafood-infused sauce.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_109_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6791,10 +6893,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add the cooked pasta and toss until the sauce coats it evenly.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_109_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_110',
     title: '정통 마르게리타 피자',
     titleEn: 'Classic Margherita Pizza (Tortilla Style)',
     emoji: '🍕',
@@ -6821,12 +6925,14 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '또르띠아 1장 바닥에 토마토소스 2큰술을 얇게 바른다.',
         descriptionEn: 'Spread 2 tbsp tomato sauce thinly over 1 tortilla.',
+        imageAsset: 'assets/images/steps/recipe_110_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '모짜렐라 치즈 80g과 얇게 썬 방울토마토 3개를 고르게 올린다.',
         descriptionEn:
             'Evenly top with 80g mozzarella and 3 thinly sliced cherry tomatoes.',
+        imageAsset: 'assets/images/steps/recipe_110_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6834,10 +6940,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Air-fry at 180°C for 7 minutes, then top with basil and 1 tbsp olive oil.',
         timerSec: 420,
+        imageAsset: 'assets/images/steps/recipe_110_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_111',
     title: '쇠고기 볼로네제 라자냐',
     titleEn: 'Beef Bolognese Lasagna',
     emoji: '🍝',
@@ -6868,12 +6976,14 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Sauté 5g garlic, 1/5 onion, and 100g ground beef in 1 tbsp olive oil, then add 150g tomato sauce to make the ragù.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_111_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '오븐 용기에 라구 소스, 삶은 라자냐면 3장, 모짜렐라 치즈 80g 순으로 켜켜이 쌓는다.',
         descriptionEn:
             'Layer the ragù, 3 sheets of cooked lasagna, and 80g mozzarella in an oven dish, repeating the order.',
+        imageAsset: 'assets/images/steps/recipe_111_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6881,10 +6991,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Bake at 190°C (or air-fry) for 12 minutes until the cheese turns golden.',
         timerSec: 720,
+        imageAsset: 'assets/images/steps/recipe_111_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_112',
     title: '프렌치 꼬꼬뱅',
     titleEn: 'Coq au Vin (French Wine-Braised Chicken)',
     emoji: '🍗',
@@ -6917,6 +7029,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Render fat from 40g bacon, then sear 500g chicken thigh until crisp on the outside.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_112_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -6925,6 +7038,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add 1/2 carrot, 1/2 onion, 4 mushrooms, and 5g garlic, stir-fry together, then pour in 300ml red wine, 1 tbsp soy sauce, and 1 bay leaf.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_112_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6932,10 +7046,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Cover and simmer over low heat for 25 minutes, then stir in 15g butter to finish.',
         timerSec: 1500,
+        imageAsset: 'assets/images/steps/recipe_112_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_113',
     title: '프로방스식 라타투이',
     titleEn: 'Provençal Ratatouille',
     emoji: '🍆',
@@ -6967,12 +7083,14 @@ const recipeCatalog = <Recipe>[
         description: '가지 1개, 애호박 1개, 토마토 2개는 동글동글하게 슬라이스한다.',
         descriptionEn:
             'Slice 1 eggplant, 1 zucchini, and 2 tomatoes into rounds.',
+        imageAsset: 'assets/images/steps/recipe_113_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '팬 바닥에 양파 1/2개와 토마토소스 200g을 깔고 채소를 예쁘게 겹쳐 올린다.',
         descriptionEn:
             'Spread 1/2 onion and 200g tomato sauce over the bottom of a pan, then arrange the sliced vegetables neatly on top, overlapping.',
+        imageAsset: 'assets/images/steps/recipe_113_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -6980,10 +7098,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Drizzle with 3 tbsp olive oil and basil, cover, and simmer over low heat for 20 minutes.',
         timerSec: 1200,
+        imageAsset: 'assets/images/steps/recipe_113_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_114',
     title: '클래식 부야베스',
     titleEn: 'Classic Bouillabaisse (Seafood Stew)',
     emoji: '🍲',
@@ -7016,6 +7136,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Sauté 5g garlic, 1/2 onion, and 1 tomato in 2 tbsp olive oil.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_114_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -7023,6 +7144,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add 4 shrimp, 1/2 squid, 10 clams, and 50ml white wine, then cook off the alcohol.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_114_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -7030,10 +7152,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add 300ml chicken stock and 2 tbsp tomato paste, simmer, then season with salt and pepper.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_114_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_115',
     title: '크리미 닭간 패티',
     titleEn: 'Creamy Chicken Liver Pâté',
     emoji: '🥖',
@@ -7065,12 +7189,14 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Cook 1/2 onion and 200g chicken liver thoroughly in 50g butter, then deglaze with 2 tbsp mirin to remove any gaminess.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_115_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '볶은 재료에 생크림 3큰술을 넣고 믹서로 부드럽게 갈아낸다.',
         descriptionEn:
             'Add 3 tbsp heavy cream to the cooked mixture and blend until smooth.',
+        imageAsset: 'assets/images/steps/recipe_115_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -7078,10 +7204,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Chill in the refrigerator to set, then spread over 2 toasted slices of baguette.',
         timerSec: 1800,
+        imageAsset: 'assets/images/steps/recipe_115_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_116',
     title: '크렘 브륄레',
     titleEn: 'Crème Brûlée',
     emoji: '🍮',
@@ -7109,6 +7237,7 @@ const recipeCatalog = <Recipe>[
             '달걀노른자 3개, 설탕 30g, 데운 생크림 200ml, 바닐라에센스 0.5작은술, 소금 한 꼬집을 잘 섞어 체에 거른다.',
         descriptionEn:
             'Mix 3 egg yolks, 30g sugar, 200ml warmed heavy cream, 0.5 tsp vanilla extract, and a pinch of salt, then strain through a sieve.',
+        imageAsset: 'assets/images/steps/recipe_116_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -7116,6 +7245,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Pour into ramekins, place in a water bath, and bake at 150°C for 30 minutes.',
         timerSec: 1800,
+        imageAsset: 'assets/images/steps/recipe_116_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -7123,10 +7253,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Chill thoroughly, sprinkle 20g sugar on top, then caramelize with a torch until golden brown.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_116_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_117',
     title: '비프 부르기뇽',
     titleEn: 'Beef Bourguignon (Wine-Braised Beef)',
     emoji: '🍷',
@@ -7158,6 +7290,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Coat 300g beef brisket with 1 tbsp flour, then sear until crisp in 20g butter.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_117_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -7166,6 +7299,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Pour in 400ml red wine and cook off the alcohol, then add 1/2 carrot, 4 mushrooms, 1 tbsp tomato paste, 100ml chicken stock, and 1 bay leaf.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_117_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -7173,10 +7307,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Simmer over low heat for over an hour until the beef is tender.',
         timerSec: 3600,
+        imageAsset: 'assets/images/steps/recipe_117_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_118',
     title: '니스풍 샐러드',
     titleEn: 'Salade Niçoise',
     emoji: '🥗',
@@ -7209,12 +7345,14 @@ const recipeCatalog = <Recipe>[
         description: '볼에 로메인상추 50g과 기름을 뺀 캔참치 150g을 담는다.',
         descriptionEn:
             'In a bowl, combine 50g romaine lettuce and 150g drained canned tuna.',
+        imageAsset: 'assets/images/steps/recipe_118_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '반으로 썬 삶은 계란 1개, 방울토마토 4개, 블랙올리브 5개를 올린다.',
         descriptionEn:
             'Top with 1 halved hard-boiled egg, 4 cherry tomatoes, and 5 black olives.',
+        imageAsset: 'assets/images/steps/recipe_118_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -7222,10 +7360,12 @@ const recipeCatalog = <Recipe>[
             '올리브유 2큰술, 레몬 1/5개의 즙, 디종머스타드 0.5작은술을 섞어 드레싱을 만들어 먹기 직전에 두른다.',
         descriptionEn:
             'Whisk together 2 tbsp olive oil, the juice of 1/5 lemon, and 0.5 tsp Dijon mustard, then drizzle on just before serving.',
+        imageAsset: 'assets/images/steps/recipe_118_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_119',
     title: '국물 마늘 떡볶이',
     titleEn: 'Garlic Broth Tteokbokki',
     emoji: '🌶️',
@@ -7257,6 +7397,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'In a pot, combine 600ml water with 1.5 tbsp gochujang, 2 tbsp gochugaru, 1.5 tbsp soy sauce, 2 tbsp sugar, and a generous 20g minced garlic, then bring to a boil.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_119_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -7264,16 +7405,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add 200g rice cake and 2 sheets of fish cake, and simmer until the rice cakes plump up and the broth reduces.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_119_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '송송 썬 대파 1단을 듬뿍 올려 마무리한다.',
         descriptionEn:
             'Finish with a generous topping of 1 bunch of sliced green onion.',
+        imageAsset: 'assets/images/steps/recipe_119_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_120',
     title: '바삭 촉촉 김말이 튀김',
     titleEn: 'Crispy Gimmari (Fried Seaweed Noodle Rolls)',
     emoji: '🍢',
@@ -7302,12 +7446,14 @@ const recipeCatalog = <Recipe>[
         description: '삶은 당면 100g에 간장 1큰술, 참기름 0.5큰술, 설탕 0.3큰술로 밑간한다.',
         descriptionEn:
             'Season 100g boiled glass noodles with 1 tbsp soy sauce, 0.5 tbsp sesame oil, and 0.3 tbsp sugar.',
+        imageAsset: 'assets/images/steps/recipe_120_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '김 위에 양념한 당면을 올리고 단단하게 말아 3등분한다.',
         descriptionEn:
             'Place the seasoned noodles on a sheet of seaweed, roll tightly, and cut into 3 pieces.',
+        imageAsset: 'assets/images/steps/recipe_120_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -7315,10 +7461,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Make a batter with 5 tbsp frying mix and 80ml water, coat the rolls, and deep-fry until golden.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_120_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_121',
     title: '모짜렐라 치즈 김치볶음밥',
     titleEn: 'Mozzarella Kimchi Fried Rice',
     emoji: '🍚',
@@ -7352,6 +7500,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Make scallion oil with 1/2 bunch of green onion in 1.5 tbsp cooking oil, then add 150g chopped kimchi with 1/2 tbsp sugar and 1 tbsp soy sauce, and stir-fry.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_121_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -7359,6 +7508,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Add 1 bowl of rice, stir-fry evenly, then spread it flat across the pan.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_121_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -7366,10 +7516,12 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Top with 50g mozzarella, cover, and cook over low heat until the cheese melts.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_121_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_122',
     title: '옛날 길거리 토스트',
     titleEn: 'Old-School Korean Street Toast',
     emoji: '🍞',
@@ -7401,6 +7553,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Mix 80g shredded cabbage with 1 egg and pan-fry into a square shape.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_122_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -7408,16 +7561,19 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'On 2 slices of bread toasted in 15g butter, layer the cabbage patty, 1 slice of ham, and 1 slice of cheese.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_122_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '설탕 1큰술을 넉넉히 뿌리고 케첩 1큰술과 마요네즈 1/2큰술을 둘러 식빵으로 덮는다.',
         descriptionEn:
             'Sprinkle generously with 1 tbsp sugar, drizzle with 1 tbsp ketchup and 1/2 tbsp mayonnaise, then close with the other slice of bread.',
+        imageAsset: 'assets/images/steps/recipe_122_3.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_123',
     title: '매콤 달콤 기름떡볶이',
     titleEn: 'Sweet and Spicy Pan-Fried Tteokbokki',
     emoji: '🌶️',
@@ -7447,6 +7603,7 @@ const recipeCatalog = <Recipe>[
             '말랑한 떡 200g에 고춧가루 1.5큰술, 간장 1큰술, 설탕 1큰술, 참기름 0.5큰술을 넣고 먼저 주물러 양념한다.',
         descriptionEn:
             'Massage 200g soft rice cakes with 1.5 tbsp gochugaru, 1 tbsp soy sauce, 1 tbsp sugar, and 0.5 tbsp sesame oil to season first.',
+        imageAsset: 'assets/images/steps/recipe_123_1.png',
       ),
       RecipeStep(
         order: 2,
@@ -7454,6 +7611,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Heat 2 tbsp cooking oil in a pan and add the seasoned rice cakes with 1/2 bunch of sliced green onion.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_123_2.png',
       ),
       RecipeStep(
         order: 3,
@@ -7461,6 +7619,7 @@ const recipeCatalog = <Recipe>[
         descriptionEn:
             'Stir-fry over low heat until crispy, taking care not to burn the seasoning.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_123_3.png',
       ),
     ],
   ),
