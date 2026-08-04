@@ -773,3 +773,42 @@ grant execute on function public.register_device_token(text) to authenticated;
 -- ============================================================
 alter table public.battle_participants
   add column if not exists comment text check (char_length(comment) <= 200);
+
+-- ============================================================
+-- 22. ingredient_swaps (식재료 대체 추천 룰 — 100% 무료, 외부 API 없이 고정 룰 테이블)
+-- 앱이 로그인 직후 IngredientSwapStore.seedDefaultsIfNeeded()로 lib/data/ingredient_swap_catalog.dart의
+-- 기본 룰 16종을 upsert하므로, 아래 insert 블록은 SQL을 직접 실행하는 경우를 위한 동일한 시드다.
+-- ============================================================
+create table public.ingredient_swaps (
+  id uuid primary key default uuid_generate_v4(),
+  original_ingredient text not null,
+  substitute_ingredient text not null,
+  category text,
+  tip text,
+  created_at timestamptz not null default now(),
+  unique (original_ingredient, substitute_ingredient)
+);
+create index idx_ingredient_swaps_original on public.ingredient_swaps(original_ingredient);
+
+alter table public.ingredient_swaps enable row level security;
+create policy "전체 공개 조회" on public.ingredient_swaps for select using (true);
+create policy "로그인한 사용자만 추가" on public.ingredient_swaps for insert with check (auth.uid() is not null);
+
+insert into public.ingredient_swaps (original_ingredient, substitute_ingredient, category, tip) values
+  ('굴소스', '간장 1큰술 + 설탕 0.5큰술', '조미료', '감칠맛은 살짝 약해지지만 볶음 요리엔 충분해요.'),
+  ('버터', '식용유 또는 마가린 동량', '유제품', '고소한 풍미는 약해지지만 볶음/구이엔 무리 없어요.'),
+  ('맛술', '청주(또는 소주) 1큰술 + 설탕 약간', '조미료', '잡내 제거와 은은한 단맛을 동시에 잡아줘요.'),
+  ('두반장', '고추장 1큰술 + 다진마늘 약간', '조미료', '매콤함은 비슷하지만 발효 향은 덜해요.'),
+  ('쯔유', '간장 1큰술 + 맛술 1큰술 + 설탕 0.5큰술 + 물 2큰술', '조미료', '일본식 국물 베이스를 집간장으로 바로 만들 수 있어요.'),
+  ('생크림', '우유 3큰술 + 버터 1큰술', '유제품', '약불에서 버터를 녹여 섞으면 꾸덕한 질감이 비슷해져요.'),
+  ('마요네즈', '플레인 요거트 + 식초 약간', '조미료', '더 산뜻한 맛이 되니 새콤한 요리에 잘 어울려요.'),
+  ('청주', '맛술 또는 소주 + 설탕 약간', '조미료', '잡내 제거 용도라면 소주로도 충분히 대체돼요.'),
+  ('다진마늘', '마늘가루 1/3작은술', '채소', '생마늘보다 향이 순해서 조금 더 넣어도 좋아요.'),
+  ('카레가루', '생략 후 설탕 약간 추가', '조미료', '색과 향은 빠지지만 단짠 밸런스는 유지할 수 있어요.'),
+  ('참치액', '멸치액젓 또는 국간장 1작은술', '조미료', '감칠맛 나는 액젓류라면 뭐든 비슷하게 대체돼요.'),
+  ('전분물', '밀가루 + 물 동량', '기타', '점도는 비슷하지만 완성 후 살짝 더 뿌옇게 보일 수 있어요.'),
+  ('페페론치노', '청양고추 또는 고춧가루 약간', '채소', '매운맛 정도만 취향껏 조절하면 돼요.'),
+  ('바질페스토', '다진마늘 + 올리브유 + 파마산치즈(생략 가능)', '조미료', '바질이 없다면 마늘 향 오일만으로도 심플하게 즐길 수 있어요.'),
+  ('초고추장', '고추장 1큰술 + 식초 1작은술 + 설탕 1작은술', '조미료', '새콤달콤한 비율은 입맛에 맞게 가감하세요.'),
+  ('설탕', '올리고당 또는 물엿 동량', '조미료', '단맛은 비슷하되 윤기가 더 살아나요.')
+on conflict (original_ingredient, substitute_ingredient) do nothing;

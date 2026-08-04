@@ -7,9 +7,12 @@ import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/chef_tier_badge.dart';
+import '../widgets/ingredient_swap_sheet.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_return_button.dart';
+import '../widgets/step_visual.dart';
+import 'cooking_mode_screen.dart';
 
 /// 레시피 상세 화면 — 영양정보, 재료(보유 여부 표시), 조리순서를 보여준다
 class RecipeDetailScreen extends StatefulWidget {
@@ -88,16 +91,15 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               children: [
                 const Text('🍳 ', style: TextStyle(fontSize: 16)),
                 Expanded(
-                  child: Text(tr(
-                      '${recipe.title} $n인분 재료를 냉장고에서 차감했어요!',
+                  child: Text(tr('${recipe.title} $n인분 재료를 냉장고에서 차감했어요!',
                       'Deducted $n-serving ingredients from your fridge!')),
                 ),
               ],
             ),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AppColors.green,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -221,6 +223,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                 owned: fridgeIngredientNames
                                     .contains(ingredient.name),
                                 servings: _selectedServings,
+                                fridgeIngredientNames: fridgeIngredientNames,
                               ))
                           .toList(),
                     ),
@@ -230,7 +233,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   const SizedBox(height: 10),
                   Column(
                     children: recipe.steps
-                        .map((step) => _StepTile(step: step))
+                        .map((step) => _StepTile(
+                            step: step, recipePhotoUrl: recipe.photoUrl))
                         .toList(),
                   ),
                 ],
@@ -239,6 +243,24 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           ],
         ),
         bottomNavigationBar: _buildBottomBar(),
+      ),
+    );
+  }
+
+  void _startCookingMode() {
+    final recipe = widget.recipe;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CookingModeScreen(
+          title: recipe.title,
+          photoUrl: recipe.photoUrl,
+          cuisineType: recipe.cuisineType,
+          emoji: recipe.emoji,
+          steps: recipe.steps
+              .map((s) => tr(s.description, s.descriptionEn))
+              .toList(),
+          stepImages: recipe.steps.map((s) => s.imageAsset).toList(),
+        ),
       ),
     );
   }
@@ -259,72 +281,97 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // 인분 스테퍼
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _stepBtn(
-                    icon: Icons.remove,
-                    onTap: _selectedServings > 1
-                        ? () => setState(() => _selectedServings--)
-                        : null,
-                  ),
-                  SizedBox(
-                    width: 56,
-                    child: Text(
-                      tr('$_selectedServings인분', '$_selectedServings serv.'),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.ink,
-                      ),
-                    ),
-                  ),
-                  _stepBtn(
-                    icon: Icons.add,
-                    onTap: _selectedServings < 8
-                        ? () => setState(() => _selectedServings++)
-                        : null,
-                  ),
-                ],
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: ElevatedButton(
+                onPressed: _startCookingMode,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.ink,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                child: const Text(
+                  '🍳 요리 시작 (음성 모드)',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+                ),
               ),
             ),
-            const SizedBox(width: 8),
-            // 요리 선택 CTA
-            Expanded(
-              child: SizedBox(
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _selectAndConsume,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.green,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                // 인분 스테퍼
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('🍳', style: TextStyle(fontSize: 18)),
-                      const SizedBox(width: 6),
-                      Text(
-                        tr('요리 선택하기', 'Cook this'),
-                        style: const TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w800),
+                      _stepBtn(
+                        icon: Icons.remove,
+                        onTap: _selectedServings > 1
+                            ? () => setState(() => _selectedServings--)
+                            : null,
+                      ),
+                      SizedBox(
+                        width: 56,
+                        child: Text(
+                          tr('$_selectedServings인분',
+                              '$_selectedServings serv.'),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.ink,
+                          ),
+                        ),
+                      ),
+                      _stepBtn(
+                        icon: Icons.add,
+                        onTap: _selectedServings < 8
+                            ? () => setState(() => _selectedServings++)
+                            : null,
                       ),
                     ],
                   ),
                 ),
-              ),
+                const SizedBox(width: 8),
+                // 요리 선택 CTA
+                Expanded(
+                  child: SizedBox(
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: _selectAndConsume,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.green,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('🍳', style: TextStyle(fontSize: 18)),
+                          const SizedBox(width: 6),
+                          Text(
+                            tr('요리 선택하기', 'Cook this'),
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w800),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -496,9 +543,14 @@ class _IngredientRow extends StatelessWidget {
   final RecipeIngredient ingredient;
   final bool owned;
   final int servings;
+  final Set<String> fridgeIngredientNames;
 
-  const _IngredientRow(
-      {required this.ingredient, required this.owned, required this.servings});
+  const _IngredientRow({
+    required this.ingredient,
+    required this.owned,
+    required this.servings,
+    required this.fridgeIngredientNames,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -551,6 +603,31 @@ class _IngredientRow extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: AppColors.ink),
+              ),
+              const SizedBox(width: 6),
+              GestureDetector(
+                onTap: () => showIngredientSwapSheet(
+                  context,
+                  ingredientName: ingredient.name,
+                  fridgeIngredientNames: fridgeIngredientNames,
+                ),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFECFDF5),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                        color: AppColors.green.withValues(alpha: 0.4)),
+                  ),
+                  child: const Text(
+                    '🔄 대체',
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.greenDeep),
+                  ),
+                ),
               ),
             ],
           ),
@@ -607,7 +684,8 @@ class _ServingsBreakdown extends StatelessWidget {
 
 class _StepTile extends StatelessWidget {
   final RecipeStep step;
-  const _StepTile({required this.step});
+  final String? recipePhotoUrl;
+  const _StepTile({required this.step, this.recipePhotoUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -616,6 +694,24 @@ class _StepTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            width: 56,
+            height: 56,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: StepVisual(
+              imageAsset: step.imageAsset,
+              recipePhotoUrl: recipePhotoUrl,
+              stepDescription: step.description,
+              width: 56,
+              height: 56,
+              borderRadius: BorderRadius.zero,
+            ),
+          ),
+          const SizedBox(width: 10),
           Container(
             width: 24,
             height: 24,

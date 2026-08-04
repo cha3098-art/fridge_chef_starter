@@ -19,8 +19,7 @@ import '../widgets/battle_split_banner.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/main_return_button.dart';
 import '../widgets/fridge_mascot.dart';
-
-
+import '../widgets/mascot_image_fallback.dart';
 
 /// 배틀 상세 화면 — 초대 링크(https://fridgechef.app/battle/{id})로도 진입한다.
 /// 참가/사진 제출/투표/승자 확정까지 이 한 화면에서 상태에 따라 다르게 보여준다.
@@ -73,8 +72,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   Future<void> _refreshVoteCounts() async {
     if (_participants.isEmpty) return;
     try {
-      final votes =
-          await BattleStore.instance.fetchVotes(widget.battleId);
+      final votes = await BattleStore.instance.fetchVotes(widget.battleId);
       final tally = <String, int>{for (final p in _participants) p.id: 0};
       for (final v in votes) {
         tally[v.votedForParticipantId] =
@@ -275,17 +273,18 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(tr('한마디 남기기 (선택)', 'Say something (optional)'),
             style: const TextStyle(
-                fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.ink)),
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+                color: AppColors.ink)),
         content: TextField(
           controller: controller,
           maxLength: battleCommentMaxLength,
           maxLines: 3,
           style: const TextStyle(color: AppColors.ink),
           decoration: InputDecoration(
-            hintText: tr('요리하면서 있었던 일을 짧게 남겨보세요',
-                'Share a quick note about your dish'),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            hintText: tr(
+                '요리하면서 있었던 일을 짧게 남겨보세요', 'Share a quick note about your dish'),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
         actions: [
@@ -300,8 +299,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
               backgroundColor: AppColors.green,
               foregroundColor: Colors.white,
               elevation: 0,
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
             child: Text(tr('완료', 'Done'),
                 style: const TextStyle(fontWeight: FontWeight.w700)),
@@ -614,11 +613,10 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: isWinner
-            ? Border.all(color: AppColors.gold, width: 2)
-            : null,
+        border: isWinner ? Border.all(color: AppColors.gold, width: 2) : null,
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
         ],
       ),
       child: Column(
@@ -628,8 +626,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
             children: [
               if (isWinner) const Text('👑 ', style: TextStyle(fontSize: 12)),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: sideColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
@@ -665,6 +662,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                   color: AppColors.green, strokeWidth: 2.5),
                             );
                           },
+                          errorBuilder: (context, error, stack) =>
+                              const RoundedMascotFallback(),
                         )
                       : _SubmitPhotoPlaceholder(
                           canSubmit: canSubmitHere,
@@ -676,7 +675,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                 left: 6,
                 right: 6,
                 bottom: 6,
-                child: _GlassInfoChip(avatarAsset: avatarAsset, nickname: nickname),
+                child: _GlassInfoChip(
+                    avatarAsset: avatarAsset, nickname: nickname),
               ),
               if (isWinner)
                 const Positioned(
@@ -764,8 +764,8 @@ class _PillShadowButton extends StatelessWidget {
           shape: const StadiumBorder(),
         ),
         onPressed: onPressed,
-        child:
-            Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
+        child: Text(label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
       ),
     );
   }
@@ -898,19 +898,22 @@ class _WinnerRibbon extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-              colors: [AppColors.gold, Color(0xFFFFE08A)]),
+          gradient:
+              const LinearGradient(colors: [AppColors.gold, Color(0xFFFFE08A)]),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white, width: 1.5),
           boxShadow: [
             BoxShadow(
                 color: AppColors.gold.withValues(alpha: 0.7), blurRadius: 12),
-            BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 4),
+            BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2), blurRadius: 4),
           ],
         ),
         child: Text(tr('🎉 승리 🏆', 'WINNER 🏆'),
             style: const TextStyle(
-                fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.ink)),
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                color: AppColors.ink)),
       ),
     );
   }
@@ -955,7 +958,8 @@ class _PulseGlowState extends State<_PulseGlow>
             borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
             boxShadow: [
               BoxShadow(
-                  color: widget.color.withValues(alpha: 0.55), blurRadius: blur),
+                  color: widget.color.withValues(alpha: 0.55),
+                  blurRadius: blur),
             ],
           ),
           child: child,
@@ -1095,7 +1099,6 @@ class _VoteSideLabel extends StatelessWidget {
   }
 }
 
-
 // ── 상태 배너 (VS 글로우 배지 + 불꽃 타이머) ────────────────────────────────────
 
 class _StatusBanner extends StatelessWidget {
@@ -1168,7 +1171,9 @@ class _StatusBanner extends StatelessWidget {
           Text(label,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                  color: AppColors.ink, fontWeight: FontWeight.w800, fontSize: 16)),
+                  color: AppColors.ink,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16)),
           if (remaining != null && totalForPhase != null) ...[
             const SizedBox(height: 10),
             _LiveStatusPill(
@@ -1215,4 +1220,3 @@ class _LiveStatusPill extends StatelessWidget {
     );
   }
 }
-

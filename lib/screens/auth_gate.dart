@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/auth_service.dart';
 import '../services/chef_points_store.dart';
 import '../services/fridge_store.dart';
+import '../services/ingredient_swap_store.dart';
 import '../services/profile_store.dart';
 import '../services/push_notification_service.dart';
 import '../services/realtime_notification_manager.dart';
@@ -32,6 +33,7 @@ class _AuthGateState extends State<AuthGate> {
       _profileFuture = Future.wait([
         ProfileStore.instance.loadCurrentProfile(),
         ChefPointsStore.instance.loadEvents(),
+        IngredientSwapStore.instance.seedDefaultsIfNeeded(),
       ]);
     }
     return _profileFuture!;

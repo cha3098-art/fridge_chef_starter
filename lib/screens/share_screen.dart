@@ -14,6 +14,7 @@ import '../services/locale_store.dart';
 import '../services/meal_invite_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
+import '../widgets/ai_image_guide_banner.dart';
 import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
 import '../widgets/framed_post_card.dart';
@@ -239,7 +240,8 @@ class _ShareScreenState extends State<ShareScreen>
             Text(
               tr('$recipeTitle 요리 자랑 링크를 클립보드에 복사했어요.',
                   'The $recipeTitle brag link was copied to your clipboard.'),
-              style: const TextStyle(fontSize: 13, color: AppColors.inkSoft, height: 1.5),
+              style: const TextStyle(
+                  fontSize: 13, color: AppColors.inkSoft, height: 1.5),
             ),
             const SizedBox(height: 12),
             Container(
@@ -267,7 +269,8 @@ class _ShareScreenState extends State<ShareScreen>
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: Text(tr('링크 복사', 'Copy link'),
-                style: const TextStyle(color: AppColors.green, fontWeight: FontWeight.w700)),
+                style: const TextStyle(
+                    color: AppColors.green, fontWeight: FontWeight.w700)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -520,8 +523,7 @@ class _BragTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _BragThumbnail(
-                      recipeTitle: brag.recipeTitle,
-                      photoPath: brag.photoPath),
+                      recipeTitle: brag.recipeTitle, photoPath: brag.photoPath),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -627,8 +629,8 @@ class CookingBragDetailScreen extends StatelessWidget {
                 fontWeight: FontWeight.w800, letterSpacing: -0.3)),
       ),
       body: ListView(
-        padding:
-            const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
+        padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
         children: [
           // 액자 틀 — 사진만 내경 창 안에 고정. 글씨는 액자 밖(아래) 패널로 분리한다.
           FramedPostCard(
@@ -676,8 +678,8 @@ class CookingBragDetailScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   _timeAgoLabel(brag.completedAt),
-                  style: const TextStyle(
-                      fontSize: 12, color: Color(0xFF94A3B8)),
+                  style:
+                      const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
                 ),
               ],
             ),
@@ -1028,9 +1030,7 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: selected
-                              ? AppColors.green
-                              : AppColors.inkSoft,
+                          color: selected ? AppColors.green : AppColors.inkSoft,
                         ),
                       ),
                     ],
@@ -1096,8 +1096,8 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
               style: const TextStyle(color: AppColors.ink),
               decoration: InputDecoration(
                 labelText: tr('레시피 이름 직접 입력', 'Type the recipe name'),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide:
@@ -1155,10 +1155,11 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
                 ),
               ),
             ),
+          const SizedBox(height: 10),
+          const AiImageGuideBanner(),
           const SizedBox(height: 8),
           Text(
-            tr(
-                '💡 안내: 사진은 1:1 권장 비율 / 10MB 이하 파일이 적합하며, 자동으로 액자 틀에 맞춰 고정됩니다. (본문은 200자까지 작성 가능)',
+            tr('💡 안내: 사진은 1:1 권장 비율 / 10MB 이하 파일이 적합하며, 자동으로 액자 틀에 맞춰 고정됩니다. (본문은 200자까지 작성 가능)',
                 '💡 Tip: a 1:1 photo under 10MB fits best — it will be auto-fit to the frame window. (Caption up to 200 characters)'),
             style: const TextStyle(
                 fontSize: 11, color: AppColors.inkSoft, height: 1.4),

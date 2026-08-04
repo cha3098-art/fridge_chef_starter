@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../data/quick_recipe_catalog.dart';
 import '../data/recipe_catalog.dart';
 import '../l10n/recipe_i18n.dart';
 import '../l10n/tr.dart';
+import '../models/quick_recipe.dart';
 import '../models/recipe.dart';
 import '../services/fridge_store.dart';
 import '../services/locale_store.dart';
@@ -12,7 +14,16 @@ import '../widgets/fridge_mascot.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
+import 'cooking_mode_screen.dart';
 import 'recipe_detail_screen.dart';
+
+const _quickRecipeEmoji = <String, String>{
+  '한식': '🍚',
+  '중식': '🥢',
+  '양식': '🍝',
+  '일식': '🍱',
+  '분식': '🌶️',
+};
 
 const _cookTimeOptions = ['전체', '15분 이내', '30분 이내', '60분 이내'];
 const _difficultyOptions = ['전체', '하', '중', '상'];
@@ -50,6 +61,7 @@ class RecommendationScreen extends StatefulWidget {
 
 class _RecommendationScreenState extends State<RecommendationScreen> {
   RecommendationFilter _filter = _defaultFilter;
+  bool _showQuickRecipes = false;
 
   static const _fallbackCount = 5;
 
@@ -271,100 +283,128 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _CuisineCapsuleRow(
-              selected: _filter.cuisine,
-              onSelected: (cuisine) => setState(() => _filter = (
-                    onlyFullMatch: _filter.onlyFullMatch,
-                    cookTime: _filter.cookTime,
-                    difficulty: _filter.difficulty,
-                    cuisine: cuisine,
-                    servings: _filter.servings,
-                  )),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Text(
-                tr('레시피 $totalCount개', '$totalCount recipes'),
-                style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
+            Container(
+              decoration: const BoxDecoration(
+                border:
+                    Border(bottom: BorderSide(color: AppColors.line, width: 1)),
+              ),
+              padding: const EdgeInsets.fromLTRB(16, 6, 12, 6),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _CuisineCapsuleRow(
+                      selected: _filter.cuisine,
+                      onSelected: (cuisine) => setState(() => _filter = (
+                            onlyFullMatch: _filter.onlyFullMatch,
+                            cookTime: _filter.cookTime,
+                            difficulty: _filter.difficulty,
+                            cuisine: cuisine,
+                            servings: _filter.servings,
+                          )),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  _QuickRecipeBadge(
+                    active: _showQuickRecipes,
+                    onTap: () =>
+                        setState(() => _showQuickRecipes = !_showQuickRecipes),
+                  ),
+                ],
               ),
             ),
-            if (isFallback)
+            if (_showQuickRecipes) ...[
+              Expanded(child: _QuickRecipeGrid(cuisineFilter: _filter.cuisine)),
+            ] else ...[
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(AppSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: AppColors.goldSoft,
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.info_outline,
-                          size: 14, color: AppColors.gold),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          tr(
-                            '냉장고 재료만으로 완성되는 레시피가 없어서, 가장 가까운 레시피를 보여드려요',
-                            'No recipe matches your fridge exactly, so here are the closest ones',
-                          ),
-                          style: const TextStyle(
-                              fontSize: 11, color: AppColors.gold),
-                        ),
-                      ),
-                    ],
-                  ),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: Text(
+                  tr('레시피 $totalCount개', '$totalCount recipes'),
+                  style:
+                      const TextStyle(fontSize: 12, color: AppColors.inkSoft),
                 ),
               ),
-            Expanded(
-              child: items.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const FridgeMascot(size: 84),
-                          const SizedBox(height: AppSpacing.md),
-                          Text(
-                              tr('조건에 맞는 레시피가 없어요',
-                                  'No recipes match these filters'),
-                              style: const TextStyle(color: AppColors.inkSoft)),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        final item = items[index];
-                        if (item is _UnmatchedSectionMarker) {
-                          return const _UnmatchedSectionHeader();
-                        }
-                        final recipe = item as Recipe;
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                          child: _RecipeCard(
-                            recipe: recipe,
-                            fridgeIngredientNames: widget.fridgeIngredientNames,
-                            isUrgent:
-                                recipe.expiryUrgencyScore(_daysLeftByName) > 0,
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => RecipeDetailScreen(
-                                  recipe: recipe,
-                                  fridgeIngredientNames:
-                                      widget.fridgeIngredientNames,
-                                  servings: _filter.servings,
+              if (isFallback)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: AppColors.goldSoft,
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.info_outline,
+                            size: 14, color: AppColors.gold),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            tr(
+                              '냉장고 재료만으로 완성되는 레시피가 없어서, 가장 가까운 레시피를 보여드려요',
+                              'No recipe matches your fridge exactly, so here are the closest ones',
+                            ),
+                            style: const TextStyle(
+                                fontSize: 11, color: AppColors.gold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              Expanded(
+                child: items.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const FridgeMascot(size: 84),
+                            const SizedBox(height: AppSpacing.md),
+                            Text(
+                                tr('조건에 맞는 레시피가 없어요',
+                                    'No recipes match these filters'),
+                                style:
+                                    const TextStyle(color: AppColors.inkSoft)),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(
+                            AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          final item = items[index];
+                          if (item is _UnmatchedSectionMarker) {
+                            return const _UnmatchedSectionHeader();
+                          }
+                          final recipe = item as Recipe;
+                          return Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: AppSpacing.sm),
+                            child: _RecipeCard(
+                              recipe: recipe,
+                              fridgeIngredientNames:
+                                  widget.fridgeIngredientNames,
+                              isUrgent:
+                                  recipe.expiryUrgencyScore(_daysLeftByName) >
+                                      0,
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => RecipeDetailScreen(
+                                    recipe: recipe,
+                                    fridgeIngredientNames:
+                                        widget.fridgeIngredientNames,
+                                    servings: _filter.servings,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
           ],
         ),
         extendBody: true,
@@ -387,11 +427,8 @@ class _CuisineCapsuleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.line, width: 1)),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
       child: Wrap(
         spacing: 6,
         runSpacing: 6,
@@ -434,6 +471,173 @@ class _CuisineCapsuleRow extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// 카테고리 선택 바 옆의 "⚡ 5분 초간단" 피치 틴트 뱃지 — 누르면 20종 초간단 레시피
+/// 2단 그리드로 전환된다(_showQuickRecipes 토글).
+class _QuickRecipeBadge extends StatelessWidget {
+  final bool active;
+  final VoidCallback onTap;
+
+  const _QuickRecipeBadge({required this.active, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: active ? AppColors.carrot : AppColors.carrotSoft,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: active
+                ? AppColors.carrot
+                : AppColors.carrot.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Text(
+          '⚡ 5분 초간단',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: active ? Colors.white : AppColors.carrot,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 초간단 레시피 20종을 1:1 카드 2단 그리드로 보여준다.
+class _QuickRecipeGrid extends StatelessWidget {
+  final String cuisineFilter;
+  const _QuickRecipeGrid({required this.cuisineFilter});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<QuickRecipe>>(
+      future: QuickRecipeCatalog.load(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final recipes = cuisineFilter == '전체'
+            ? snapshot.data!
+            : snapshot.data!
+                .where((r) => r.cuisineType == cuisineFilter)
+                .toList();
+        if (recipes.isEmpty) {
+          return Center(
+            child: Text('$cuisineFilter 초간단 레시피가 아직 없어요',
+                style: const TextStyle(color: AppColors.inkSoft)),
+          );
+        }
+        return GridView.builder(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1,
+            crossAxisSpacing: AppSpacing.sm,
+            mainAxisSpacing: AppSpacing.sm,
+          ),
+          itemCount: recipes.length,
+          itemBuilder: (context, index) =>
+              _QuickRecipeGridCard(recipe: recipes[index]),
+        );
+      },
+    );
+  }
+}
+
+class _QuickRecipeGridCard extends StatelessWidget {
+  final QuickRecipe recipe;
+  const _QuickRecipeGridCard({required this.recipe});
+
+  @override
+  Widget build(BuildContext context) {
+    final gradient = cuisineGradient(recipe.cuisineType);
+    final emoji = _quickRecipeEmoji[recipe.cuisineType] ?? '⚡';
+
+    return InkWell(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => CookingModeScreen(
+            title: recipe.title,
+            cuisineType: recipe.cuisineType,
+            emoji: emoji,
+            steps: recipe.steps,
+            stepImages: recipe.stepImages,
+          ),
+        ),
+      ),
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: cardDropShadow(),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              height: 64,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: gradient,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(emoji, style: const TextStyle(fontSize: 30)),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              recipe.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.ink),
+            ),
+            const Spacer(),
+            Row(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.carrotSoft,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '⚡ ${recipe.cookTimeMin}분',
+                    style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.carrot),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  trTag(recipe.cuisineType),
+                  style:
+                      const TextStyle(fontSize: 10, color: AppColors.inkSoft),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

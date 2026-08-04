@@ -1,0 +1,167 @@
+[
+  {
+    "id": "quick_01",
+    "title": "대파 계란볶음밥",
+    "cuisineType": "한식",
+    "cookTimeMin": 5,
+    "ingredients": ["밥 1공기", "계란 2개", "대파 1대", "굴소스 1큰술"],
+    "steps": ["파기름 내기", "계란 스크램블후 밥 볶기", "굴소스 간 맞추기"],
+    "stepImages": ["assets/images/steps/quick_01_1.png", "assets/images/steps/quick_01_2.png", "assets/images/steps/quick_01_3.png"]
+  },
+  {
+    "id": "quick_02",
+    "title": "스팸 두부짜글이",
+    "cuisineType": "한식",
+    "cookTimeMin": 10,
+    "ingredients": ["스팸 1/2캔", "두부 1/2모", "양파 1/2개", "고추장 1큰술", "진간장 1큰술", "고춧가루 1큰술"],
+    "steps": ["스팸 으깨고 재료 썰기", "냄비에 재료+양념+물 1컵 넣기", "자작하게 7분 끓이기"],
+    "stepImages": ["assets/images/steps/quick_02_1.png", "assets/images/steps/quick_02_2.png", "assets/images/steps/quick_02_3.png"]
+  },
+  {
+    "id": "quick_03",
+    "title": "전자레인지 계란찜",
+    "cuisineType": "한식",
+    "cookTimeMin": 5,
+    "ingredients": ["계란 3개", "물 150ml", "참치액 1작은술", "참기름"],
+    "steps": ["계란, 물, 참치액 잘 섞기", "랩 씌우고 구멍 뚫어 레인지 3분 30초", "참기름 얹기"],
+    "stepImages": ["assets/images/steps/quick_03_1.png", "assets/images/steps/quick_03_2.png", "assets/images/steps/quick_03_3.png"]
+  },
+  {
+    "id": "quick_04",
+    "title": "참치 마요 덮밥",
+    "cuisineType": "한식",
+    "cookTimeMin": 5,
+    "ingredients": ["밥 1공기", "참치캔 1개", "계란 1개", "마요네즈 2큰술", "굴소스 0.5큰술"],
+    "steps": ["계란 스크램블", "기름 뺀 참치+마요네즈 섞기", "밥 위에 스크램블, 참치마요, 굴소스 올리기"],
+    "stepImages": ["assets/images/steps/quick_04_1.png", "assets/images/steps/quick_04_2.png", "assets/images/steps/quick_04_3.png"]
+  },
+  {
+    "id": "quick_05",
+    "title": "차돌박이 비빔국수",
+    "cuisineType": "한식",
+    "cookTimeMin": 8,
+    "ingredients": ["소면 1인분", "차돌박이 100g", "초고추장 2큰술", "참기름"],
+    "steps": ["소면 3분 삶아 찬물 헹굼", "차돌박이 구우기", "면+초고추장+참기름 비비고 고기 올리기"],
+    "stepImages": ["assets/images/steps/quick_05_1.png", "assets/images/steps/quick_05_2.png", "assets/images/steps/quick_05_3.png"]
+  },
+  {
+    "id": "quick_06",
+    "title": "토마토 달걀볶음",
+    "cuisineType": "중식",
+    "cookTimeMin": 7,
+    "ingredients": ["토마토 1개", "계란 2개", "대파", "굴소스 0.5큰술"],
+    "steps": ["계란 스크램블 만들어 빼두기", "토마토, 대파 볶다 굴소스 간하기", "계란 넣고 가볍게 섞기"]
+  },
+  {
+    "id": "quick_07",
+    "title": "마늘종 차돌 마파두부",
+    "cuisineType": "중식",
+    "cookTimeMin": 10,
+    "ingredients": ["두부 1모", "다진 돼지고기 80g", "두반장 1큰술", "굴소스 0.5큰술", "전분물"],
+    "steps": ["고기 볶다 두반장, 굴소스 넣기", "물 100ml+두부 넣고 3분 끓이기", "전분물로 농도 맞추기"]
+  },
+  {
+    "id": "quick_08",
+    "title": "백종원식 대파 비빔면",
+    "cuisineType": "중식",
+    "cookTimeMin": 5,
+    "ingredients": ["라면사리 1개", "대파 1대", "진간장 1.5큰술", "설탕 0.5큰술", "식용유 3큰술"],
+    "steps": ["대파+식용유로 파기름 내기", "진간장, 설탕 넣어 간장파소스 만들기", "삶은 면에 부어 비비기"]
+  },
+  {
+    "id": "quick_09",
+    "title": "초간단 깐풍만두",
+    "cuisineType": "중식",
+    "cookTimeMin": 8,
+    "ingredients": ["냉동군만두 8개", "간장 1큰술", "식초 1큰술", "설탕 1큰술", "다진마늘"],
+    "steps": ["만두 노릇하게 구우기", "양념 재료 팬에서 보글보글 끓이기", "만두 넣어 졸이듯 볶기"]
+  },
+  {
+    "id": "quick_10",
+    "title": "원팬 알리오 올리오",
+    "cuisineType": "양식",
+    "cookTimeMin": 8,
+    "ingredients": ["파스타면 100g", "통마늘 5알", "페페론치노 2개", "올리브유 4큰술"],
+    "steps": ["마늘, 고추 올리브유에 볶기", "삶은 면+면수 3큰술 넣고 볶기", "올리브유 코팅 후 소금 간"]
+  },
+  {
+    "id": "quick_11",
+    "title": "원팬 크림 리조또",
+    "cuisineType": "양식",
+    "cookTimeMin": 10,
+    "ingredients": ["찬밥 1공기", "우유 200ml", "슬라이스치즈 1장", "햄 2장", "양송이"],
+    "steps": ["햄, 양송이 버터에 볶기", "우유, 찬밥 넣고 푹 퍼질 때까지 저어주기", "치즈 녹이고 간하기"]
+  },
+  {
+    "id": "quick_12",
+    "title": "에어프라이어 퀘사디아",
+    "cuisineType": "양식",
+    "cookTimeMin": 7,
+    "ingredients": ["또띠아 1장", "모짜렐라치즈 1컵", "파스타소스 2큰술", "옥수수"],
+    "steps": ["또띠아 반쪽에 소스, 옥수수, 치즈 얹기", "반 접어 에어프라이어 180도 5분", "3등분 썰기"]
+  },
+  {
+    "id": "quick_13",
+    "title": "바질 페스토 파스타",
+    "cuisineType": "양식",
+    "cookTimeMin": 7,
+    "ingredients": ["파스타면 100g", "시판 바질페스토 2큰술", "방울토마토 4개"],
+    "steps": ["파스타면 소금물에 7분 삶기", "방울토마토와 면을 볼에 담기", "바질페스토, 올리브유 섞기"]
+  },
+  {
+    "id": "quick_14",
+    "title": "5분 초간단 양파덮밥",
+    "cuisineType": "일식",
+    "cookTimeMin": 5,
+    "ingredients": ["밥 1공기", "계란 1개", "양파 1/2개", "진간장 2큰술", "설탕 1큰술", "물 4큰술"],
+    "steps": ["양파, 간장, 설탕, 물 넣고 끓이기", "계란물 둘러 반숙 익히기", "밥 위에 얹기"]
+  },
+  {
+    "id": "quick_15",
+    "title": "명란 버터 우동",
+    "cuisineType": "일식",
+    "cookTimeMin": 6,
+    "ingredients": ["우동면 1개", "명란젓 1줄", "버터 1큰술", "쯔유 0.5큰술", "김가루"],
+    "steps": ["우동면 2분 삶아 건지기", "뜨거운 면에 버터, 명란, 쯔유 올리기", "잘 비벼 김가루 올리기"]
+  },
+  {
+    "id": "quick_16",
+    "title": "차돌박이 팽이버섯 덮밥",
+    "cuisineType": "일식",
+    "cookTimeMin": 8,
+    "ingredients": ["밥 1공기", "차돌박이 80g", "팽이버섯 1/2봉", "쯔유 2큰술", "맛술"],
+    "steps": ["차돌박이 볶다 팽이버섯 넣기", "쯔유, 맛술, 물 넣고 2분 졸이기", "밥 위에 얹고 노른자 올리기"]
+  },
+  {
+    "id": "quick_17",
+    "title": "야키소바풍 라면",
+    "cuisineType": "일식",
+    "cookTimeMin": 7,
+    "ingredients": ["라면사리 1개", "양배추", "굴소스 1큰술", "간장 0.5큰술", "마요네즈"],
+    "steps": ["면 삶아 건지기", "양배추, 면, 굴소스, 간장 센 불에 볶기", "접시에 담고 마요네즈 뿌리기"]
+  },
+  {
+    "id": "quick_18",
+    "title": "추억의 컵떡볶이",
+    "cuisineType": "분식",
+    "cookTimeMin": 8,
+    "ingredients": ["떡볶이떡 1인분", "고추장 1큰술", "간장 0.5큰술", "설탕 1.5큰술", "카레가루 0.3스푼"],
+    "steps": ["물 1컵과 양념 풀고 끓이기", "떡 넣고 국물 자작해질 때까지 5분 끓이기"]
+  },
+  {
+    "id": "quick_19",
+    "title": "마요 콘치즈",
+    "cuisineType": "분식",
+    "cookTimeMin": 5,
+    "ingredients": ["캔옥수수 1캔", "모짜렐라치즈 1컵", "마요네즈 2큰술", "설탕 0.5큰술"],
+    "steps": ["옥수수 물기 빼기", "마요네즈, 설탕 섞어 용기에 담기", "치즈 올리고 레인지 2분 30초"]
+  },
+  {
+    "id": "quick_20",
+    "title": "김치 치즈 밥전",
+    "cuisineType": "분식",
+    "cookTimeMin": 7,
+    "ingredients": ["찬밥 1공기", "다진 김치 1/2컵", "모짜렐라치즈 0.5컵", "부침가루 1큰술"],
+    "steps": ["찬밥, 김치, 부침가루, 참기름 섞기", "팬에 얇게 펴서 구우기", "치즈 올려 반 접어 녹이기"]
+  }
+]

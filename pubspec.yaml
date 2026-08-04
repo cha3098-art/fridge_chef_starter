@@ -23,6 +23,8 @@ dependencies:
   google_mlkit_text_recognition: ^0.13.0
   firebase_core: ^3.6.0
   firebase_messaging: ^15.1.3
+  speech_to_text: ^7.0.0
+  audioplayers: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -41,6 +43,9 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
+    - assets/data/quick_recipes.json
+    - assets/sounds/timer_alarm.wav
+    - assets/images/steps/
     - assets/icon/icon_square.png
     - assets/icon/icon_share.png
     - assets/icon/icon_challenge.png

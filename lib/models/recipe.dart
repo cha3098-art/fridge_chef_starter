@@ -43,17 +43,26 @@ class RecipeStep {
   final String descriptionEn;
   final int? timerSec;
 
+  /// MS Copilot/Bing Image Creator 등으로 무료 생성해 assets/images/steps/에 넣어둔
+  /// 단계별 비주얼 이미지 경로. 아직 없으면 null — 이 경우 StepVisual이 카테고리
+  /// 라인 아이콘(썰기/볶기/끓이기 등)으로 자동 대체한다.
+  final String? imageAsset;
+
   const RecipeStep({
     required this.order,
     required this.description,
     required this.descriptionEn,
     this.timerSec,
+    this.imageAsset,
   });
 }
 
 /// recipes 테이블에 대응하는 레시피 모델
 /// 매칭 로직(내 냉장고 재료로 몇 개나 만들 수 있는지)은 여기서 계산한다
 class Recipe {
+  /// assets/images/steps/{id}_{step_num}.png 단계별 이미지 자산 경로를 짓는 데 쓰는 고정 ID.
+  /// 아직 전용 이미지가 없는 레시피는 null이어도 되고, StepVisual은 그 경우 대표 사진으로 대체한다.
+  final String? id;
   final String title;
   final String titleEn;
   final int cookTimeMin;
@@ -77,6 +86,7 @@ class Recipe {
   final bool isKFood;
 
   const Recipe({
+    this.id,
     required this.title,
     required this.titleEn,
     required this.cookTimeMin,
@@ -102,7 +112,9 @@ class Recipe {
       requiredIngredients.where(fridgeIngredientNames.contains).length;
 
   List<String> missingIngredients(Set<String> fridgeIngredientNames) =>
-      requiredIngredients.where((name) => !fridgeIngredientNames.contains(name)).toList();
+      requiredIngredients
+          .where((name) => !fridgeIngredientNames.contains(name))
+          .toList();
 
   RecipeMatchLevel matchLevel(Set<String> fridgeIngredientNames) {
     final matched = matchedCount(fridgeIngredientNames);

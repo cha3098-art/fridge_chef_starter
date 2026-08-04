@@ -15,6 +15,7 @@ import '../widgets/fridge_mascot.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
+import '../widgets/mascot_image_fallback.dart';
 import 'board_screen.dart';
 import 'profile_view_sheet.dart';
 
@@ -190,69 +191,68 @@ class _RankingScreenState extends State<RankingScreen> {
 
   Widget _buildOverallRanking() {
     return FutureBuilder<List<_RankRow>>(
-          future: _rowsFuture,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                  child: CircularProgressIndicator(color: AppColors.green));
-            }
-            final rows = snapshot.data!;
-            if (rows.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const FridgeMascot(size: 84),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(tr('아직 가입한 사용자가 없어요', 'No one has signed up yet'),
-                        style: const TextStyle(color: AppColors.inkSoft)),
-                  ],
-                ),
-              );
-            }
-            final podiumCount = rows.length < 3 ? rows.length : 3;
-            final rest = rows.skip(podiumCount).toList();
-            final myIndex = rows.indexWhere((r) => r.isMe);
-
-            // 스크롤 리스트 + 하단 스티키 "내 순위" 바를 Stack으로 겹친다
-            return Stack(
+      future: _rowsFuture,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+              child: CircularProgressIndicator(color: AppColors.green));
+        }
+        final rows = snapshot.data!;
+        if (rows.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(AppSpacing.md,
-                            AppSpacing.sm, AppSpacing.md, AppSpacing.md),
-                        child:
-                            _RankPodium(rows: rows.take(podiumCount).toList()),
-                      ),
-                    ),
-                    SliverPadding(
-                      // 하단 스티키 바에 가려지지 않도록 아래 여백을 넉넉히 준다
-                      padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.md, 0, AppSpacing.md, 120),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, i) => _RankingRow(
-                              row: rest[i], rank: podiumCount + i + 1),
-                          childCount: rest.length,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                if (myIndex >= 0)
-                  Positioned(
-                    bottom: 16,
-                    left: 16,
-                    right: 16,
-                    child: _MyStickyRankingBar(
-                        row: rows[myIndex], rank: myIndex + 1),
-                  ),
+                const FridgeMascot(size: 84),
+                const SizedBox(height: AppSpacing.md),
+                Text(tr('아직 가입한 사용자가 없어요', 'No one has signed up yet'),
+                    style: const TextStyle(color: AppColors.inkSoft)),
               ],
-            );
-          },
+            ),
+          );
+        }
+        final podiumCount = rows.length < 3 ? rows.length : 3;
+        final rest = rows.skip(podiumCount).toList();
+        final myIndex = rows.indexWhere((r) => r.isMe);
+
+        // 스크롤 리스트 + 하단 스티키 "내 순위" 바를 Stack으로 겹친다
+        return Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(AppSpacing.md,
+                        AppSpacing.sm, AppSpacing.md, AppSpacing.md),
+                    child: _RankPodium(rows: rows.take(podiumCount).toList()),
+                  ),
+                ),
+                SliverPadding(
+                  // 하단 스티키 바에 가려지지 않도록 아래 여백을 넉넉히 준다
+                  padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.md, 0, AppSpacing.md, 120),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, i) =>
+                          _RankingRow(row: rest[i], rank: podiumCount + i + 1),
+                      childCount: rest.length,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (myIndex >= 0)
+              Positioned(
+                bottom: 16,
+                left: 16,
+                right: 16,
+                child:
+                    _MyStickyRankingBar(row: rows[myIndex], rank: myIndex + 1),
+              ),
+          ],
         );
+      },
+    );
   }
 }
 
@@ -714,8 +714,8 @@ class _HallOfFameView extends StatelessWidget {
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md, 0, AppSpacing.md, 120),
+          padding:
+              const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, 120),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, i) =>
@@ -840,7 +840,12 @@ class _BragPodiumSpot extends StatelessWidget {
                     : Image.network(post.photoPath!,
                         fit: BoxFit.cover,
                         width: avatarSize,
-                        height: avatarSize),
+                        height: avatarSize,
+                        errorBuilder: (context, error, stack) =>
+                            RoundedMascotFallback(
+                                width: avatarSize,
+                                height: avatarSize,
+                                backgroundColor: const Color(0xFF1E293B))),
               ),
             ),
           ),
@@ -950,7 +955,14 @@ class _BragRankingRow extends StatelessWidget {
                       ? const Icon(Icons.restaurant,
                           size: 18, color: Colors.white54)
                       : Image.network(post.photoPath!,
-                          fit: BoxFit.cover, width: 40, height: 40),
+                          fit: BoxFit.cover,
+                          width: 40,
+                          height: 40,
+                          errorBuilder: (context, error, stack) =>
+                              const RoundedMascotFallback(
+                                  width: 40,
+                                  height: 40,
+                                  backgroundColor: Color(0xFF1E293B))),
                 ),
               ),
               const SizedBox(width: 10),
@@ -971,7 +983,8 @@ class _BragRankingRow extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       post.authorNickname,
-                      style: const TextStyle(fontSize: 11, color: Colors.white54),
+                      style:
+                          const TextStyle(fontSize: 11, color: Colors.white54),
                     ),
                   ],
                 ),

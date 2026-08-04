@@ -13,6 +13,7 @@ import '../services/locale_store.dart';
 import '../services/profile_store.dart';
 import '../theme/app_theme.dart';
 import '../utils/image_compressor.dart';
+import '../widgets/ai_image_guide_banner.dart';
 import '../widgets/chef_badge.dart';
 import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
@@ -20,6 +21,7 @@ import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import '../widgets/main_return_button.dart';
+import '../widgets/mascot_image_fallback.dart';
 import 'sign_up_screen.dart';
 
 String _timeAgoLabel(DateTime dateTime) {
@@ -193,8 +195,7 @@ class _BoardScreenState extends State<BoardScreen> {
                               children: [
                                 _category == BoardCategory.challenge
                                     ? ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(20),
                                         child: Image.asset(
                                             'assets/icon/icon_challenge_rival.png',
                                             width: 84,
@@ -275,8 +276,8 @@ class _CategoryButton extends StatelessWidget {
             if (iconAsset != null) ...[
               ClipRRect(
                 borderRadius: BorderRadius.circular(5),
-                child:
-                    Image.asset(iconAsset!, width: 16, height: 16, fit: BoxFit.cover),
+                child: Image.asset(iconAsset!,
+                    width: 16, height: 16, fit: BoxFit.cover),
               ),
               const SizedBox(width: 6),
             ],
@@ -323,7 +324,15 @@ class _PhotoViewerScreen extends StatelessWidget {
             children: [
               Center(
                 child: InteractiveViewer(
-                  child: Image.network(url, fit: BoxFit.contain),
+                  child: Image.network(
+                    url,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stack) =>
+                        const RoundedMascotFallback(
+                            width: 160,
+                            height: 160,
+                            backgroundColor: Colors.transparent),
+                  ),
                 ),
               ),
               Positioned(
@@ -375,6 +384,8 @@ class _PostCard extends StatelessWidget {
                         width: 80,
                         height: 80,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stack) =>
+                            const RoundedMascotFallback(width: 80, height: 80),
                       ),
                     )
                   : Container(
@@ -451,9 +462,8 @@ class _PostCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               vertical: 4, horizontal: 8),
                           decoration: BoxDecoration(
-                            color: liked
-                                ? AppColors.redSoft
-                                : AppColors.paperDeep,
+                            color:
+                                liked ? AppColors.redSoft : AppColors.paperDeep,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -471,9 +481,8 @@ class _PostCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: liked
-                                      ? AppColors.red
-                                      : AppColors.inkSoft,
+                                  color:
+                                      liked ? AppColors.red : AppColors.inkSoft,
                                 ),
                               ),
                             ],
@@ -711,6 +720,8 @@ class _CreatePostSheetState extends State<_CreatePostSheet> {
                 ),
               ],
             ),
+          const SizedBox(height: 10),
+          const AiImageGuideBanner(),
           const SizedBox(height: 16),
           TextField(
             controller: _titleController,
@@ -970,8 +981,7 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                           // 1단 — 상단 프로필 바 (원형 아바타 + 아이디 + 옵션 아이콘)
                           Container(
                             color: Colors.white,
-                            padding:
-                                const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                            padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
                             child: Row(
                               children: [
                                 Container(
@@ -1017,8 +1027,7 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                                         horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: AppColors.gold,
-                                      borderRadius:
-                                          BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
                                       tr('🏅 채택 레시피', '🏅 Adopted'),
@@ -1046,6 +1055,8 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                                       post.photoPath!,
                                       fit: BoxFit.cover,
                                       width: double.infinity,
+                                      errorBuilder: (context, error, stack) =>
+                                          const RoundedMascotFallback(),
                                     ),
                                   )
                                 : Container(
@@ -1159,8 +1170,7 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          tr(
-                              '💡 안내: 좋아요 10개가 넘으면 랭킹 메뉴의 \'명예의 전당\'에 등록됩니다.',
+                          tr('💡 안내: 좋아요 10개가 넘으면 랭킹 메뉴의 \'명예의 전당\'에 등록됩니다.',
                               "💡 Tip: posts with 10+ likes get featured in the Ranking screen's Hall of Fame."),
                           style: const TextStyle(
                               fontSize: 11.5,
@@ -1234,7 +1244,7 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(
-              AppSpacing.md,
+                  AppSpacing.md,
                   AppSpacing.sm,
                   AppSpacing.md,
                   AppSpacing.sm + MediaQuery.of(context).viewInsets.bottom,
