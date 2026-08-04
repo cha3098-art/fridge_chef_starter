@@ -10,7 +10,8 @@ const recipeCatalog = <Recipe>[
     title: '계란볶음밥',
     titleEn: 'Egg Fried Rice',
     emoji: '🍳',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Bokkeum-bap.jpg/960px-Bokkeum-bap.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Bokkeum-bap.jpg/960px-Bokkeum-bap.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '한식',
@@ -25,7 +26,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '양파', quantity: 0.25, unit: '개'),
       RecipeIngredient(name: '밥', quantity: 1, unit: '공기', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 1, unit: '큰술', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
@@ -37,14 +39,16 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '달군 팬에 식용유 1큰술을 두르고 다진 대파를 넣어 볶아 파기름을 낸다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan and stir-fry the chopped green onion to make scallion oil.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan and stir-fry the chopped green onion to make scallion oil.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_01_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '양파를 넣고 중불에서 투명해질 때까지 볶는다.',
-        descriptionEn: 'Add the onion and stir-fry over medium heat until translucent.',
+        descriptionEn:
+            'Add the onion and stir-fry over medium heat until translucent.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_01_3.png',
       ),
@@ -58,7 +62,8 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 5,
         description: '밥 1공기를 넣어 골고루 볶은 뒤 소금 1/4작은술로 간을 맞춘다.',
-        descriptionEn: 'Add 1 bowl of rice, stir-fry evenly, and season with 1/4 tsp salt.',
+        descriptionEn:
+            'Add 1 bowl of rice, stir-fry evenly, and season with 1/4 tsp salt.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_01_5.png',
       ),
@@ -69,7 +74,8 @@ const recipeCatalog = <Recipe>[
     title: '두부김치찌개',
     titleEn: 'Tofu Kimchi Stew',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg/960px-Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg/960px-Korean_stew_dish_-_Kimchi-jjigae_Kimchi_Stew_2019_%2801%29.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -89,34 +95,39 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '돼지고기 앞다리살 150g과 김치 200g을 한입 크기로 썬다.',
-        descriptionEn: 'Cut 150g pork shoulder and 200g kimchi into bite-sized pieces.',
+        descriptionEn:
+            'Cut 150g pork shoulder and 200g kimchi into bite-sized pieces.',
         imageAsset: 'assets/images/steps/recipe_02_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 식용유 1큰술을 두르고 돼지고기를 중불에서 볶는다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pot and stir-fry the pork over medium heat.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pot and stir-fry the pork over medium heat.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_02_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '김치를 넣고 함께 볶아 신맛을 날린다.',
-        descriptionEn: 'Add the kimchi and stir-fry together to mellow its sourness.',
+        descriptionEn:
+            'Add the kimchi and stir-fry together to mellow its sourness.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_02_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '물 2컵(400ml)을 붓고 끓인 뒤 두부 1모를 큼직하게 썰어 넣는다.',
-        descriptionEn: 'Pour in 2 cups (400ml) of water, bring to a boil, then add 1 block of tofu cut into large pieces.',
+        descriptionEn:
+            'Pour in 2 cups (400ml) of water, bring to a boil, then add 1 block of tofu cut into large pieces.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_02_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '대파 1/3단을 어슷하게 썰어 올리고 한소끔 더 끓인다.',
-        descriptionEn: 'Top with 1/3 bunch of green onion sliced diagonally and simmer a bit longer.',
+        descriptionEn:
+            'Top with 1/3 bunch of green onion sliced diagonally and simmer a bit longer.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_02_5.png',
       ),
@@ -127,7 +138,8 @@ const recipeCatalog = <Recipe>[
     title: '애호박전',
     titleEn: 'Pan-Fried Zucchini',
     emoji: '🥘',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Hobak-jeon.jpg/960px-Hobak-jeon.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Hobak-jeon.jpg/960px-Hobak-jeon.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '한식',
@@ -142,7 +154,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g'),
       RecipeIngredient(name: '부침가루', quantity: 3, unit: '큰술', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 2, unit: '큰술', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
@@ -154,20 +167,23 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '애호박에 소금 1/4작은술을 살짝 뿌려 절인다.',
-        descriptionEn: 'Sprinkle 1/4 tsp salt over the zucchini and let it sit to draw out moisture.',
+        descriptionEn:
+            'Sprinkle 1/4 tsp salt over the zucchini and let it sit to draw out moisture.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_03_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '절인 애호박의 물기를 닦고 부침가루 3큰술을 얇게 입힌다.',
-        descriptionEn: 'Pat the zucchini dry and coat lightly with 3 tbsp pancake mix.',
+        descriptionEn:
+            'Pat the zucchini dry and coat lightly with 3 tbsp pancake mix.',
         imageAsset: 'assets/images/steps/recipe_03_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '풀어둔 계란물(계란 1개)에 담갔다가 식용유 2큰술 두른 팬에서 앞뒤로 노릇하게 지진다.',
-        descriptionEn: 'Dip into beaten egg (1 egg) and pan-fry in 2 tbsp cooking oil until golden on both sides.',
+        descriptionEn:
+            'Dip into beaten egg (1 egg) and pan-fry in 2 tbsp cooking oil until golden on both sides.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_03_4.png',
       ),
@@ -178,7 +194,8 @@ const recipeCatalog = <Recipe>[
     title: '시금치나물무침',
     titleEn: 'Seasoned Spinach',
     emoji: '🥬',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Sigeumchi-namul.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/5/56/Sigeumchi-namul.jpg',
     cookTimeMin: 10,
     difficulty: '하',
     cuisineType: '한식',
@@ -191,26 +208,30 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '시금치', quantity: 1, unit: '단'),
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g'),
       RecipeIngredient(name: '참기름', quantity: 1, unit: '작은술', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '끓는 물 4컵에 소금 1작은술을 넣고 시금치 1단을 데친다.',
-        descriptionEn: 'Add 1 tsp salt to 4 cups of boiling water and blanch 1 bunch of spinach.',
+        descriptionEn:
+            'Add 1 tsp salt to 4 cups of boiling water and blanch 1 bunch of spinach.',
         timerSec: 30,
         imageAsset: 'assets/images/steps/recipe_04_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '데친 시금치를 찬물에 헹궈 물기를 꼭 짠다.',
-        descriptionEn: 'Rinse the blanched spinach in cold water and squeeze out the water firmly.',
+        descriptionEn:
+            'Rinse the blanched spinach in cold water and squeeze out the water firmly.',
         imageAsset: 'assets/images/steps/recipe_04_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '다진 마늘 5g, 참기름 1작은술, 소금 1/4작은술을 넣고 조물조물 무친다.',
-        descriptionEn: 'Add 5g minced garlic, 1 tsp sesame oil, and 1/4 tsp salt, then mix well by hand.',
+        descriptionEn:
+            'Add 5g minced garlic, 1 tsp sesame oil, and 1/4 tsp salt, then mix well by hand.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_04_3.png',
       ),
@@ -221,7 +242,8 @@ const recipeCatalog = <Recipe>[
     title: '감자조림',
     titleEn: 'Braised Potatoes',
     emoji: '🥔',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Gamja_jorim_%EA%B0%90%EC%9E%90%EC%A1%B0%EB%A6%BC1.jpg/960px-Gamja_jorim_%EA%B0%90%EC%9E%90%EC%A1%B0%EB%A6%BC1.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Gamja_jorim_%EA%B0%90%EC%9E%90%EC%A1%B0%EB%A6%BC1.jpg/960px-Gamja_jorim_%EA%B0%90%EC%9E%90%EC%A1%B0%EB%A6%BC1.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -241,21 +263,24 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '감자 3개를 한입 크기로 썰어 물에 담가 전분기를 뺀다.',
-        descriptionEn: 'Cut 3 potatoes into bite-sized pieces and soak in water to remove excess starch.',
+        descriptionEn:
+            'Cut 3 potatoes into bite-sized pieces and soak in water to remove excess starch.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_05_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 감자, 간장 3큰술, 설탕 1큰술, 물 1컵(200ml)을 넣고 끓인다.',
-        descriptionEn: 'In a pot, combine the potatoes, 3 tbsp soy sauce, 1 tbsp sugar, and 1 cup (200ml) of water, and bring to a boil.',
+        descriptionEn:
+            'In a pot, combine the potatoes, 3 tbsp soy sauce, 1 tbsp sugar, and 1 cup (200ml) of water, and bring to a boil.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_05_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '국물이 자작해지면 다진 마늘 5g과 대파 1/5단을 넣고 조린다.',
-        descriptionEn: 'Once the sauce has reduced, add 5g minced garlic and 1/5 bunch of green onion and braise.',
+        descriptionEn:
+            'Once the sauce has reduced, add 5g minced garlic and 1/5 bunch of green onion and braise.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_05_3.png',
       ),
@@ -266,7 +291,8 @@ const recipeCatalog = <Recipe>[
     title: '소고기 등심 스테이크',
     titleEn: 'Beef Sirloin Steak',
     emoji: '🥩',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Beef_fillet_steak_with_mushrooms.jpg/960px-Beef_fillet_steak_with_mushrooms.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Beef_fillet_steak_with_mushrooms.jpg/960px-Beef_fillet_steak_with_mushrooms.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '양식',
@@ -280,7 +306,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '버터', quantity: 15, unit: 'g'),
       RecipeIngredient(name: '마늘', quantity: 10, unit: 'g'),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.5, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
@@ -293,13 +320,15 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '고기 양면에 소금 1/2작은술과 후추 1꼬집을 뿌려 밑간한다.',
-        descriptionEn: 'Season both sides of the steak with 1/2 tsp salt and a pinch of pepper.',
+        descriptionEn:
+            'Season both sides of the steak with 1/2 tsp salt and a pinch of pepper.',
         imageAsset: 'assets/images/steps/recipe_06_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 버터 15g을 녹이고 편으로 썬 마늘 10g을 넣어 향을 낸다.',
-        descriptionEn: 'Melt 15g butter in a hot pan and add 10g sliced garlic to infuse the flavor.',
+        descriptionEn:
+            'Melt 15g butter in a hot pan and add 10g sliced garlic to infuse the flavor.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_06_3.png',
       ),
@@ -324,7 +353,8 @@ const recipeCatalog = <Recipe>[
     title: '닭가슴살 샐러드',
     titleEn: 'Chicken Breast Salad',
     emoji: '🥗',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Chicken_salad_with_eggs.jpg/960px-Chicken_salad_with_eggs.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Chicken_salad_with_eggs.jpg/960px-Chicken_salad_with_eggs.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '양식',
@@ -338,14 +368,16 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '애호박', quantity: 0.5, unit: '개'),
       RecipeIngredient(name: '양파', quantity: 0.25, unit: '개'),
       RecipeIngredient(name: '올리브유', quantity: 1, unit: '큰술', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '닭가슴살 150g에 소금 1/4작은술, 후추 1꼬집을 뿌려 밑간한 뒤 팬에서 앞뒤로 굽는다.',
-        descriptionEn: 'Season 150g chicken breast with 1/4 tsp salt and a pinch of pepper, then pan-fry on both sides.',
+        descriptionEn:
+            'Season 150g chicken breast with 1/4 tsp salt and a pinch of pepper, then pan-fry on both sides.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_07_1.png',
       ),
@@ -358,13 +390,15 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 3,
         description: '구운 닭가슴살을 한 김 식힌 뒤 1cm 두께로 슬라이스한다.',
-        descriptionEn: 'Let the cooked chicken breast cool slightly, then slice into 1cm-thick pieces.',
+        descriptionEn:
+            'Let the cooked chicken breast cool slightly, then slice into 1cm-thick pieces.',
         imageAsset: 'assets/images/steps/recipe_07_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '채소와 닭가슴살을 담고 올리브유 1큰술을 둘러 마무리한다.',
-        descriptionEn: 'Plate the vegetables and chicken, then finish with a drizzle of 1 tbsp olive oil.',
+        descriptionEn:
+            'Plate the vegetables and chicken, then finish with a drizzle of 1 tbsp olive oil.',
         imageAsset: 'assets/images/steps/recipe_07_4.png',
       ),
     ],
@@ -374,7 +408,8 @@ const recipeCatalog = <Recipe>[
     title: '삼겹살 구이',
     titleEn: 'Grilled Pork Belly',
     emoji: '🥓',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Korean.cuisine-Samgyeopsal-01.jpg/960px-Korean.cuisine-Samgyeopsal-01.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Korean.cuisine-Samgyeopsal-01.jpg/960px-Korean.cuisine-Samgyeopsal-01.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '한식',
@@ -393,7 +428,8 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '팬을 달군 뒤 삼겹살 300g을 앞뒤로 노릇하게 굽는다.',
-        descriptionEn: 'Heat a pan and grill 300g pork belly until golden on both sides.',
+        descriptionEn:
+            'Heat a pan and grill 300g pork belly until golden on both sides.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_08_1.png',
       ),
@@ -407,7 +443,8 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 3,
         description: '대파 1/2단을 채썰어 곁들이고 쌈장 2큰술과 함께 낸다.',
-        descriptionEn: 'Julienne 1/2 bunch of green onion to serve alongside, with 2 tbsp ssamjang.',
+        descriptionEn:
+            'Julienne 1/2 bunch of green onion to serve alongside, with 2 tbsp ssamjang.',
         imageAsset: 'assets/images/steps/recipe_08_3.png',
       ),
     ],
@@ -417,7 +454,8 @@ const recipeCatalog = <Recipe>[
     title: '고등어 조림',
     titleEn: 'Braised Mackerel',
     emoji: '🐟',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Korean.cuisine-Godeungeo.jorim-01.jpg/960px-Korean.cuisine-Godeungeo.jorim-01.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Korean.cuisine-Godeungeo.jorim-01.jpg/960px-Korean.cuisine-Godeungeo.jorim-01.jpg',
     cookTimeMin: 35,
     difficulty: '상',
     cuisineType: '한식',
@@ -444,20 +482,23 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '간장 2큰술, 고춧가루 2큰술, 설탕 1큰술, 다진 마늘 10g을 섞어 양념장을 만든다.',
-        descriptionEn: 'Mix 2 tbsp soy sauce, 2 tbsp gochugaru, 1 tbsp sugar, and 10g minced garlic to make the sauce.',
+        descriptionEn:
+            'Mix 2 tbsp soy sauce, 2 tbsp gochugaru, 1 tbsp sugar, and 10g minced garlic to make the sauce.',
         imageAsset: 'assets/images/steps/recipe_09_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '냄비에 고등어, 양념장, 물 1컵(200ml)을 넣고 끓인다.',
-        descriptionEn: 'In a pot, combine the mackerel, sauce, and 1 cup (200ml) of water, and bring to a boil.',
+        descriptionEn:
+            'In a pot, combine the mackerel, sauce, and 1 cup (200ml) of water, and bring to a boil.',
         timerSec: 900,
         imageAsset: 'assets/images/steps/recipe_09_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '대파 1/2단을 어슷 썰어 올리고 국물을 끼얹으며 졸인다.',
-        descriptionEn: 'Top with 1/2 bunch of green onion sliced diagonally and simmer, basting with the sauce.',
+        descriptionEn:
+            'Top with 1/2 bunch of green onion sliced diagonally and simmer, basting with the sauce.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_09_4.png',
       ),
@@ -468,7 +509,8 @@ const recipeCatalog = <Recipe>[
     title: '새우볶음밥',
     titleEn: 'Shrimp Fried Rice',
     emoji: '🍤',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Shrimp_Fried_Rice_%28Taiwan%29.jpg/960px-Shrimp_Fried_Rice_%28Taiwan%29.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Shrimp_Fried_Rice_%28Taiwan%29.jpg/960px-Shrimp_Fried_Rice_%28Taiwan%29.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '중식',
@@ -483,34 +525,39 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '대파', quantity: 0.3, unit: '단'),
       RecipeIngredient(name: '밥', quantity: 1, unit: '공기', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 1, unit: '큰술', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '새우 150g은 껍질과 내장을 제거해 손질한 뒤 소금 1/4작은술, 후추 1꼬집으로 밑간한다.',
-        descriptionEn: 'Peel and devein 150g shrimp, then season with 1/4 tsp salt and a pinch of pepper.',
+        descriptionEn:
+            'Peel and devein 150g shrimp, then season with 1/4 tsp salt and a pinch of pepper.',
         imageAsset: 'assets/images/steps/recipe_10_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '달군 팬에 식용유 1큰술을 두르고 계란 1개를 풀어 스크램블한 뒤 따로 덜어둔다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan, scramble 1 egg, and set aside.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan, scramble 1 egg, and set aside.',
         timerSec: 90,
         imageAsset: 'assets/images/steps/recipe_10_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '같은 팬에 새우와 대파 1/3단을 넣고 볶는다.',
-        descriptionEn: 'In the same pan, stir-fry the shrimp and 1/3 bunch of green onion.',
+        descriptionEn:
+            'In the same pan, stir-fry the shrimp and 1/3 bunch of green onion.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_10_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '밥 1공기와 스크램블 계란을 넣고 강불에 볶는다.',
-        descriptionEn: 'Add 1 bowl of rice and the scrambled egg, and stir-fry over high heat.',
+        descriptionEn:
+            'Add 1 bowl of rice and the scrambled egg, and stir-fry over high heat.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_10_4.png',
       ),
@@ -521,7 +568,8 @@ const recipeCatalog = <Recipe>[
     title: '치즈오믈렛',
     titleEn: 'Cheese Omelet',
     emoji: '🧀',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Fried_cheese_omelet.jpg/960px-Fried_cheese_omelet.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Fried_cheese_omelet.jpg/960px-Fried_cheese_omelet.jpg',
     cookTimeMin: 10,
     difficulty: '하',
     cuisineType: '양식',
@@ -535,26 +583,30 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '슬라이스치즈', quantity: 1, unit: '장'),
       RecipeIngredient(name: '버터', quantity: 10, unit: 'g'),
       RecipeIngredient(name: '우유', quantity: 30, unit: 'ml', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '계란 3개, 우유 30ml, 소금 1/4작은술을 볼에 넣고 잘 풀어준다.',
-        descriptionEn: 'Whisk 3 eggs, 30ml milk, and 1/4 tsp salt together in a bowl.',
+        descriptionEn:
+            'Whisk 3 eggs, 30ml milk, and 1/4 tsp salt together in a bowl.',
         imageAsset: 'assets/images/steps/recipe_11_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '약불로 달군 팬에 버터 10g을 녹이고 계란물을 부어 익힌다.',
-        descriptionEn: 'Melt 10g butter in a pan over low heat and pour in the egg mixture.',
+        descriptionEn:
+            'Melt 10g butter in a pan over low heat and pour in the egg mixture.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_11_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '반쯤 익으면 슬라이스치즈 1장을 올리고 반으로 접어 마저 익힌다.',
-        descriptionEn: 'When half-set, place 1 slice of cheese on top, fold in half, and finish cooking.',
+        descriptionEn:
+            'When half-set, place 1 slice of cheese on top, fold in half, and finish cooking.',
         timerSec: 90,
         imageAsset: 'assets/images/steps/recipe_11_3.png',
       ),
@@ -565,7 +617,8 @@ const recipeCatalog = <Recipe>[
     title: '감자 크림스튜',
     titleEn: 'Creamy Potato Stew',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Cream_Stew_001.jpg/960px-Cream_Stew_001.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Cream_Stew_001.jpg/960px-Cream_Stew_001.jpg',
     cookTimeMin: 30,
     difficulty: '중',
     cuisineType: '양식',
@@ -580,7 +633,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '양파', quantity: 0.5, unit: '개'),
       RecipeIngredient(name: '버터', quantity: 20, unit: 'g'),
       RecipeIngredient(name: '밀가루', quantity: 2, unit: '큰술', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.5, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
@@ -592,21 +646,24 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '냄비에 버터 20g을 녹이고 양파를 볶다가 감자를 넣어 볶는다.',
-        descriptionEn: 'Melt 20g butter in a pot, sauté the onion, then add the potatoes and stir-fry.',
+        descriptionEn:
+            'Melt 20g butter in a pot, sauté the onion, then add the potatoes and stir-fry.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_12_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '밀가루 2큰술을 넣어 볶은 뒤 우유 300ml를 부어 끓인다.',
-        descriptionEn: 'Stir in 2 tbsp flour, then pour in 300ml milk and bring to a boil.',
+        descriptionEn:
+            'Stir in 2 tbsp flour, then pour in 300ml milk and bring to a boil.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_12_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '소금 1/2작은술로 간하고 약불에서 저어가며 걸쭉해질 때까지 끓인다.',
-        descriptionEn: 'Season with 1/2 tsp salt and simmer over low heat, stirring, until thickened.',
+        descriptionEn:
+            'Season with 1/2 tsp salt and simmer over low heat, stirring, until thickened.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_12_4.png',
       ),
@@ -617,7 +674,8 @@ const recipeCatalog = <Recipe>[
     title: '김치볶음밥',
     titleEn: 'Kimchi Fried Rice',
     emoji: '🍚',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Kimchi-bokkeum-bap.jpg/960px-Kimchi-bokkeum-bap.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Kimchi-bokkeum-bap.jpg/960px-Kimchi-bokkeum-bap.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '한식',
@@ -632,7 +690,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '대파', quantity: 0.3, unit: '단'),
       RecipeIngredient(name: '밥', quantity: 1, unit: '공기', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 1, unit: '큰술', isOptional: true),
-      RecipeIngredient(name: '설탕', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '설탕', quantity: 0.5, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
@@ -643,15 +702,18 @@ const recipeCatalog = <Recipe>[
       ),
       RecipeStep(
         order: 2,
-        description: '달군 팬에 식용유 1큰술을 두르고 김치와 설탕 1/2작은술을 넣어 볶은 뒤, 밥 1공기와 대파 1/3단을 넣고 더 볶는다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan, stir-fry the kimchi with 1/2 tsp sugar, then add 1 bowl of rice and 1/3 bunch of green onion and stir-fry further.',
+        description:
+            '달군 팬에 식용유 1큰술을 두르고 김치와 설탕 1/2작은술을 넣어 볶은 뒤, 밥 1공기와 대파 1/3단을 넣고 더 볶는다.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan, stir-fry the kimchi with 1/2 tsp sugar, then add 1 bowl of rice and 1/3 bunch of green onion and stir-fry further.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_13_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '다른 팬에 계란후라이를 부쳐 볶음밥 위에 올린다.',
-        descriptionEn: 'Fry an egg in another pan and place it on top of the fried rice.',
+        descriptionEn:
+            'Fry an egg in another pan and place it on top of the fried rice.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_13_3.png',
       ),
@@ -662,7 +724,8 @@ const recipeCatalog = <Recipe>[
     title: '김달걀말이',
     titleEn: 'Nori Egg Roll',
     emoji: '🍙',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Gyeran-mari.jpg/960px-Gyeran-mari.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Gyeran-mari.jpg/960px-Gyeran-mari.jpg',
     cookTimeMin: 10,
     difficulty: '하',
     cuisineType: '한식',
@@ -675,26 +738,30 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '김', quantity: 1, unit: '봉'),
       RecipeIngredient(name: '계란', quantity: 3, unit: '개'),
       RecipeIngredient(name: '대파', quantity: 0.1, unit: '단', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '계란 3개를 풀어 다진 대파와 소금 1/4작은술을 섞는다.',
-        descriptionEn: 'Beat 3 eggs and mix in chopped green onion and 1/4 tsp salt.',
+        descriptionEn:
+            'Beat 3 eggs and mix in chopped green onion and 1/4 tsp salt.',
         imageAsset: 'assets/images/steps/recipe_14_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '달군 팬에 계란물을 얇게 부어 절반쯤 익으면 김 1장을 올리고 돌돌 말아가며 익힌다.',
-        descriptionEn: 'Pour a thin layer of the egg mixture into a hot pan, and once half-set, place 1 sheet of seaweed on top and roll it up while cooking.',
+        descriptionEn:
+            'Pour a thin layer of the egg mixture into a hot pan, and once half-set, place 1 sheet of seaweed on top and roll it up while cooking.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_14_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '한 김 식힌 뒤 1.5cm 두께로 먹기 좋게 썬다.',
-        descriptionEn: 'Let it cool slightly, then cut into bite-sized 1.5cm pieces.',
+        descriptionEn:
+            'Let it cool slightly, then cut into bite-sized 1.5cm pieces.',
         imageAsset: 'assets/images/steps/recipe_14_3.png',
       ),
     ],
@@ -704,7 +771,8 @@ const recipeCatalog = <Recipe>[
     title: '치즈떡볶이',
     titleEn: 'Cheese Tteokbokki',
     emoji: '🌶️',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Tteokbokki.JPG/960px-Tteokbokki.JPG',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Tteokbokki.JPG/960px-Tteokbokki.JPG',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '분식',
@@ -732,20 +800,23 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '양파 0.3개와 대파 1/3단을 어슷 썰어 준비한다.',
-        descriptionEn: 'Slice 0.3 onion and 1/3 bunch of green onion diagonally.',
+        descriptionEn:
+            'Slice 0.3 onion and 1/3 bunch of green onion diagonally.',
         imageAsset: 'assets/images/steps/recipe_15_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '냄비에 물 2컵(400ml), 고추장 2큰술, 설탕 1큰술을 넣어 끓인 뒤 떡과 채소를 넣는다.',
-        descriptionEn: 'Bring 2 cups (400ml) of water, 2 tbsp gochujang, and 1 tbsp sugar to a boil in a pot, then add the rice cakes and vegetables.',
+        descriptionEn:
+            'Bring 2 cups (400ml) of water, 2 tbsp gochujang, and 1 tbsp sugar to a boil in a pot, then add the rice cakes and vegetables.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_15_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '떡이 익으면 슬라이스치즈 2장을 올려 녹인다.',
-        descriptionEn: 'Once the rice cakes are cooked, top with 2 slices of cheese and let it melt.',
+        descriptionEn:
+            'Once the rice cakes are cooked, top with 2 slices of cheese and let it melt.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_15_4.png',
       ),
@@ -756,7 +827,8 @@ const recipeCatalog = <Recipe>[
     title: '실패 없는 황금비율 제육볶음',
     titleEn: 'Foolproof Golden-Ratio Spicy Pork Stir-fry',
     emoji: '🥘',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Jeyuk-bokkeum_4.jpg/960px-Jeyuk-bokkeum_4.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Jeyuk-bokkeum_4.jpg/960px-Jeyuk-bokkeum_4.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -775,7 +847,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '설탕', quantity: 0.5, unit: '큰술'),
       RecipeIngredient(name: '마늘', quantity: 8, unit: 'g'),
       RecipeIngredient(name: '생강', quantity: 3, unit: 'g', isOptional: true),
-      RecipeIngredient(name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 1, unit: '큰술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
@@ -783,40 +856,47 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '돼지고기 목살 150g을 한입 크기로 썰고 키친타월로 핏물을 가볍게 눌러 닦는다.',
-        descriptionEn: 'Cut 150g pork collar into bite-sized pieces and gently blot off excess blood with a paper towel.',
+        descriptionEn:
+            'Cut 150g pork collar into bite-sized pieces and gently blot off excess blood with a paper towel.',
         imageAsset: 'assets/images/steps/recipe_16_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '볼에 고추장 1큰술, 고춧가루 1/2큰술, 간장 1작은술, 설탕 1/2큰술, 다진 마늘 8g, 다진 생강 3g을 넣어 황금 비율 양념장을 만든다.',
-        descriptionEn: 'In a bowl, mix 1 tbsp gochujang, 1/2 tbsp gochugaru, 1 tsp soy sauce, 1/2 tbsp sugar, 8g minced garlic, and 3g minced ginger to make the golden-ratio sauce.',
+        description:
+            '볼에 고추장 1큰술, 고춧가루 1/2큰술, 간장 1작은술, 설탕 1/2큰술, 다진 마늘 8g, 다진 생강 3g을 넣어 황금 비율 양념장을 만든다.',
+        descriptionEn:
+            'In a bowl, mix 1 tbsp gochujang, 1/2 tbsp gochugaru, 1 tsp soy sauce, 1/2 tbsp sugar, 8g minced garlic, and 3g minced ginger to make the golden-ratio sauce.',
         imageAsset: 'assets/images/steps/recipe_16_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '손질한 돼지고기에 양념장을 고루 버무려 10분간 재운다.',
-        descriptionEn: 'Toss the trimmed pork evenly with the sauce and let it marinate for 10 minutes.',
+        descriptionEn:
+            'Toss the trimmed pork evenly with the sauce and let it marinate for 10 minutes.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_16_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '달군 팬에 식용유 1큰술을 두르고 양파 3/10개를 넣어 반투명해질 때까지 볶는다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan and stir-fry 3/10 onion until translucent.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan and stir-fry 3/10 onion until translucent.',
         timerSec: 90,
         imageAsset: 'assets/images/steps/recipe_16_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '재운 돼지고기를 넣고 센 불에서 겉면이 노릇해질 때까지 볶는다.',
-        descriptionEn: 'Add the marinated pork and stir-fry over high heat until the surface turns golden brown.',
+        descriptionEn:
+            'Add the marinated pork and stir-fry over high heat until the surface turns golden brown.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_16_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '대파 3/10단을 넣어 한 번 더 볶고, 참기름과 후추 한 꼬집으로 향을 더해 마무리한다.',
-        descriptionEn: 'Add 3/10 bunch of green onion, stir-fry once more, and finish with sesame oil and a pinch of pepper for aroma.',
+        descriptionEn:
+            'Add 3/10 bunch of green onion, stir-fry once more, and finish with sesame oil and a pinch of pepper for aroma.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_16_6.png',
       ),
@@ -827,7 +907,8 @@ const recipeCatalog = <Recipe>[
     title: '깊고 구수한 황금비율 된장찌개',
     titleEn: 'Rich Golden-Ratio Doenjang Stew',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Doenjang_jjigae.jpg/960px-Doenjang_jjigae.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Doenjang_jjigae.jpg/960px-Doenjang_jjigae.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '한식',
@@ -838,47 +919,54 @@ const recipeCatalog = <Recipe>[
     sodiumMg: 1200,
     ingredients: [
       RecipeIngredient(name: '된장', quantity: 1, unit: '큰술'),
-      RecipeIngredient(name: '돼지고기 앞다리살', quantity: 60, unit: 'g', isOptional: true),
+      RecipeIngredient(
+          name: '돼지고기 앞다리살', quantity: 60, unit: 'g', isOptional: true),
       RecipeIngredient(name: '두부', quantity: 0.3, unit: '모'),
       RecipeIngredient(name: '애호박', quantity: 0.2, unit: '개'),
       RecipeIngredient(name: '감자', quantity: 0.5, unit: '개'),
       RecipeIngredient(name: '양파', quantity: 0.2, unit: '개'),
       RecipeIngredient(name: '대파', quantity: 0.2, unit: '단', isOptional: true),
-      RecipeIngredient(name: '청양고추', quantity: 0.5, unit: '개', isOptional: true),
+      RecipeIngredient(
+          name: '청양고추', quantity: 0.5, unit: '개', isOptional: true),
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g'),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '감자 1/2개와 애호박 1/5개, 두부 3/10모를 한입 크기로 썬다.',
-        descriptionEn: 'Cut 1/2 potato, 1/5 zucchini, and 3/10 block of tofu into bite-sized pieces.',
+        descriptionEn:
+            'Cut 1/2 potato, 1/5 zucchini, and 3/10 block of tofu into bite-sized pieces.',
         imageAsset: 'assets/images/steps/recipe_17_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 돼지고기 앞다리살 60g을 넣고 중불에서 살짝 볶아 기름을 낸다.',
-        descriptionEn: 'In a pot, lightly stir-fry 60g pork shoulder over medium heat to render out some fat.',
+        descriptionEn:
+            'In a pot, lightly stir-fry 60g pork shoulder over medium heat to render out some fat.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_17_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '물 2컵(400ml)을 붓고 된장 1큰술을 잘 풀어준 뒤 끓인다.',
-        descriptionEn: 'Pour in 2 cups (400ml) of water, dissolve 1 tbsp doenjang thoroughly, and bring to a boil.',
+        descriptionEn:
+            'Pour in 2 cups (400ml) of water, dissolve 1 tbsp doenjang thoroughly, and bring to a boil.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_17_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '감자와 양파 1/5개를 넣고 감자가 익을 때까지 끓인다.',
-        descriptionEn: 'Add the potato and 1/5 onion, and simmer until the potato is cooked through.',
+        descriptionEn:
+            'Add the potato and 1/5 onion, and simmer until the potato is cooked through.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_17_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '애호박과 두부, 다진 마늘 5g, 청양고추 1/2개를 넣고 한소끔 더 끓인다.',
-        descriptionEn: 'Add the zucchini, tofu, 5g minced garlic, and 1/2 cheongyang chili pepper, and simmer for a bit longer.',
+        descriptionEn:
+            'Add the zucchini, tofu, 5g minced garlic, and 1/2 cheongyang chili pepper, and simmer for a bit longer.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_17_5.png',
       ),
@@ -895,7 +983,8 @@ const recipeCatalog = <Recipe>[
     title: '든든한 황금비율 계란말이',
     titleEn: 'Hearty Golden-Ratio Rolled Omelette',
     emoji: '🥚',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Gyeran-mari_1.jpg/960px-Gyeran-mari_1.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Gyeran-mari_1.jpg/960px-Gyeran-mari_1.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '한식',
@@ -915,38 +1004,44 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '당근 3/20개와 대파 3/20단을 아주 잘게 다진다.',
-        descriptionEn: 'Finely mince 3/20 carrot and 3/20 bunch of green onion.',
+        descriptionEn:
+            'Finely mince 3/20 carrot and 3/20 bunch of green onion.',
         imageAsset: 'assets/images/steps/recipe_18_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '볼에 계란 3개를 풀고 소금 1/4작은술을 넣어 알끈을 자르듯 충분히 젓는다.',
-        descriptionEn: 'Beat 3 eggs in a bowl with 1/4 tsp salt, whisking thoroughly to break up the egg white strands.',
+        descriptionEn:
+            'Beat 3 eggs in a bowl with 1/4 tsp salt, whisking thoroughly to break up the egg white strands.',
         imageAsset: 'assets/images/steps/recipe_18_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '다진 당근과 대파를 계란물에 섞는다.',
-        descriptionEn: 'Mix the minced carrot and green onion into the egg mixture.',
+        descriptionEn:
+            'Mix the minced carrot and green onion into the egg mixture.',
         imageAsset: 'assets/images/steps/recipe_18_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '달군 사각팬에 식용유 1작은술을 얇게 두르고 약불로 낮춘다.',
-        descriptionEn: 'Lightly coat a heated rectangular pan with 1 tsp cooking oil and lower to low heat.',
+        descriptionEn:
+            'Lightly coat a heated rectangular pan with 1 tsp cooking oil and lower to low heat.',
         imageAsset: 'assets/images/steps/recipe_18_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '계란물의 1/3을 부어 얇게 펴고, 반쯤 익으면 한쪽 끝부터 돌돌 만다.',
-        descriptionEn: 'Pour in 1/3 of the egg mixture, spread thin, and once half-set, roll it up starting from one end.',
+        descriptionEn:
+            'Pour in 1/3 of the egg mixture, spread thin, and once half-set, roll it up starting from one end.',
         timerSec: 90,
         imageAsset: 'assets/images/steps/recipe_18_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '남은 계란물을 두 번에 나눠 부으며 같은 방식으로 겹쳐 말아, 한 김 식힌 뒤 썬다.',
-        descriptionEn: 'Pour in the remaining egg mixture in two more additions, rolling in the same layered way, then rest briefly before slicing.',
+        descriptionEn:
+            'Pour in the remaining egg mixture in two more additions, rolling in the same layered way, then rest briefly before slicing.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_18_6.png',
       ),
@@ -957,7 +1052,8 @@ const recipeCatalog = <Recipe>[
     title: '얼큰한 황금비율 순두부찌개',
     titleEn: 'Spicy Golden-Ratio Soft Tofu Stew',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Sundubu-jjigae.jpg/960px-Sundubu-jjigae.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Sundubu-jjigae.jpg/960px-Sundubu-jjigae.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -968,13 +1064,16 @@ const recipeCatalog = <Recipe>[
     sodiumMg: 1100,
     ingredients: [
       RecipeIngredient(name: '순두부', quantity: 1, unit: '봉'),
-      RecipeIngredient(name: '돼지고기 앞다리살', quantity: 80, unit: 'g', isOptional: true),
+      RecipeIngredient(
+          name: '돼지고기 앞다리살', quantity: 80, unit: 'g', isOptional: true),
       RecipeIngredient(name: '대파', quantity: 0.2, unit: '단'),
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g'),
       RecipeIngredient(name: '고춧가루', quantity: 1, unit: '큰술'),
-      RecipeIngredient(name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '계란', quantity: 1, unit: '개', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
@@ -986,35 +1085,40 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '냄비에 참기름 1/2작은술을 두르고 고춧가루 1큰술을 넣어 약불에서 볶아 매운 기름을 낸다.',
-        descriptionEn: 'Heat 1/2 tsp sesame oil in a pot, add 1 tbsp gochugaru, and stir-fry over low heat to make spicy oil.',
+        descriptionEn:
+            'Heat 1/2 tsp sesame oil in a pot, add 1 tbsp gochugaru, and stir-fry over low heat to make spicy oil.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_19_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '돼지고기와 다진 마늘 5g을 넣고 고기가 익을 때까지 볶는다.',
-        descriptionEn: 'Add the pork and 5g minced garlic, and stir-fry until the meat is cooked.',
+        descriptionEn:
+            'Add the pork and 5g minced garlic, and stir-fry until the meat is cooked.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_19_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '물 1컵(200ml)을 붓고 끓으면 순두부 1봉을 숟가락으로 큼직하게 떠 넣는다.',
-        descriptionEn: 'Pour in 1 cup (200ml) of water, and once boiling, spoon in 1 pack of soft tofu in large chunks.',
+        descriptionEn:
+            'Pour in 1 cup (200ml) of water, and once boiling, spoon in 1 pack of soft tofu in large chunks.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_19_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '대파 1/5단과 소금 1/4작은술로 간을 맞추고 한소끔 더 끓인다.',
-        descriptionEn: 'Season with 1/5 bunch of green onion and 1/4 tsp salt, and simmer a little longer.',
+        descriptionEn:
+            'Season with 1/5 bunch of green onion and 1/4 tsp salt, and simmer a little longer.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_19_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '불을 끄기 직전 계란 1개를 톡 깨 넣어 반숙으로 익힌다.',
-        descriptionEn: 'Just before turning off the heat, crack in 1 egg and let it cook until softly set.',
+        descriptionEn:
+            'Just before turning off the heat, crack in 1 egg and let it cook until softly set.',
         imageAsset: 'assets/images/steps/recipe_19_6.png',
       ),
     ],
@@ -1024,7 +1128,8 @@ const recipeCatalog = <Recipe>[
     title: '매콤달콤 황금비율 오징어볶음',
     titleEn: 'Sweet & Spicy Golden-Ratio Squid Stir-fry',
     emoji: '🦑',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Ojingeo-bokkeum.jpg/960px-Ojingeo-bokkeum.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Ojingeo-bokkeum.jpg/960px-Ojingeo-bokkeum.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '한식',
@@ -1043,47 +1148,55 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '간장', quantity: 1, unit: '작은술'),
       RecipeIngredient(name: '설탕', quantity: 0.5, unit: '큰술'),
       RecipeIngredient(name: '마늘', quantity: 8, unit: 'g'),
-      RecipeIngredient(name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '통깨', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '오징어 1마리는 내장을 제거하고 몸통에 칼집을 낸 뒤 한입 크기로 썬다.',
-        descriptionEn: 'Clean 1 squid by removing the innards, score the body, and cut into bite-sized pieces.',
+        descriptionEn:
+            'Clean 1 squid by removing the innards, score the body, and cut into bite-sized pieces.',
         imageAsset: 'assets/images/steps/recipe_20_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '볼에 고추장 1큰술, 고춧가루 1/2큰술, 간장 1작은술, 설탕 1/2큰술, 다진 마늘 8g을 섞어 황금 비율 양념장을 만든다.',
-        descriptionEn: 'In a bowl, mix 1 tbsp gochujang, 1/2 tbsp gochugaru, 1 tsp soy sauce, 1/2 tbsp sugar, and 8g minced garlic to make the golden-ratio sauce.',
+        description:
+            '볼에 고추장 1큰술, 고춧가루 1/2큰술, 간장 1작은술, 설탕 1/2큰술, 다진 마늘 8g을 섞어 황금 비율 양념장을 만든다.',
+        descriptionEn:
+            'In a bowl, mix 1 tbsp gochujang, 1/2 tbsp gochugaru, 1 tsp soy sauce, 1/2 tbsp sugar, and 8g minced garlic to make the golden-ratio sauce.',
         imageAsset: 'assets/images/steps/recipe_20_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 양파 3/10개와 당근 3/20개를 넣고 센 불에서 살짝 볶는다.',
-        descriptionEn: 'Stir-fry 3/10 onion and 3/20 carrot in a heated pan over high heat.',
+        descriptionEn:
+            'Stir-fry 3/10 onion and 3/20 carrot in a heated pan over high heat.',
         timerSec: 90,
         imageAsset: 'assets/images/steps/recipe_20_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '손질한 오징어를 넣고 강불에서 재빨리 볶는다.',
-        descriptionEn: 'Add the prepared squid and stir-fry quickly over high heat.',
+        descriptionEn:
+            'Add the prepared squid and stir-fry quickly over high heat.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_20_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '양념장을 넣고 국물이 자작해질 때까지 골고루 볶는다.',
-        descriptionEn: 'Add the sauce and stir-fry evenly until the liquid reduces slightly.',
+        descriptionEn:
+            'Add the sauce and stir-fry evenly until the liquid reduces slightly.',
         timerSec: 150,
         imageAsset: 'assets/images/steps/recipe_20_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '대파 1/5단을 넣고 한 번 더 볶은 뒤 참기름과 통깨로 마무리한다.',
-        descriptionEn: 'Add 1/5 bunch of green onion, stir-fry once more, and finish with sesame oil and a pinch of sesame seeds.',
+        descriptionEn:
+            'Add 1/5 bunch of green onion, stir-fry once more, and finish with sesame oil and a pinch of sesame seeds.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_20_6.png',
       ),
@@ -1094,7 +1207,8 @@ const recipeCatalog = <Recipe>[
     title: '든든한 황금비율 계란찜',
     titleEn: 'Hearty Golden-Ratio Steamed Egg',
     emoji: '🍳',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Gyeran-jjim.jpg/960px-Gyeran-jjim.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Gyeran-jjim.jpg/960px-Gyeran-jjim.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '한식',
@@ -1108,38 +1222,44 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술'),
       RecipeIngredient(name: '대파', quantity: 0.1, unit: '단', isOptional: true),
       RecipeIngredient(name: '당근', quantity: 0.1, unit: '개', isOptional: true),
-      RecipeIngredient(name: '참기름', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '참기름', quantity: 0.25, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '계란 2개를 볼에 곱게 풀고 소금 1/4작은술을 넣어 섞는다.',
-        descriptionEn: 'Beat 2 eggs smoothly in a bowl and mix in 1/4 tsp salt.',
+        descriptionEn:
+            'Beat 2 eggs smoothly in a bowl and mix in 1/4 tsp salt.',
         imageAsset: 'assets/images/steps/recipe_21_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '계란물과 동량의 물(또는 멸치육수) 100ml를 체에 걸러 알끈 없이 곱게 섞는다.',
-        descriptionEn: 'Strain in an equal amount (100ml) of water or anchovy stock through a sieve for a smooth mixture without egg white strands.',
+        descriptionEn:
+            'Strain in an equal amount (100ml) of water or anchovy stock through a sieve for a smooth mixture without egg white strands.',
         imageAsset: 'assets/images/steps/recipe_21_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '대파와 당근을 잘게 다져 계란물에 섞는다.',
-        descriptionEn: 'Finely mince the green onion and carrot and mix them into the egg mixture.',
+        descriptionEn:
+            'Finely mince the green onion and carrot and mix them into the egg mixture.',
         imageAsset: 'assets/images/steps/recipe_21_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '뚝배기나 내열 용기에 부어 약불에서 저어가며 몽글몽글하게 익힌다.',
-        descriptionEn: 'Pour into a stone pot or heatproof dish and cook over low heat, stirring, until softly curdled.',
+        descriptionEn:
+            'Pour into a stone pot or heatproof dish and cook over low heat, stirring, until softly curdled.',
         timerSec: 240,
         imageAsset: 'assets/images/steps/recipe_21_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '절반쯤 익으면 뚜껑을 덮어 약불에서 봉긋하게 부풀어 오르도록 마저 익힌다.',
-        descriptionEn: 'Once about half set, cover with a lid and continue cooking over low heat until it puffs up.',
+        descriptionEn:
+            'Once about half set, cover with a lid and continue cooking over low heat until it puffs up.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_21_5.png',
       ),
@@ -1156,7 +1276,8 @@ const recipeCatalog = <Recipe>[
     title: '명절 부럽지 않은 황금비율 갈비찜',
     titleEn: 'Festive-Worthy Golden-Ratio Braised Short Ribs',
     emoji: '🍖',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Korean_braised_beef_short_ribs-Galbijjim.jpg/960px-Korean_braised_beef_short_ribs-Galbijjim.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Korean_braised_beef_short_ribs-Galbijjim.jpg/960px-Korean_braised_beef_short_ribs-Galbijjim.jpg',
     cookTimeMin: 60,
     difficulty: '상',
     cuisineType: '한식',
@@ -1173,47 +1294,55 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '마늘', quantity: 8, unit: 'g'),
       RecipeIngredient(name: '간장', quantity: 2, unit: '큰술'),
       RecipeIngredient(name: '설탕', quantity: 1, unit: '큰술'),
-      RecipeIngredient(name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '소고기 갈비 250g을 찬물에 1시간 담가 핏물을 뺀 뒤 끓는 물에 한 번 데쳐낸다.',
-        descriptionEn: 'Soak 250g beef short ribs in cold water for 1 hour to remove blood, then briefly blanch in boiling water.',
+        descriptionEn:
+            'Soak 250g beef short ribs in cold water for 1 hour to remove blood, then briefly blanch in boiling water.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_22_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '무와 당근을 큼직하게 썰어 데친 갈비와 함께 냄비에 담는다.',
-        descriptionEn: 'Cut the radish and carrot into large chunks and place them in a pot with the blanched ribs.',
+        descriptionEn:
+            'Cut the radish and carrot into large chunks and place them in a pot with the blanched ribs.',
         imageAsset: 'assets/images/steps/recipe_22_2.png',
       ),
       RecipeStep(
         order: 3,
-        description: '간장 2큰술, 설탕 1큰술, 다진 마늘 8g, 물 1과 1/2컵(300ml)을 부어 양념 국물을 만든다.',
-        descriptionEn: 'Pour in 2 tbsp soy sauce, 1 tbsp sugar, 8g minced garlic, and 1 1/2 cups (300ml) of water to make the braising liquid.',
+        description:
+            '간장 2큰술, 설탕 1큰술, 다진 마늘 8g, 물 1과 1/2컵(300ml)을 부어 양념 국물을 만든다.',
+        descriptionEn:
+            'Pour in 2 tbsp soy sauce, 1 tbsp sugar, 8g minced garlic, and 1 1/2 cups (300ml) of water to make the braising liquid.',
         imageAsset: 'assets/images/steps/recipe_22_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '센 불로 끓이다가 끓어오르면 약불로 줄여 뚜껑을 덮고 은근히 조린다.',
-        descriptionEn: 'Bring to a boil over high heat, then reduce to low, cover, and braise gently.',
+        descriptionEn:
+            'Bring to a boil over high heat, then reduce to low, cover, and braise gently.',
         timerSec: 2400,
         imageAsset: 'assets/images/steps/recipe_22_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '국물이 자작해지면 대파 1/5단을 넣고 한소끔 더 끓인다.',
-        descriptionEn: 'Once the sauce has reduced, add 1/5 bunch of green onion and simmer a bit longer.',
+        descriptionEn:
+            'Once the sauce has reduced, add 1/5 bunch of green onion and simmer a bit longer.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_22_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '불을 끄고 참기름과 후추 한 꼬집으로 마무리한다.',
-        descriptionEn: 'Turn off the heat and finish with sesame oil and a pinch of pepper.',
+        descriptionEn:
+            'Turn off the heat and finish with sesame oil and a pinch of pepper.',
         imageAsset: 'assets/images/steps/recipe_22_6.png',
       ),
     ],
@@ -1223,7 +1352,8 @@ const recipeCatalog = <Recipe>[
     title: '얼큰한 황금비율 부대찌개',
     titleEn: 'Spicy Golden-Ratio Army Stew',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Budae_jjigae_%2828048555734%29.jpg/960px-Budae_jjigae_%2828048555734%29.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Budae_jjigae_%2828048555734%29.jpg/960px-Budae_jjigae_%2828048555734%29.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -1253,33 +1383,38 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '냄비에 김치 150g을 깔고 햄, 소시지, 두부 3/10모를 가지런히 담는다.',
-        descriptionEn: 'Line the pot with 150g kimchi, then arrange the ham, sausage, and 3/10 block of tofu on top.',
+        descriptionEn:
+            'Line the pot with 150g kimchi, then arrange the ham, sausage, and 3/10 block of tofu on top.',
         imageAsset: 'assets/images/steps/recipe_23_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '고추장 1큰술, 고춧가루 1/2큰술, 다진 마늘 5g을 섞어 양념장을 만들어 위에 얹는다.',
-        descriptionEn: 'Mix 1 tbsp gochujang, 1/2 tbsp gochugaru, and 5g minced garlic to make a sauce, and spoon it on top.',
+        descriptionEn:
+            'Mix 1 tbsp gochujang, 1/2 tbsp gochugaru, and 5g minced garlic to make a sauce, and spoon it on top.',
         imageAsset: 'assets/images/steps/recipe_23_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '물 2컵(400ml)을 붓고 센 불에서 끓인다.',
-        descriptionEn: 'Pour in 2 cups (400ml) of water and bring to a boil over high heat.',
+        descriptionEn:
+            'Pour in 2 cups (400ml) of water and bring to a boil over high heat.',
         timerSec: 480,
         imageAsset: 'assets/images/steps/recipe_23_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '끓어오르면 대파 1/5단을 넣고 중불로 낮춰 5분간 더 끓인다.',
-        descriptionEn: 'Once boiling, add 1/5 bunch of green onion, lower to medium heat, and simmer 5 minutes more.',
+        descriptionEn:
+            'Once boiling, add 1/5 bunch of green onion, lower to medium heat, and simmer 5 minutes more.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_23_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '라면사리를 넣어 면이 익으면 완성한다.',
-        descriptionEn: 'Add instant ramyeon noodles and finish once cooked through.',
+        descriptionEn:
+            'Add instant ramyeon noodles and finish once cooked through.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_23_6.png',
       ),
@@ -1290,7 +1425,8 @@ const recipeCatalog = <Recipe>[
     title: '얼큰 진한 황금비율 육개장',
     titleEn: 'Rich Spicy Golden-Ratio Beef Soup',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Korean_soup-Yukgaejang-01.jpg/960px-Korean_soup-Yukgaejang-01.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Korean_soup-Yukgaejang-01.jpg/960px-Korean_soup-Yukgaejang-01.jpg',
     cookTimeMin: 40,
     difficulty: '중',
     cuisineType: '한식',
@@ -1313,41 +1449,47 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '소고기 양지 150g을 찬물에 담가 핏물을 뺀 뒤 끓는 물에 삶아 익힌다.',
-        descriptionEn: 'Soak 150g beef brisket in cold water to remove blood, then boil in water until cooked.',
+        descriptionEn:
+            'Soak 150g beef brisket in cold water to remove blood, then boil in water until cooked.',
         timerSec: 900,
         imageAsset: 'assets/images/steps/recipe_24_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '삶은 고기는 건져 결대로 찢고, 육수는 면포에 걸러둔다.',
-        descriptionEn: 'Remove the cooked beef and shred it along the grain; strain the broth through a cloth.',
+        descriptionEn:
+            'Remove the cooked beef and shred it along the grain; strain the broth through a cloth.',
         imageAsset: 'assets/images/steps/recipe_24_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '냄비에 참기름 1작은술을 두르고 고춧가루 1큰술을 넣어 약불에서 볶아 매운 기름을 낸다.',
-        descriptionEn: 'Heat 1 tsp sesame oil in a pot, add 1 tbsp gochugaru, and stir-fry over low heat to make spicy oil.',
+        descriptionEn:
+            'Heat 1 tsp sesame oil in a pot, add 1 tbsp gochugaru, and stir-fry over low heat to make spicy oil.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_24_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '찢은 고기와 고사리, 콩나물, 다진 마늘 8g을 넣고 함께 볶는다.',
-        descriptionEn: 'Add the shredded beef, gosari, bean sprouts, and 8g minced garlic, and stir-fry together.',
+        descriptionEn:
+            'Add the shredded beef, gosari, bean sprouts, and 8g minced garlic, and stir-fry together.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_24_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '걸러둔 육수를 붓고 간장 1큰술로 간을 하여 끓인다.',
-        descriptionEn: 'Pour in the strained broth, season with 1 tbsp soy sauce, and bring to a boil.',
+        descriptionEn:
+            'Pour in the strained broth, season with 1 tbsp soy sauce, and bring to a boil.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_24_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '대파 1/2단을 큼직하게 썰어 넣고 한소끔 더 끓인다.',
-        descriptionEn: 'Add 1/2 bunch of green onion cut into large pieces and simmer a bit longer.',
+        descriptionEn:
+            'Add 1/2 bunch of green onion cut into large pieces and simmer a bit longer.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_24_6.png',
       ),
@@ -1358,7 +1500,8 @@ const recipeCatalog = <Recipe>[
     title: '시원한 황금비율 콩나물국',
     titleEn: 'Refreshing Golden-Ratio Bean Sprout Soup',
     emoji: '🍜',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Korean_bean_sprout_soup-Kongnamulguk-01.jpg/960px-Korean_bean_sprout_soup-Kongnamulguk-01.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Korean_bean_sprout_soup-Kongnamulguk-01.jpg/960px-Korean_bean_sprout_soup-Kongnamulguk-01.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '한식',
@@ -1372,7 +1515,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g'),
       RecipeIngredient(name: '소금', quantity: 0.5, unit: '작은술'),
       RecipeIngredient(name: '대파', quantity: 0.15, unit: '단', isOptional: true),
-      RecipeIngredient(name: '청양고추', quantity: 0.3, unit: '개', isOptional: true),
+      RecipeIngredient(
+          name: '청양고추', quantity: 0.3, unit: '개', isOptional: true),
     ],
     steps: [
       RecipeStep(
@@ -1384,30 +1528,35 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '냄비에 물 2컵(400ml)과 콩나물을 넣고 뚜껑을 덮은 채 센 불에서 끓인다.',
-        descriptionEn: 'Add 2 cups (400ml) of water and the bean sprouts to a pot, cover with a lid, and boil over high heat.',
+        descriptionEn:
+            'Add 2 cups (400ml) of water and the bean sprouts to a pot, cover with a lid, and boil over high heat.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_25_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '콩나물이 익으면 다진 마늘 5g과 소금 1/2작은술로 간을 맞춘다.',
-        descriptionEn: 'Once the bean sprouts are cooked, season with 5g minced garlic and 1/2 tsp salt.',
+        descriptionEn:
+            'Once the bean sprouts are cooked, season with 5g minced garlic and 1/2 tsp salt.',
         imageAsset: 'assets/images/steps/recipe_25_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '청양고추와 대파를 어슷 썰어 넣고 한소끔 더 끓인다.',
-        descriptionEn: 'Add the cheongyang chili pepper and green onion, sliced diagonally, and simmer a bit longer.',
+        descriptionEn:
+            'Add the cheongyang chili pepper and green onion, sliced diagonally, and simmer a bit longer.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_25_4.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_37',
     title: '담백한 황금비율 미역국',
     titleEn: 'Clean Golden-Ratio Seaweed Soup',
     emoji: '🍜',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Korea.food-Miyeok.guk-01.jpg/960px-Korea.food-Miyeok.guk-01.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Korea.food-Miyeok.guk-01.jpg/960px-Korea.food-Miyeok.guk-01.jpg',
     cookTimeMin: 25,
     difficulty: '하',
     cuisineType: '한식',
@@ -1418,7 +1567,8 @@ const recipeCatalog = <Recipe>[
     sodiumMg: 650,
     ingredients: [
       RecipeIngredient(name: '미역', quantity: 15, unit: 'g'),
-      RecipeIngredient(name: '소고기 등심', quantity: 80, unit: 'g', isOptional: true),
+      RecipeIngredient(
+          name: '소고기 등심', quantity: 80, unit: 'g', isOptional: true),
       RecipeIngredient(name: '참기름', quantity: 1, unit: '작은술'),
       RecipeIngredient(name: '간장', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g', isOptional: true),
@@ -1427,44 +1577,57 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '마른미역 15g을 물에 20분간 불려 부드럽게 만든 뒤 먹기 좋게 썬다.',
-        descriptionEn: 'Soak 15g dried seaweed in water for 20 minutes until soft, then cut into bite-sized pieces.',
+        descriptionEn:
+            'Soak 15g dried seaweed in water for 20 minutes until soft, then cut into bite-sized pieces.',
         timerSec: 1200,
+        imageAsset: 'assets/images/steps/recipe_37_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '소고기 등심 80g을 작게 썬다.',
         descriptionEn: 'Cut 80g beef sirloin into small pieces.',
+        imageAsset: 'assets/images/steps/recipe_37_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '냄비에 참기름 1작은술을 두르고 소고기와 불린 미역을 넣어 볶는다.',
-        descriptionEn: 'Heat 1 tsp sesame oil in a pot and stir-fry the beef with the soaked seaweed.',
+        descriptionEn:
+            'Heat 1 tsp sesame oil in a pot and stir-fry the beef with the soaked seaweed.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_37_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '간장 1큰술을 넣어 향이 배도록 더 볶는다.',
-        descriptionEn: 'Add 1 tbsp soy sauce and stir-fry further so the flavor absorbs.',
+        descriptionEn:
+            'Add 1 tbsp soy sauce and stir-fry further so the flavor absorbs.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_37_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '물 2컵(400ml)을 붓고 끓어오르면 중약불로 줄여 20분간 끓인다.',
-        descriptionEn: 'Pour in 2 cups (400ml) of water, and once boiling, reduce to medium-low and simmer for 20 minutes.',
+        descriptionEn:
+            'Pour in 2 cups (400ml) of water, and once boiling, reduce to medium-low and simmer for 20 minutes.',
         timerSec: 1200,
+        imageAsset: 'assets/images/steps/recipe_37_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '다진 마늘 5g을 넣고 한소끔 더 끓여 마무리한다.',
-        descriptionEn: 'Add 5g minced garlic and simmer a bit longer to finish.',
+        descriptionEn:
+            'Add 5g minced garlic and simmer a bit longer to finish.',
+        imageAsset: 'assets/images/steps/recipe_37_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_38',
     title: '바삭한 황금비율 김치전',
     titleEn: 'Crispy Golden-Ratio Kimchi Pancake',
     emoji: '🥞',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Kimchijeon_at_Okja_Restaurant%2C_Milan%2C_2022.jpg/960px-Kimchijeon_at_Okja_Restaurant%2C_Milan%2C_2022.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Kimchijeon_at_Okja_Restaurant%2C_Milan%2C_2022.jpg/960px-Kimchijeon_at_Okja_Restaurant%2C_Milan%2C_2022.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '분식',
@@ -1484,41 +1647,54 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '김치 150g을 잘게 썰고, 양파와 대파도 채 썬다.',
-        descriptionEn: 'Finely chop 150g kimchi, and julienne the onion and green onion.',
+        descriptionEn:
+            'Finely chop 150g kimchi, and julienne the onion and green onion.',
+        imageAsset: 'assets/images/steps/recipe_38_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '볼에 부침가루 1/2컵과 물 1/2컵(100ml), 김치 국물 1큰술을 넣어 반죽을 만든다.',
-        descriptionEn: 'In a bowl, mix 1/2 cup pancake mix, 1/2 cup (100ml) water, and 1 tbsp kimchi brine to make the batter.',
+        descriptionEn:
+            'In a bowl, mix 1/2 cup pancake mix, 1/2 cup (100ml) water, and 1 tbsp kimchi brine to make the batter.',
+        imageAsset: 'assets/images/steps/recipe_38_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '썬 김치와 양파, 대파를 반죽에 넣어 골고루 섞는다.',
-        descriptionEn: 'Add the chopped kimchi, onion, and green onion to the batter and mix evenly.',
+        descriptionEn:
+            'Add the chopped kimchi, onion, and green onion to the batter and mix evenly.',
+        imageAsset: 'assets/images/steps/recipe_38_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '달군 팬에 식용유 2큰술을 두르고 반죽을 얇게 펴 올린다.',
-        descriptionEn: 'Heat 2 tbsp cooking oil in a pan and spread the batter thinly.',
+        descriptionEn:
+            'Heat 2 tbsp cooking oil in a pan and spread the batter thinly.',
+        imageAsset: 'assets/images/steps/recipe_38_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '중불에서 앞뒤로 노릇하게 뒤집어가며 부친다.',
-        descriptionEn: 'Fry over medium heat, flipping until both sides are golden brown.',
+        descriptionEn:
+            'Fry over medium heat, flipping until both sides are golden brown.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_38_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '먹기 좋은 크기로 잘라 담는다.',
         descriptionEn: 'Cut into bite-sized pieces and serve.',
+        imageAsset: 'assets/images/steps/recipe_38_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_39',
     title: '새콤달콤 황금비율 어묵볶음',
     titleEn: 'Sweet & Tangy Golden-Ratio Fish Cake Stir-fry',
     emoji: '🍢',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Eomuk-bokkeum.jpg/960px-Eomuk-bokkeum.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Eomuk-bokkeum.jpg/960px-Eomuk-bokkeum.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '한식',
@@ -1542,39 +1718,50 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '어묵 150g을 한입 크기로 썰고 끓는 물에 살짝 데쳐 기름기를 뺀다.',
-        descriptionEn: 'Cut 150g fish cake into bite-sized pieces and briefly blanch in boiling water to remove excess oil.',
+        descriptionEn:
+            'Cut 150g fish cake into bite-sized pieces and briefly blanch in boiling water to remove excess oil.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_39_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '양파와 당근을 채 썬다.',
         descriptionEn: 'Julienne the onion and carrot.',
+        imageAsset: 'assets/images/steps/recipe_39_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 식용유 1큰술을 두르고 양파와 당근을 넣어 볶는다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan and stir-fry the onion and carrot.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan and stir-fry the onion and carrot.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_39_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '데친 어묵을 넣고 간장 1큰술, 설탕 1/2큰술, 다진 마늘 5g을 넣어 함께 볶는다.',
-        descriptionEn: 'Add the blanched fish cake with 1 tbsp soy sauce, 1/2 tbsp sugar, and 5g minced garlic, and stir-fry together.',
+        descriptionEn:
+            'Add the blanched fish cake with 1 tbsp soy sauce, 1/2 tbsp sugar, and 5g minced garlic, and stir-fry together.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_39_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '대파를 넣고 한 번 더 볶은 뒤 통깨를 뿌려 마무리한다.',
-        descriptionEn: 'Add the green onion, stir-fry once more, and finish with a sprinkle of sesame seeds.',
+        descriptionEn:
+            'Add the green onion, stir-fry once more, and finish with a sprinkle of sesame seeds.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_39_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_40',
     title: '매콤달콤 황금비율 진미채볶음',
     titleEn: 'Sweet & Spicy Golden-Ratio Dried Squid Stir-fry',
     emoji: '🦑',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Ojingeo-chae-bokkeum.jpg/960px-Ojingeo-chae-bokkeum.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Ojingeo-chae-bokkeum.jpg/960px-Ojingeo-chae-bokkeum.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '한식',
@@ -1590,49 +1777,63 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '간장', quantity: 0.5, unit: '큰술'),
       RecipeIngredient(name: '설탕', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g', isOptional: true),
-      RecipeIngredient(name: '식용유', quantity: 0.5, unit: '큰술', isOptional: true),
+      RecipeIngredient(
+          name: '식용유', quantity: 0.5, unit: '큰술', isOptional: true),
       RecipeIngredient(name: '통깨', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '진미채 100g을 가위로 먹기 좋은 길이로 자르고, 마요네즈 1큰술과 미리 버무려 부드럽게 한다.',
-        descriptionEn: 'Cut 100g dried shredded squid into bite-sized lengths with scissors, and pre-toss with 1 tbsp mayonnaise to soften.',
+        descriptionEn:
+            'Cut 100g dried shredded squid into bite-sized lengths with scissors, and pre-toss with 1 tbsp mayonnaise to soften.',
+        imageAsset: 'assets/images/steps/recipe_40_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '볼에 고추장 1큰술, 간장 1/2큰술, 설탕 1큰술, 다진 마늘 5g을 섞어 양념장을 만든다.',
-        descriptionEn: 'In a bowl, mix 1 tbsp gochujang, 1/2 tbsp soy sauce, 1 tbsp sugar, and 5g minced garlic to make the sauce.',
+        descriptionEn:
+            'In a bowl, mix 1 tbsp gochujang, 1/2 tbsp soy sauce, 1 tbsp sugar, and 5g minced garlic to make the sauce.',
+        imageAsset: 'assets/images/steps/recipe_40_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 식용유 1/2큰술을 두르고 약불로 낮춘다.',
-        descriptionEn: 'Heat 1/2 tbsp cooking oil in a pan and lower to low heat.',
+        descriptionEn:
+            'Heat 1/2 tbsp cooking oil in a pan and lower to low heat.',
+        imageAsset: 'assets/images/steps/recipe_40_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '진미채를 넣고 타지 않게 살짝 볶는다.',
-        descriptionEn: 'Add the dried shredded squid and stir-fry lightly, taking care not to burn it.',
+        descriptionEn:
+            'Add the dried shredded squid and stir-fry lightly, taking care not to burn it.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_40_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '양념장을 넣고 골고루 버무리듯 볶는다.',
         descriptionEn: 'Add the sauce and stir-fry, tossing evenly to coat.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_40_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '불을 끄고 통깨를 뿌려 마무리한다.',
-        descriptionEn: 'Turn off the heat and finish with a sprinkle of sesame seeds.',
+        descriptionEn:
+            'Turn off the heat and finish with a sprinkle of sesame seeds.',
+        imageAsset: 'assets/images/steps/recipe_40_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_41',
     title: '매콤 진한 황금비율 닭볶음탕',
     titleEn: 'Rich Spicy Golden-Ratio Braised Chicken',
     emoji: '🍗',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Korean.food-Dakbokemtang-01.jpg/960px-Korean.food-Dakbokemtang-01.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Korean.food-Dakbokemtang-01.jpg/960px-Korean.food-Dakbokemtang-01.jpg',
     cookTimeMin: 40,
     difficulty: '중',
     cuisineType: '한식',
@@ -1657,44 +1858,59 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '닭다리살 300g을 한입 크기로 썰고 끓는 물에 데쳐 기름기와 잡내를 뺀다.',
-        descriptionEn: 'Cut 300g chicken thigh into bite-sized pieces and briefly blanch in boiling water to remove excess fat and odor.',
+        descriptionEn:
+            'Cut 300g chicken thigh into bite-sized pieces and briefly blanch in boiling water to remove excess fat and odor.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_41_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '감자와 당근을 큼직하게 썰고 양파는 굵게 채 썬다.',
-        descriptionEn: 'Cut the potato and carrot into large chunks, and thickly julienne the onion.',
+        descriptionEn:
+            'Cut the potato and carrot into large chunks, and thickly julienne the onion.',
+        imageAsset: 'assets/images/steps/recipe_41_2.png',
       ),
       RecipeStep(
         order: 3,
-        description: '볼에 고추장 1큰술, 고춧가루 1큰술, 간장 1큰술, 설탕 1/2큰술, 다진 마늘 8g을 섞어 양념장을 만든다.',
-        descriptionEn: 'In a bowl, mix 1 tbsp gochujang, 1 tbsp gochugaru, 1 tbsp soy sauce, 1/2 tbsp sugar, and 8g minced garlic to make the sauce.',
+        description:
+            '볼에 고추장 1큰술, 고춧가루 1큰술, 간장 1큰술, 설탕 1/2큰술, 다진 마늘 8g을 섞어 양념장을 만든다.',
+        descriptionEn:
+            'In a bowl, mix 1 tbsp gochujang, 1 tbsp gochugaru, 1 tbsp soy sauce, 1/2 tbsp sugar, and 8g minced garlic to make the sauce.',
+        imageAsset: 'assets/images/steps/recipe_41_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '냄비에 데친 닭과 양념장, 물 1과 1/2컵(300ml)을 넣고 센 불에서 끓인다.',
-        descriptionEn: 'Add the blanched chicken, sauce, and 1 1/2 cups (300ml) of water to a pot and bring to a boil over high heat.',
+        descriptionEn:
+            'Add the blanched chicken, sauce, and 1 1/2 cups (300ml) of water to a pot and bring to a boil over high heat.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_41_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '끓어오르면 감자와 당근을 넣고 중약불로 줄여 15분간 조린다.',
-        descriptionEn: 'Once boiling, add the potato and carrot, reduce to medium-low heat, and braise for 15 minutes.',
+        descriptionEn:
+            'Once boiling, add the potato and carrot, reduce to medium-low heat, and braise for 15 minutes.',
         timerSec: 900,
+        imageAsset: 'assets/images/steps/recipe_41_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '양파와 대파를 넣고 국물이 자작해질 때까지 조려 마무리한다.',
-        descriptionEn: 'Add the onion and green onion, and braise until the sauce reduces to finish.',
+        descriptionEn:
+            'Add the onion and green onion, and braise until the sauce reduces to finish.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_41_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_42',
     title: '쫄깃 고소한 황금비율 잡채',
     titleEn: 'Chewy Savory Golden-Ratio Japchae',
     emoji: '🍜',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Japchae_2.jpg/960px-Japchae_2.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Japchae_2.jpg/960px-Japchae_2.jpg',
     cookTimeMin: 35,
     difficulty: '중',
     cuisineType: '한식',
@@ -1705,7 +1921,8 @@ const recipeCatalog = <Recipe>[
     sodiumMg: 780,
     ingredients: [
       RecipeIngredient(name: '당면', quantity: 100, unit: 'g'),
-      RecipeIngredient(name: '소고기 등심', quantity: 60, unit: 'g', isOptional: true),
+      RecipeIngredient(
+          name: '소고기 등심', quantity: 60, unit: 'g', isOptional: true),
       RecipeIngredient(name: '시금치', quantity: 0.2, unit: '단'),
       RecipeIngredient(name: '당근', quantity: 0.15, unit: '개', isOptional: true),
       RecipeIngredient(name: '양파', quantity: 0.2, unit: '개'),
@@ -1721,40 +1938,54 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '당면 100g을 끓는 물에 8분간 삶아 찬물에 헹군 뒤 물기를 뺀다.',
-        descriptionEn: 'Boil 100g glass noodles for 8 minutes, rinse in cold water, and drain.',
+        descriptionEn:
+            'Boil 100g glass noodles for 8 minutes, rinse in cold water, and drain.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_42_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '소고기 등심 60g은 채 썰고, 당근 3/20개와 양파 1/5개, 목이버섯은 얇게 채 썬다.',
-        descriptionEn: 'Julienne 60g beef sirloin, and thinly slice 3/20 carrot, 1/5 onion, and the wood ear mushroom.',
+        descriptionEn:
+            'Julienne 60g beef sirloin, and thinly slice 3/20 carrot, 1/5 onion, and the wood ear mushroom.',
+        imageAsset: 'assets/images/steps/recipe_42_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '시금치 1/5단을 끓는 물에 살짝 데쳐 찬물에 헹구고 물기를 짠다.',
-        descriptionEn: 'Briefly blanch 1/5 bunch of spinach in boiling water, rinse in cold water, and squeeze out the moisture.',
+        descriptionEn:
+            'Briefly blanch 1/5 bunch of spinach in boiling water, rinse in cold water, and squeeze out the moisture.',
         timerSec: 30,
+        imageAsset: 'assets/images/steps/recipe_42_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '달군 팬에 식용유 1큰술을 두르고 소고기와 채소를 각각 따로 볶아 소금으로 밑간한다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan and stir-fry the beef and vegetables separately, seasoning lightly with salt.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan and stir-fry the beef and vegetables separately, seasoning lightly with salt.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_42_4.png',
       ),
       RecipeStep(
         order: 5,
-        description: '삶은 당면에 간장 1과 1/2큰술, 설탕 1큰술, 다진 마늘 5g을 넣고 중약불에서 볶아가며 간을 배게 한다.',
-        descriptionEn: 'Add 1 1/2 tbsp soy sauce, 1 tbsp sugar, and 5g minced garlic to the boiled noodles and stir-fry over medium-low heat to absorb the seasoning.',
+        description:
+            '삶은 당면에 간장 1과 1/2큰술, 설탕 1큰술, 다진 마늘 5g을 넣고 중약불에서 볶아가며 간을 배게 한다.',
+        descriptionEn:
+            'Add 1 1/2 tbsp soy sauce, 1 tbsp sugar, and 5g minced garlic to the boiled noodles and stir-fry over medium-low heat to absorb the seasoning.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_42_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '볶아둔 소고기와 채소, 대파 1/10단을 넣고 골고루 버무린 뒤 참기름 1큰술로 마무리한다.',
-        descriptionEn: 'Add the stir-fried beef, vegetables, and 1/10 bunch of green onion, toss evenly, and finish with 1 tbsp sesame oil.',
+        descriptionEn:
+            'Add the stir-fried beef, vegetables, and 1/10 bunch of green onion, toss evenly, and finish with 1 tbsp sesame oil.',
+        imageAsset: 'assets/images/steps/recipe_42_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_43',
     title: '아삭한 황금비율 콩나물무침',
     titleEn: 'Crisp Golden-Ratio Bean Sprout Salad',
     emoji: '🥗',
@@ -1774,39 +2005,52 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '마늘', quantity: 3, unit: 'g'),
       RecipeIngredient(name: '소금', quantity: 0.3, unit: '작은술'),
       RecipeIngredient(name: '참기름', quantity: 0.5, unit: '작은술'),
-      RecipeIngredient(name: '고춧가루', quantity: 0.3, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '고춧가루', quantity: 0.3, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '콩나물 200g을 흐르는 물에 헹궈 냄비에 담고 물을 자작하게 붓는다.',
-        descriptionEn: 'Rinse 200g bean sprouts under running water and place in a pot with a shallow layer of water.',
+        descriptionEn:
+            'Rinse 200g bean sprouts under running water and place in a pot with a shallow layer of water.',
+        imageAsset: 'assets/images/steps/recipe_43_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '뚜껑을 덮고 센 불에서 5분간 삶아 비린내를 날린다.',
-        descriptionEn: 'Cover with a lid and boil over high heat for 5 minutes to remove the raw smell.',
+        descriptionEn:
+            'Cover with a lid and boil over high heat for 5 minutes to remove the raw smell.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_43_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '삶은 콩나물을 체에 밭쳐 한 김 식힌다.',
-        descriptionEn: 'Drain the boiled bean sprouts in a colander and let cool slightly.',
+        descriptionEn:
+            'Drain the boiled bean sprouts in a colander and let cool slightly.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_43_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '대파 1/10단을 잘게 다져 콩나물과 함께 볼에 담는다.',
-        descriptionEn: 'Finely chop 1/10 bunch of green onion and place in a bowl with the bean sprouts.',
+        descriptionEn:
+            'Finely chop 1/10 bunch of green onion and place in a bowl with the bean sprouts.',
+        imageAsset: 'assets/images/steps/recipe_43_4.png',
       ),
       RecipeStep(
         order: 5,
-        description: '다진 마늘 3g, 소금 3/10작은술, 참기름 1/2작은술, 고춧가루 3/10작은술을 넣고 조물조물 무친다.',
-        descriptionEn: 'Add 3g minced garlic, 3/10 tsp salt, 1/2 tsp sesame oil, and 3/10 tsp gochugaru, and toss gently by hand.',
+        description:
+            '다진 마늘 3g, 소금 3/10작은술, 참기름 1/2작은술, 고춧가루 3/10작은술을 넣고 조물조물 무친다.',
+        descriptionEn:
+            'Add 3g minced garlic, 3/10 tsp salt, 1/2 tsp sesame oil, and 3/10 tsp gochugaru, and toss gently by hand.',
+        imageAsset: 'assets/images/steps/recipe_43_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_44',
     title: '새콤 아삭 황금비율 오이무침',
     titleEn: 'Tangy Crisp Golden-Ratio Cucumber Salad',
     emoji: '🥒',
@@ -1833,36 +2077,46 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '오이 1개를 얇게 어슷 썬 뒤 소금 3/10작은술을 뿌려 10분간 절인다.',
-        descriptionEn: 'Thinly slice 1 cucumber diagonally, sprinkle with 3/10 tsp salt, and let it sit for 10 minutes.',
+        descriptionEn:
+            'Thinly slice 1 cucumber diagonally, sprinkle with 3/10 tsp salt, and let it sit for 10 minutes.',
         timerSec: 600,
+        imageAsset: 'assets/images/steps/recipe_44_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '절인 오이의 물기를 가볍게 짜낸다.',
         descriptionEn: 'Gently squeeze out the water from the salted cucumber.',
+        imageAsset: 'assets/images/steps/recipe_44_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '대파 1/10단과 마늘 3g을 잘게 다진다.',
         descriptionEn: 'Finely chop 1/10 bunch of green onion and 3g garlic.',
+        imageAsset: 'assets/images/steps/recipe_44_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '고춧가루 1/2큰술, 식초 1큰술, 설탕 1/2큰술을 먼저 섞어 양념을 만든다.',
-        descriptionEn: 'First mix 1/2 tbsp gochugaru, 1 tbsp vinegar, and 1/2 tbsp sugar to make the dressing.',
+        descriptionEn:
+            'First mix 1/2 tbsp gochugaru, 1 tbsp vinegar, and 1/2 tbsp sugar to make the dressing.',
+        imageAsset: 'assets/images/steps/recipe_44_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '오이에 양념과 다진 대파, 마늘을 넣고 버무려 바로 낸다.',
-        descriptionEn: 'Toss the cucumber with the dressing, chopped green onion, and garlic, then serve right away.',
+        descriptionEn:
+            'Toss the cucumber with the dressing, chopped green onion, and garlic, then serve right away.',
+        imageAsset: 'assets/images/steps/recipe_44_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_45',
     title: '칼칼하고 깊은 황금비율 감자탕',
     titleEn: 'Spicy Rich Golden-Ratio Pork Bone Stew',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Gamja-tang_5.jpg/960px-Gamja-tang_5.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Gamja-tang_5.jpg/960px-Gamja-tang_5.jpg',
     cookTimeMin: 60,
     difficulty: '상',
     cuisineType: '한식',
@@ -1886,45 +2140,60 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '돼지등뼈 400g을 찬물에 1시간 담가 핏물을 뺀다.',
-        descriptionEn: 'Soak 400g pork spine bones in cold water for 1 hour to remove the blood.',
+        descriptionEn:
+            'Soak 400g pork spine bones in cold water for 1 hour to remove the blood.',
         timerSec: 3600,
+        imageAsset: 'assets/images/steps/recipe_45_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '끓는 물에 등뼈를 넣고 5분간 데친 뒤 헹궈 불순물을 제거한다.',
-        descriptionEn: 'Blanch the bones in boiling water for 5 minutes, then rinse to remove impurities.',
+        descriptionEn:
+            'Blanch the bones in boiling water for 5 minutes, then rinse to remove impurities.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_45_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '냄비에 등뼈와 물을 넉넉히 붓고 된장 1큰술을 풀어 40분간 푹 끓인다.',
-        descriptionEn: 'Add the bones to a pot with plenty of water, dissolve in 1 tbsp doenjang, and simmer thoroughly for 40 minutes.',
+        descriptionEn:
+            'Add the bones to a pot with plenty of water, dissolve in 1 tbsp doenjang, and simmer thoroughly for 40 minutes.',
         timerSec: 2400,
+        imageAsset: 'assets/images/steps/recipe_45_3.png',
       ),
       RecipeStep(
         order: 4,
-        description: '감자 1개를 큼직하게 썰어 넣고 고춧가루 1과 1/2큰술, 다진 마늘 10g, 다진 생강 3g을 더한다.',
-        descriptionEn: 'Add 1 potato cut into large chunks, along with 1 1/2 tbsp gochugaru, 10g minced garlic, and 3g minced ginger.',
+        description:
+            '감자 1개를 큼직하게 썰어 넣고 고춧가루 1과 1/2큰술, 다진 마늘 10g, 다진 생강 3g을 더한다.',
+        descriptionEn:
+            'Add 1 potato cut into large chunks, along with 1 1/2 tbsp gochugaru, 10g minced garlic, and 3g minced ginger.',
+        imageAsset: 'assets/images/steps/recipe_45_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '우거지 50g을 넣고 감자가 익을 때까지 15분 더 끓인다.',
-        descriptionEn: 'Add 50g dried radish greens and simmer for another 15 minutes until the potato is cooked through.',
+        descriptionEn:
+            'Add 50g dried radish greens and simmer for another 15 minutes until the potato is cooked through.',
         timerSec: 900,
+        imageAsset: 'assets/images/steps/recipe_45_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '대파 3/10단과 들깻가루 1큰술을 넣고 한소끔 더 끓여 마무리한다.',
-        descriptionEn: 'Add 3/10 bunch of green onion and 1 tbsp perilla powder, and simmer briefly to finish.',
+        descriptionEn:
+            'Add 3/10 bunch of green onion and 1 tbsp perilla powder, and simmer briefly to finish.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_45_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_46',
     title: '매콤 화끈한 황금비율 낙지볶음',
     titleEn: 'Fiery Spicy Golden-Ratio Stir-Fried Octopus',
     emoji: '🐙',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Nakji-bokkeum.jpg/960px-Nakji-bokkeum.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Nakji-bokkeum.jpg/960px-Nakji-bokkeum.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '한식',
@@ -1943,46 +2212,61 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '간장', quantity: 1, unit: '작은술'),
       RecipeIngredient(name: '설탕', quantity: 0.5, unit: '큰술'),
       RecipeIngredient(name: '마늘', quantity: 8, unit: 'g'),
-      RecipeIngredient(name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 1, unit: '큰술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '낙지 200g은 밀가루로 바락바락 주물러 씻은 뒤 한입 크기로 썬다.',
-        descriptionEn: 'Scrub 200g octopus thoroughly with flour to clean, then cut into bite-sized pieces.',
+        descriptionEn:
+            'Scrub 200g octopus thoroughly with flour to clean, then cut into bite-sized pieces.',
+        imageAsset: 'assets/images/steps/recipe_46_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '양파 3/10개, 대파 1/5단, 당근 1/10개를 어슷하게 썬다.',
-        descriptionEn: 'Diagonally slice 3/10 onion, 1/5 bunch of green onion, and 1/10 carrot.',
+        descriptionEn:
+            'Diagonally slice 3/10 onion, 1/5 bunch of green onion, and 1/10 carrot.',
+        imageAsset: 'assets/images/steps/recipe_46_2.png',
       ),
       RecipeStep(
         order: 3,
-        description: '볼에 고추장 1큰술, 고춧가루 1큰술, 간장 1작은술, 설탕 1/2큰술, 다진 마늘 8g을 섞어 양념장을 만든다.',
-        descriptionEn: 'In a bowl, mix 1 tbsp gochujang, 1 tbsp gochugaru, 1 tsp soy sauce, 1/2 tbsp sugar, and 8g minced garlic to make the sauce.',
+        description:
+            '볼에 고추장 1큰술, 고춧가루 1큰술, 간장 1작은술, 설탕 1/2큰술, 다진 마늘 8g을 섞어 양념장을 만든다.',
+        descriptionEn:
+            'In a bowl, mix 1 tbsp gochujang, 1 tbsp gochugaru, 1 tsp soy sauce, 1/2 tbsp sugar, and 8g minced garlic to make the sauce.',
+        imageAsset: 'assets/images/steps/recipe_46_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '달군 팬에 식용유 1큰술을 두르고 양파와 당근을 먼저 볶는다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan and stir-fry the onion and carrot first.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan and stir-fry the onion and carrot first.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_46_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '낙지와 양념장을 넣고 센 불에서 짧고 빠르게 볶아 질겨지지 않게 한다.',
-        descriptionEn: 'Add the octopus and sauce, and stir-fry quickly over high heat so it doesn\'t turn rubbery.',
+        descriptionEn:
+            'Add the octopus and sauce, and stir-fry quickly over high heat so it doesn\'t turn rubbery.',
         timerSec: 150,
+        imageAsset: 'assets/images/steps/recipe_46_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '대파를 넣어 한 번 더 볶고 참기름으로 향을 더해 마무리한다.',
-        descriptionEn: 'Add the green onion, stir-fry once more, and finish with a touch of sesame oil for aroma.',
+        descriptionEn:
+            'Add the green onion, stir-fry once more, and finish with a touch of sesame oil for aroma.',
         timerSec: 30,
+        imageAsset: 'assets/images/steps/recipe_46_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_47',
     title: '따뜻한 황금비율 만둣국',
     titleEn: 'Warm Golden-Ratio Dumpling Soup',
     emoji: '🥟',
@@ -2002,44 +2286,57 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '대파', quantity: 0.2, unit: '단'),
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g'),
       RecipeIngredient(name: '국간장', quantity: 1, unit: '작은술'),
-      RecipeIngredient(name: '소금', quantity: 0.3, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.3, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '냄비에 물 2컵(400ml)을 붓고 끓인다.',
-        descriptionEn: 'Pour 2 cups (400ml) of water into a pot and bring to a boil.',
+        descriptionEn:
+            'Pour 2 cups (400ml) of water into a pot and bring to a boil.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_47_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '물이 끓으면 다진 마늘 5g과 국간장 1작은술을 넣어 간을 한다.',
-        descriptionEn: 'Once boiling, add 5g minced garlic and 1 tsp guk-ganjang (soup soy sauce) to season.',
+        descriptionEn:
+            'Once boiling, add 5g minced garlic and 1 tsp guk-ganjang (soup soy sauce) to season.',
+        imageAsset: 'assets/images/steps/recipe_47_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '만두 8개를 넣고 떠오를 때까지 5분간 끓인다.',
-        descriptionEn: 'Add 8 dumplings and boil for 5 minutes until they float to the top.',
+        descriptionEn:
+            'Add 8 dumplings and boil for 5 minutes until they float to the top.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_47_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '계란 1개를 풀어 넣고 젓가락으로 휘저어 계란물을 넓게 퍼뜨린다.',
-        descriptionEn: 'Beat in 1 egg and stir with chopsticks to spread the egg thinly through the broth.',
+        descriptionEn:
+            'Beat in 1 egg and stir with chopsticks to spread the egg thinly through the broth.',
         timerSec: 30,
+        imageAsset: 'assets/images/steps/recipe_47_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '대파 1/5단을 썰어 넣고 소금으로 간을 맞춰 마무리한다.',
-        descriptionEn: 'Add sliced 1/5 bunch of green onion and adjust the seasoning with salt to finish.',
+        descriptionEn:
+            'Add sliced 1/5 bunch of green onion and adjust the seasoning with salt to finish.',
+        imageAsset: 'assets/images/steps/recipe_47_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_48',
     title: '한그릇 뚝딱 황금비율 비빔밥',
     titleEn: 'One-Bowl Golden-Ratio Bibimbap',
     emoji: '🍚',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Bibimbap_6.jpg/960px-Bibimbap_6.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Bibimbap_6.jpg/960px-Bibimbap_6.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '한식',
@@ -2052,9 +2349,11 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '밥', quantity: 1, unit: '공기'),
       RecipeIngredient(name: '계란', quantity: 1, unit: '개'),
       RecipeIngredient(name: '시금치', quantity: 0.2, unit: '단'),
-      RecipeIngredient(name: '애호박', quantity: 0.15, unit: '개', isOptional: true),
+      RecipeIngredient(
+          name: '애호박', quantity: 0.15, unit: '개', isOptional: true),
       RecipeIngredient(name: '콩나물', quantity: 80, unit: 'g', isOptional: true),
-      RecipeIngredient(name: '소고기 등심', quantity: 80, unit: 'g', isOptional: true),
+      RecipeIngredient(
+          name: '소고기 등심', quantity: 80, unit: 'g', isOptional: true),
       RecipeIngredient(name: '고추장', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '참기름', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '마늘', quantity: 3, unit: 'g', isOptional: true),
@@ -2064,39 +2363,53 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '콩나물 80g은 삶고, 시금치 1/5단은 데쳐 물기를 짠 뒤 각각 소금과 참기름으로 밑간한다.',
-        descriptionEn: 'Boil 80g bean sprouts and blanch 1/5 bunch of spinach, squeeze out water, and season each lightly with salt and sesame oil.',
+        descriptionEn:
+            'Boil 80g bean sprouts and blanch 1/5 bunch of spinach, squeeze out water, and season each lightly with salt and sesame oil.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_48_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '애호박 3/20개를 채 썰어 소금에 살짝 절였다가 볶고, 소고기 등심 80g은 다진 마늘 3g과 간장으로 밑간해 볶는다.',
-        descriptionEn: 'Julienne 3/20 zucchini, salt briefly then stir-fry, and stir-fry 80g beef sirloin seasoned with 3g minced garlic and soy sauce.',
+        description:
+            '애호박 3/20개를 채 썰어 소금에 살짝 절였다가 볶고, 소고기 등심 80g은 다진 마늘 3g과 간장으로 밑간해 볶는다.',
+        descriptionEn:
+            'Julienne 3/20 zucchini, salt briefly then stir-fry, and stir-fry 80g beef sirloin seasoned with 3g minced garlic and soy sauce.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_48_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 식용유 1큰술을 둘러 계란 1개를 반숙 프라이로 부친다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan and fry 1 egg sunny-side up until the yolk is still soft.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan and fry 1 egg sunny-side up until the yolk is still soft.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_48_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '큰 그릇에 밥 1공기를 담고 준비한 나물과 고기를 색깔별로 돌려 담는다.',
-        descriptionEn: 'Place 1 bowl of rice in a large bowl and arrange the prepared vegetables and meat around it by color.',
+        descriptionEn:
+            'Place 1 bowl of rice in a large bowl and arrange the prepared vegetables and meat around it by color.',
+        imageAsset: 'assets/images/steps/recipe_48_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '가운데에 계란 프라이를 올리고 고추장 1큰술을 얹는다.',
-        descriptionEn: 'Top the center with the fried egg and add 1 tbsp gochujang.',
+        descriptionEn:
+            'Top the center with the fried egg and add 1 tbsp gochujang.',
+        imageAsset: 'assets/images/steps/recipe_48_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '참기름 1큰술을 두르고 골고루 비벼서 먹는다.',
-        descriptionEn: 'Drizzle with 1 tbsp sesame oil and mix everything together evenly before eating.',
+        descriptionEn:
+            'Drizzle with 1 tbsp sesame oil and mix everything together evenly before eating.',
+        imageAsset: 'assets/images/steps/recipe_48_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_49',
     title: '노릇노릇 황금비율 파전',
     titleEn: 'Golden-Crisp Golden-Ratio Scallion Pancake',
     emoji: '🥞',
@@ -2122,37 +2435,49 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '대파 1단을 프라이팬 길이에 맞춰 반으로 자른다.',
-        descriptionEn: 'Cut 1 bunch of green onion in half to match the length of the frying pan.',
+        descriptionEn:
+            'Cut 1 bunch of green onion in half to match the length of the frying pan.',
+        imageAsset: 'assets/images/steps/recipe_49_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '부침가루 100g에 물 100ml를 넣어 반죽을 만들고 계란 1개를 풀어 섞는다.',
-        descriptionEn: 'Mix 100g pancake flour with 100ml water to make a batter, then beat in 1 egg.',
+        descriptionEn:
+            'Mix 100g pancake flour with 100ml water to make a batter, then beat in 1 egg.',
+        imageAsset: 'assets/images/steps/recipe_49_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 식용유 2큰술을 두르고 대파를 가지런히 편 뒤 반죽을 부어 덮는다.',
-        descriptionEn: 'Heat 2 tbsp cooking oil in a pan, lay the green onions flat, and pour the batter over them.',
+        descriptionEn:
+            'Heat 2 tbsp cooking oil in a pan, lay the green onions flat, and pour the batter over them.',
+        imageAsset: 'assets/images/steps/recipe_49_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '손질한 새우 50g을 반죽 위에 고루 얹고 중불에서 앞면을 노릇하게 굽는다.',
-        descriptionEn: 'Evenly place 50g peeled shrimp on top of the batter and cook the first side until golden over medium heat.',
+        descriptionEn:
+            'Evenly place 50g peeled shrimp on top of the batter and cook the first side until golden over medium heat.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_49_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '뒤집어서 반대쪽도 바삭하게 구운 뒤 간장에 곁들여 낸다.',
-        descriptionEn: 'Flip and cook the other side until crisp, then serve with soy sauce for dipping.',
+        descriptionEn:
+            'Flip and cook the other side until crisp, then serve with soy sauce for dipping.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_49_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_50',
     title: '매콤 칼칼한 황금비율 갈치조림',
     titleEn: 'Spicy Golden-Ratio Braised Hairtail',
     emoji: '🐟',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Galchi-jorim_1.jpg/960px-Galchi-jorim_1.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Galchi-jorim_1.jpg/960px-Galchi-jorim_1.jpg',
     cookTimeMin: 30,
     difficulty: '중',
     cuisineType: '한식',
@@ -2177,42 +2502,57 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '갈치 1마리는 비늘과 내장을 제거해 손질한 뒤 큼직하게 토막 낸다.',
-        descriptionEn: 'Clean 1 hairtail fish by removing the scales and innards, then cut into large pieces.',
+        descriptionEn:
+            'Clean 1 hairtail fish by removing the scales and innards, then cut into large pieces.',
+        imageAsset: 'assets/images/steps/recipe_50_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '무 150g과 감자 3/10개를 두툼하게 썰어 냄비 바닥에 깐다.',
-        descriptionEn: 'Thickly slice 150g radish and 3/10 potato and line the bottom of a pot with them.',
+        descriptionEn:
+            'Thickly slice 150g radish and 3/10 potato and line the bottom of a pot with them.',
+        imageAsset: 'assets/images/steps/recipe_50_2.png',
       ),
       RecipeStep(
         order: 3,
-        description: '고춧가루 1큰술, 고추장 1/2큰술, 간장 1큰술, 설탕 1/2큰술, 다진 마늘 8g, 다진 생강 3g을 섞어 양념장을 만든다.',
-        descriptionEn: 'Mix 1 tbsp gochugaru, 1/2 tbsp gochujang, 1 tbsp soy sauce, 1/2 tbsp sugar, 8g minced garlic, and 3g minced ginger to make the sauce.',
+        description:
+            '고춧가루 1큰술, 고추장 1/2큰술, 간장 1큰술, 설탕 1/2큰술, 다진 마늘 8g, 다진 생강 3g을 섞어 양념장을 만든다.',
+        descriptionEn:
+            'Mix 1 tbsp gochugaru, 1/2 tbsp gochujang, 1 tbsp soy sauce, 1/2 tbsp sugar, 8g minced garlic, and 3g minced ginger to make the sauce.',
+        imageAsset: 'assets/images/steps/recipe_50_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '무 위에 갈치를 올리고 양념장을 끼얹은 뒤 물 1컵(200ml)을 붓는다.',
-        descriptionEn: 'Place the hairtail over the radish, pour the sauce on top, and add 1 cup (200ml) of water.',
+        descriptionEn:
+            'Place the hairtail over the radish, pour the sauce on top, and add 1 cup (200ml) of water.',
+        imageAsset: 'assets/images/steps/recipe_50_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '센 불로 끓이다 끓어오르면 중불로 줄여 15분간 조린다.',
-        descriptionEn: 'Bring to a boil over high heat, then reduce to medium heat and braise for 15 minutes.',
+        descriptionEn:
+            'Bring to a boil over high heat, then reduce to medium heat and braise for 15 minutes.',
         timerSec: 900,
+        imageAsset: 'assets/images/steps/recipe_50_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '대파 1/5단을 올리고 국물을 끼얹어가며 5분 더 조려 마무리한다.',
-        descriptionEn: 'Add 1/5 bunch of green onion, spoon the sauce over the top, and braise for 5 more minutes to finish.',
+        descriptionEn:
+            'Add 1/5 bunch of green onion, spoon the sauce over the top, and braise for 5 more minutes to finish.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_50_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_51',
     title: '속풀이 황금비율 북엇국',
     titleEn: 'Hangover-Soothing Golden-Ratio Dried Pollock Soup',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Bugeo-guk_2.jpg/960px-Bugeo-guk_2.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Bugeo-guk_2.jpg/960px-Bugeo-guk_2.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '한식',
@@ -2235,32 +2575,42 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '북어채 40g을 물에 살짝 불려 물기를 꼭 짠다.',
-        descriptionEn: 'Soak 40g dried pollock shreds briefly in water, then squeeze out the moisture.',
+        descriptionEn:
+            'Soak 40g dried pollock shreds briefly in water, then squeeze out the moisture.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_51_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 참기름 1작은술을 두르고 북어채를 넣어 중불에서 볶는다.',
-        descriptionEn: 'Heat 1 tsp sesame oil in a pot and stir-fry the dried pollock over medium heat.',
+        descriptionEn:
+            'Heat 1 tsp sesame oil in a pot and stir-fry the dried pollock over medium heat.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_51_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '무 50g을 얇게 썰어 넣고 물 2컵(400ml)을 부어 끓인다.',
-        descriptionEn: 'Add 50g thinly sliced radish, pour in 2 cups (400ml) of water, and bring to a boil.',
+        descriptionEn:
+            'Add 50g thinly sliced radish, pour in 2 cups (400ml) of water, and bring to a boil.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_51_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '두부 1/5모와 다진 마늘 5g, 국간장 1작은술을 넣어 간을 맞춘다.',
-        descriptionEn: 'Add 1/5 block of tofu, 5g minced garlic, and 1 tsp guk-ganjang, and adjust the seasoning.',
+        descriptionEn:
+            'Add 1/5 block of tofu, 5g minced garlic, and 1 tsp guk-ganjang, and adjust the seasoning.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_51_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '계란 1개를 풀어 넣고 대파 1/5단을 올려 한소끔 더 끓여 마무리한다.',
-        descriptionEn: 'Beat in 1 egg, top with 1/5 bunch of green onion, and simmer briefly to finish.',
+        descriptionEn:
+            'Beat in 1 egg, top with 1/5 bunch of green onion, and simmer briefly to finish.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_51_5.png',
       ),
     ],
   ),
@@ -2269,7 +2619,8 @@ const recipeCatalog = <Recipe>[
     title: '진하고 감칠맛 나는 황금비율 짜장면',
     titleEn: 'Rich Savory Golden-Ratio Jjajangmyeon',
     emoji: '🍜',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Jajangmyeon_1.jpg/960px-Jajangmyeon_1.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Jajangmyeon_1.jpg/960px-Jajangmyeon_1.jpg',
     cookTimeMin: 30,
     difficulty: '중',
     cuisineType: '중식',
@@ -2293,42 +2644,49 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '돼지고기 앞다리살 100g과 양파 1/2개, 애호박 1/5개, 감자 3/10개를 사방 1cm로 깍둑 썬다.',
-        descriptionEn: 'Dice 100g pork shoulder, 1/2 onion, 1/5 zucchini, and 3/10 potato into 1cm cubes.',
+        description:
+            '돼지고기 앞다리살 100g과 양파 1/2개, 애호박 1/5개, 감자 3/10개를 사방 1cm로 깍둑 썬다.',
+        descriptionEn:
+            'Dice 100g pork shoulder, 1/2 onion, 1/5 zucchini, and 3/10 potato into 1cm cubes.',
         imageAsset: 'assets/images/steps/recipe_26_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '달군 팬에 식용유 2큰술과 춘장 2큰술을 넣고 약불에서 2분간 볶아 기름에 감칠맛을 낸다.',
-        descriptionEn: 'Heat 2 tbsp cooking oil and 2 tbsp chunjang in a pan and stir-fry over low heat for 2 minutes to infuse the oil with flavor.',
+        descriptionEn:
+            'Heat 2 tbsp cooking oil and 2 tbsp chunjang in a pan and stir-fry over low heat for 2 minutes to infuse the oil with flavor.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_26_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '돼지고기를 넣고 센 불에서 겉이 익을 때까지 볶는다.',
-        descriptionEn: 'Add the pork and stir-fry over high heat until the surface is cooked.',
+        descriptionEn:
+            'Add the pork and stir-fry over high heat until the surface is cooked.',
         timerSec: 180,
         imageAsset: 'assets/images/steps/recipe_26_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '양파, 애호박, 감자를 넣고 물 1컵(200ml)과 설탕 1작은술을 더해 10분간 끓인다.',
-        descriptionEn: 'Add the onion, zucchini, and potato along with 1 cup (200ml) of water and 1 tsp sugar, and simmer for 10 minutes.',
+        descriptionEn:
+            'Add the onion, zucchini, and potato along with 1 cup (200ml) of water and 1 tsp sugar, and simmer for 10 minutes.',
         timerSec: 600,
         imageAsset: 'assets/images/steps/recipe_26_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '전분가루 1큰술을 물에 풀어 넣고 걸쭉해질 때까지 저어가며 끓인다.',
-        descriptionEn: 'Mix 1 tbsp starch with water, stir it in, and simmer while stirring until thickened.',
+        descriptionEn:
+            'Mix 1 tbsp starch with water, stir it in, and simmer while stirring until thickened.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_26_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '삶아 건진 중화면 1인분 위에 소스를 부고 대파를 고명으로 올린다.',
-        descriptionEn: 'Pour the sauce over 1 serving of boiled noodles and garnish with green onion.',
+        descriptionEn:
+            'Pour the sauce over 1 serving of boiled noodles and garnish with green onion.',
         imageAsset: 'assets/images/steps/recipe_26_6.png',
       ),
     ],
@@ -2351,7 +2709,8 @@ const recipeCatalog = <Recipe>[
     ingredients: [
       RecipeIngredient(name: '중화면', quantity: 1, unit: '인분'),
       RecipeIngredient(name: '새우', quantity: 60, unit: 'g'),
-      RecipeIngredient(name: '돼지고기 앞다리살', quantity: 60, unit: 'g', isOptional: true),
+      RecipeIngredient(
+          name: '돼지고기 앞다리살', quantity: 60, unit: 'g', isOptional: true),
       RecipeIngredient(name: '양파', quantity: 0.3, unit: '개'),
       RecipeIngredient(name: '애호박', quantity: 0.2, unit: '개'),
       RecipeIngredient(name: '대파', quantity: 0.2, unit: '단'),
@@ -2364,34 +2723,40 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '양파 3/10개, 애호박 1/5개, 대파 1/5단을 채 썰고, 새우 60g은 껍질을 벗긴다.',
-        descriptionEn: 'Julienne 3/10 onion, 1/5 zucchini, and 1/5 bunch of green onion, and peel 60g shrimp.',
+        descriptionEn:
+            'Julienne 3/10 onion, 1/5 zucchini, and 1/5 bunch of green onion, and peel 60g shrimp.',
         imageAsset: 'assets/images/steps/recipe_27_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '달군 웍에 식용유 1큰술을 두르고 다진 마늘 8g과 고춧가루 1과 1/2큰술을 넣어 매운 기름을 낸다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a wok and stir-fry 8g minced garlic with 1 1/2 tbsp gochugaru to make spicy chili oil.',
+        description:
+            '달군 웍에 식용유 1큰술을 두르고 다진 마늘 8g과 고춧가루 1과 1/2큰술을 넣어 매운 기름을 낸다.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a wok and stir-fry 8g minced garlic with 1 1/2 tbsp gochugaru to make spicy chili oil.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_27_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '돼지고기와 채소를 넣고 센 불에서 재빨리 볶는다.',
-        descriptionEn: 'Add the pork and vegetables and stir-fry quickly over high heat.',
+        descriptionEn:
+            'Add the pork and vegetables and stir-fry quickly over high heat.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_27_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '물 2컵(400ml)과 간장 1큰술을 넣고 끓으면 새우를 넣어 익힌다.',
-        descriptionEn: 'Add 2 cups (400ml) of water and 1 tbsp soy sauce, and once boiling, add the shrimp to cook.',
+        descriptionEn:
+            'Add 2 cups (400ml) of water and 1 tbsp soy sauce, and once boiling, add the shrimp to cook.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_27_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '삶아 건진 중화면 1인분을 그릇에 담고 뜨거운 국물을 부어 마무리한다.',
-        descriptionEn: 'Place 1 serving of boiled noodles in a bowl and pour the hot broth over them to finish.',
+        descriptionEn:
+            'Place 1 serving of boiled noodles in a bowl and pour the hot broth over them to finish.',
         imageAsset: 'assets/images/steps/recipe_27_5.png',
       ),
     ],
@@ -2427,13 +2792,15 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '돼지고기 안심 200g을 한입 크기로 썰고, 계란 1개와 전분가루 4큰술을 섞어 튀김옷을 입힌다.',
-        descriptionEn: 'Cut 200g pork tenderloin into bite-sized pieces and coat with a batter made from 1 egg and 4 tbsp starch.',
+        descriptionEn:
+            'Cut 200g pork tenderloin into bite-sized pieces and coat with a batter made from 1 egg and 4 tbsp starch.',
         imageAsset: 'assets/images/steps/recipe_28_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '식용유 3큰술을 넉넉히 달궈 돼지고기를 튀기고, 한 번 더 튀겨 바삭함을 더한다.',
-        descriptionEn: 'Deep-fry the pork in plenty of heated cooking oil, then fry a second time for extra crispiness.',
+        descriptionEn:
+            'Deep-fry the pork in plenty of heated cooking oil, then fry a second time for extra crispiness.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_28_2.png',
       ),
@@ -2446,21 +2813,24 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 4,
         description: '냄비에 물 1/2컵(100ml), 식초 2큰술, 설탕 2큰술, 간장 1큰술을 넣고 끓인다.',
-        descriptionEn: 'In a pot, combine 1/2 cup (100ml) water, 2 tbsp vinegar, 2 tbsp sugar, and 1 tbsp soy sauce, and bring to a boil.',
+        descriptionEn:
+            'In a pot, combine 1/2 cup (100ml) water, 2 tbsp vinegar, 2 tbsp sugar, and 1 tbsp soy sauce, and bring to a boil.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_28_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '채소를 넣고 전분물을 살짝 풀어 걸쭉하게 소스를 완성한다.',
-        descriptionEn: 'Add the vegetables and stir in a little starch slurry to thicken the sauce.',
+        descriptionEn:
+            'Add the vegetables and stir in a little starch slurry to thicken the sauce.',
         timerSec: 90,
         imageAsset: 'assets/images/steps/recipe_28_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '튀긴 돼지고기 위에 소스를 부어 바로 낸다.',
-        descriptionEn: 'Pour the sauce over the fried pork and serve immediately.',
+        descriptionEn:
+            'Pour the sauce over the fried pork and serve immediately.',
         imageAsset: 'assets/images/steps/recipe_28_6.png',
       ),
     ],
@@ -2470,7 +2840,8 @@ const recipeCatalog = <Recipe>[
     title: '얼큰 고소한 황금비율 마파두부',
     titleEn: 'Spicy Savory Golden-Ratio Mapo Tofu',
     emoji: '🌶️',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Chen_Mapo_Tofu.jpg/960px-Chen_Mapo_Tofu.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Chen_Mapo_Tofu.jpg/960px-Chen_Mapo_Tofu.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '중식',
@@ -2485,54 +2856,64 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '대파', quantity: 0.2, unit: '단'),
       RecipeIngredient(name: '마늘', quantity: 8, unit: 'g'),
       RecipeIngredient(name: '두반장', quantity: 1, unit: '큰술'),
-      RecipeIngredient(name: '고춧가루', quantity: 0.5, unit: '큰술', isOptional: true),
+      RecipeIngredient(
+          name: '고춧가루', quantity: 0.5, unit: '큰술', isOptional: true),
       RecipeIngredient(name: '간장', quantity: 1, unit: '작은술'),
-      RecipeIngredient(name: '전분가루', quantity: 1, unit: '작은술', isOptional: true),
-      RecipeIngredient(name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '전분가루', quantity: 1, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '참기름', quantity: 0.5, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 1, unit: '큰술'),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '두부 1모를 사방 2cm로 깍둑 썰어 끓는 물에 살짝 데친다.',
-        descriptionEn: 'Cut 1 block of tofu into 2cm cubes and briefly blanch in boiling water.',
+        descriptionEn:
+            'Cut 1 block of tofu into 2cm cubes and briefly blanch in boiling water.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_29_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '달군 팬에 식용유 1큰술을 두르고 다진 돼지고기 80g을 볶아 기름을 낸다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan and stir-fry 80g minced pork to render out fat.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan and stir-fry 80g minced pork to render out fat.',
         timerSec: 120,
         imageAsset: 'assets/images/steps/recipe_29_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '다진 마늘 8g과 두반장 1큰술, 고춧가루 1/2큰술을 넣고 향이 올라올 때까지 볶는다.',
-        descriptionEn: 'Add 8g minced garlic, 1 tbsp doubanjiang, and 1/2 tbsp gochugaru, and stir-fry until fragrant.',
+        descriptionEn:
+            'Add 8g minced garlic, 1 tbsp doubanjiang, and 1/2 tbsp gochugaru, and stir-fry until fragrant.',
         timerSec: 60,
         imageAsset: 'assets/images/steps/recipe_29_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '물 1/2컵(100ml)과 간장 1작은술을 넣고 끓으면 두부를 넣어 5분간 조린다.',
-        descriptionEn: 'Add 1/2 cup (100ml) water and 1 tsp soy sauce, and once boiling, add the tofu and simmer for 5 minutes.',
+        descriptionEn:
+            'Add 1/2 cup (100ml) water and 1 tsp soy sauce, and once boiling, add the tofu and simmer for 5 minutes.',
         timerSec: 300,
         imageAsset: 'assets/images/steps/recipe_29_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '전분물을 살짝 풀어 걸쭉하게 만들고 대파와 참기름을 더해 마무리한다.',
-        descriptionEn: 'Stir in a little starch slurry to thicken, then finish with green onion and sesame oil.',
+        descriptionEn:
+            'Stir in a little starch slurry to thicken, then finish with green onion and sesame oil.',
         imageAsset: 'assets/images/steps/recipe_29_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_30',
     title: '새콤달콤 황금비율 유린기',
     titleEn: 'Sweet and Tangy Golden-Ratio Yurinki Chicken',
     emoji: '🍗',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b2/Yuringi_1.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/b/b2/Yuringi_1.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '중식',
@@ -2557,37 +2938,50 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '닭가슴살 200g을 얇게 저며 전분가루 3큰술을 고루 묻힌다.',
-        descriptionEn: 'Thinly slice 200g chicken breast and coat evenly with 3 tbsp starch.',
+        descriptionEn:
+            'Thinly slice 200g chicken breast and coat evenly with 3 tbsp starch.',
+        imageAsset: 'assets/images/steps/recipe_30_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '식용유 3큰술을 달궈 닭가슴살을 노릇하고 바삭하게 튀기듯 굽는다.',
-        descriptionEn: 'Heat 3 tbsp cooking oil and pan-fry the chicken until golden and crisp, like shallow-frying.',
+        descriptionEn:
+            'Heat 3 tbsp cooking oil and pan-fry the chicken until golden and crisp, like shallow-frying.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_30_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '오이 1/5개와 양파 1/5개를 잘게 썰고 대파 1/10단, 마늘 5g을 다진다.',
-        descriptionEn: 'Finely dice 1/5 cucumber and 1/5 onion, and mince 1/10 bunch of green onion and 5g garlic.',
+        descriptionEn:
+            'Finely dice 1/5 cucumber and 1/5 onion, and mince 1/10 bunch of green onion and 5g garlic.',
+        imageAsset: 'assets/images/steps/recipe_30_3.png',
       ),
       RecipeStep(
         order: 4,
-        description: '작은 냄비에 간장 2큰술, 식초 1과 1/2큰술, 설탕 1과 1/2큰술을 넣어 한소끔 끓인 뒤 식힌다.',
-        descriptionEn: 'In a small pot, bring 2 tbsp soy sauce, 1 1/2 tbsp vinegar, and 1 1/2 tbsp sugar to a boil once, then let cool.',
+        description:
+            '작은 냄비에 간장 2큰술, 식초 1과 1/2큰술, 설탕 1과 1/2큰술을 넣어 한소끔 끓인 뒤 식힌다.',
+        descriptionEn:
+            'In a small pot, bring 2 tbsp soy sauce, 1 1/2 tbsp vinegar, and 1 1/2 tbsp sugar to a boil once, then let cool.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_30_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '다진 채소를 소스에 섞고 튀긴 닭가슴살을 썰어 담은 뒤 소스를 끼얹는다.',
-        descriptionEn: 'Mix the diced vegetables into the sauce, slice the fried chicken onto a plate, and pour the sauce over it.',
+        descriptionEn:
+            'Mix the diced vegetables into the sauce, slice the fried chicken onto a plate, and pour the sauce over it.',
+        imageAsset: 'assets/images/steps/recipe_30_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_31',
     title: '매콤 새콤 황금비율 깐풍기',
     titleEn: 'Spicy Tangy Golden-Ratio Kkanpunggi Chicken',
     emoji: '🍗',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Kkanpunggi.jpg/960px-Kkanpunggi.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Kkanpunggi.jpg/960px-Kkanpunggi.jpg',
     cookTimeMin: 30,
     difficulty: '중',
     cuisineType: '중식',
@@ -2612,38 +3006,51 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '닭다리살 300g을 한입 크기로 썰어 전분가루 4큰술을 고루 묻힌다.',
-        descriptionEn: 'Cut 300g chicken thigh into bite-sized pieces and coat evenly with 4 tbsp starch.',
+        descriptionEn:
+            'Cut 300g chicken thigh into bite-sized pieces and coat evenly with 4 tbsp starch.',
+        imageAsset: 'assets/images/steps/recipe_31_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '식용유 3큰술을 달궈 닭다리살을 두 번 튀겨 겉을 바삭하게 만든다.',
-        descriptionEn: 'Heat 3 tbsp cooking oil and double-fry the chicken thigh to make the outside crispy.',
+        descriptionEn:
+            'Heat 3 tbsp cooking oil and double-fry the chicken thigh to make the outside crispy.',
         timerSec: 360,
+        imageAsset: 'assets/images/steps/recipe_31_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '대파 1/5단과 마늘 8g, 생강 3g을 잘게 다진다.',
-        descriptionEn: 'Finely chop 1/5 bunch of green onion, 8g garlic, and 3g ginger.',
+        descriptionEn:
+            'Finely chop 1/5 bunch of green onion, 8g garlic, and 3g ginger.',
+        imageAsset: 'assets/images/steps/recipe_31_3.png',
       ),
       RecipeStep(
         order: 4,
-        description: '팬에 다진 재료를 볶다가 간장 1과 1/2큰술, 식초 1큰술, 설탕 1큰술, 고춧가루 1큰술을 넣어 소스를 끓인다.',
-        descriptionEn: 'Stir-fry the chopped aromatics in a pan, then add 1 1/2 tbsp soy sauce, 1 tbsp vinegar, 1 tbsp sugar, and 1 tbsp gochugaru and simmer into a sauce.',
+        description:
+            '팬에 다진 재료를 볶다가 간장 1과 1/2큰술, 식초 1큰술, 설탕 1큰술, 고춧가루 1큰술을 넣어 소스를 끓인다.',
+        descriptionEn:
+            'Stir-fry the chopped aromatics in a pan, then add 1 1/2 tbsp soy sauce, 1 tbsp vinegar, 1 tbsp sugar, and 1 tbsp gochugaru and simmer into a sauce.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_31_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '튀긴 닭다리살을 소스에 넣고 재빨리 버무려 낸다.',
-        descriptionEn: 'Add the fried chicken to the sauce and toss quickly before serving.',
+        descriptionEn:
+            'Add the fried chicken to the sauce and toss quickly before serving.',
         timerSec: 30,
+        imageAsset: 'assets/images/steps/recipe_31_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_32',
     title: '푸짐한 황금비율 팔보채',
     titleEn: 'Bountiful Golden-Ratio Palbochae Seafood Stir-fry',
     emoji: '🦐',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Palbo-chae.jpg/960px-Palbo-chae.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Palbo-chae.jpg/960px-Palbo-chae.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '중식',
@@ -2654,47 +3061,62 @@ const recipeCatalog = <Recipe>[
     sodiumMg: 1050,
     ingredients: [
       RecipeIngredient(name: '새우', quantity: 60, unit: 'g'),
-      RecipeIngredient(name: '돼지고기 앞다리살', quantity: 60, unit: 'g', isOptional: true),
+      RecipeIngredient(
+          name: '돼지고기 앞다리살', quantity: 60, unit: 'g', isOptional: true),
       RecipeIngredient(name: '양파', quantity: 0.2, unit: '개'),
       RecipeIngredient(name: '당근', quantity: 0.1, unit: '개', isOptional: true),
-      RecipeIngredient(name: '애호박', quantity: 0.15, unit: '개', isOptional: true),
+      RecipeIngredient(
+          name: '애호박', quantity: 0.15, unit: '개', isOptional: true),
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g'),
       RecipeIngredient(name: '굴소스', quantity: 1, unit: '큰술'),
-      RecipeIngredient(name: '전분가루', quantity: 1, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '전분가루', quantity: 1, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 1, unit: '큰술'),
     ],
     steps: [
       RecipeStep(
         order: 1,
-        description: '새우 60g은 껍질을 벗기고, 양파 1/5개, 당근 1/10개, 애호박 3/20개를 한입 크기로 썬다.',
-        descriptionEn: 'Peel 60g shrimp, and cut 1/5 onion, 1/10 carrot, and 3/20 zucchini into bite-sized pieces.',
+        description:
+            '새우 60g은 껍질을 벗기고, 양파 1/5개, 당근 1/10개, 애호박 3/20개를 한입 크기로 썬다.',
+        descriptionEn:
+            'Peel 60g shrimp, and cut 1/5 onion, 1/10 carrot, and 3/20 zucchini into bite-sized pieces.',
+        imageAsset: 'assets/images/steps/recipe_32_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '달군 웍에 식용유 1큰술을 두르고 다진 마늘 5g과 돼지고기 60g을 볶는다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a wok and stir-fry 5g minced garlic with 60g pork.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a wok and stir-fry 5g minced garlic with 60g pork.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_32_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '단단한 채소부터 넣어가며 센 불에서 볶는다.',
-        descriptionEn: 'Add the firmer vegetables first and stir-fry over high heat.',
+        descriptionEn:
+            'Add the firmer vegetables first and stir-fry over high heat.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_32_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '새우를 넣고 굴소스 1큰술과 물 1/3컵(70ml)을 부어 끓인다.',
-        descriptionEn: 'Add the shrimp, pour in 1 tbsp oyster sauce and 1/3 cup (70ml) water, and bring to a boil.',
+        descriptionEn:
+            'Add the shrimp, pour in 1 tbsp oyster sauce and 1/3 cup (70ml) water, and bring to a boil.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_32_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '전분물을 살짝 풀어 걸쭉하게 마무리한다.',
-        descriptionEn: 'Stir in a little starch slurry to finish with a light, glossy sauce.',
+        descriptionEn:
+            'Stir in a little starch slurry to finish with a light, glossy sauce.',
+        imageAsset: 'assets/images/steps/recipe_32_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_33',
     title: '매콤 새콤달콤 황금비율 깐쇼새우',
     titleEn: 'Sweet Spicy Golden-Ratio Chili Shrimp',
     emoji: '🍤',
@@ -2714,7 +3136,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '대파', quantity: 0.15, unit: '단'),
       RecipeIngredient(name: '마늘', quantity: 6, unit: 'g'),
       RecipeIngredient(name: '케첩', quantity: 2, unit: '큰술'),
-      RecipeIngredient(name: '고춧가루', quantity: 0.5, unit: '큰술', isOptional: true),
+      RecipeIngredient(
+          name: '고춧가루', quantity: 0.5, unit: '큰술', isOptional: true),
       RecipeIngredient(name: '설탕', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '식용유', quantity: 2, unit: '큰술'),
     ],
@@ -2722,39 +3145,51 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '새우 200g은 껍질과 내장을 제거하고 전분가루 2큰술을 살짝 묻힌다.',
-        descriptionEn: 'Peel and devein 200g shrimp, then lightly coat with 2 tbsp starch.',
+        descriptionEn:
+            'Peel and devein 200g shrimp, then lightly coat with 2 tbsp starch.',
+        imageAsset: 'assets/images/steps/recipe_33_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '식용유 2큰술을 달궈 새우를 겉이 바삭해질 때까지 튀기듯 굽는다.',
-        descriptionEn: 'Heat 2 tbsp cooking oil and pan-fry the shrimp until the outside is crisp.',
+        descriptionEn:
+            'Heat 2 tbsp cooking oil and pan-fry the shrimp until the outside is crisp.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_33_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '다진 마늘 6g과 대파 3/20단을 볶아 향을 낸다.',
-        descriptionEn: 'Stir-fry 6g minced garlic and 3/20 bunch of green onion to release their aroma.',
+        descriptionEn:
+            'Stir-fry 6g minced garlic and 3/20 bunch of green onion to release their aroma.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_33_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '케첩 2큰술, 고춧가루 1/2큰술, 설탕 1큰술을 넣고 약불에서 걸쭉하게 볶는다.',
-        descriptionEn: 'Add 2 tbsp ketchup, 1/2 tbsp gochugaru, and 1 tbsp sugar, and stir-fry over low heat until thickened.',
+        descriptionEn:
+            'Add 2 tbsp ketchup, 1/2 tbsp gochugaru, and 1 tbsp sugar, and stir-fry over low heat until thickened.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_33_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '튀긴 새우를 넣고 소스가 고루 배도록 버무려 마무리한다.',
-        descriptionEn: 'Add the fried shrimp and toss until evenly coated with the sauce to finish.',
+        descriptionEn:
+            'Add the fried shrimp and toss until evenly coated with the sauce to finish.',
         timerSec: 30,
+        imageAsset: 'assets/images/steps/recipe_33_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_34',
     title: '고급스러운 황금비율 유산슬',
     titleEn: 'Elegant Golden-Ratio Yusanseul Stir-fry',
     emoji: '🥘',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Yusanseul.jpg/960px-Yusanseul.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Yusanseul.jpg/960px-Yusanseul.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '중식',
@@ -2768,7 +3203,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '돼지고기 안심', quantity: 60, unit: 'g'),
       RecipeIngredient(name: '표고버섯', quantity: 2, unit: '개', isOptional: true),
       RecipeIngredient(name: '양파', quantity: 0.2, unit: '개'),
-      RecipeIngredient(name: '애호박', quantity: 0.15, unit: '개', isOptional: true),
+      RecipeIngredient(
+          name: '애호박', quantity: 0.15, unit: '개', isOptional: true),
       RecipeIngredient(name: '계란', quantity: 1, unit: '개', isOptional: true),
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g'),
       RecipeIngredient(name: '굴소스', quantity: 1, unit: '큰술'),
@@ -2778,35 +3214,46 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '새우 50g과 돼지고기 안심 60g을 얇게 썰고, 표고버섯과 양파 1/5개, 애호박 3/20개를 채 썬다.',
-        descriptionEn: 'Thinly slice 50g shrimp and 60g pork tenderloin, and julienne the shiitake mushrooms, 1/5 onion, and 3/20 zucchini.',
+        description:
+            '새우 50g과 돼지고기 안심 60g을 얇게 썰고, 표고버섯과 양파 1/5개, 애호박 3/20개를 채 썬다.',
+        descriptionEn:
+            'Thinly slice 50g shrimp and 60g pork tenderloin, and julienne the shiitake mushrooms, 1/5 onion, and 3/20 zucchini.',
+        imageAsset: 'assets/images/steps/recipe_34_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '계란 1개는 흰자와 노른자를 분리해 흰자만 살짝 풀어둔다.',
         descriptionEn: 'Separate 1 egg and lightly beat just the egg white.',
+        imageAsset: 'assets/images/steps/recipe_34_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 웍에 식용유 1큰술을 두르고 다진 마늘 5g과 돼지고기, 새우를 볶는다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a wok and stir-fry 5g minced garlic with the pork and shrimp.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a wok and stir-fry 5g minced garlic with the pork and shrimp.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_34_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '채소를 넣고 굴소스 1큰술과 물 1/3컵(70ml)을 부어 함께 볶는다.',
-        descriptionEn: 'Add the vegetables, pour in 1 tbsp oyster sauce and 1/3 cup (70ml) water, and stir-fry together.',
+        descriptionEn:
+            'Add the vegetables, pour in 1 tbsp oyster sauce and 1/3 cup (70ml) water, and stir-fry together.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_34_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '전분물로 살짝 걸쭉하게 만들고 달걀흰자를 둘러 넣어 하얀 실처럼 퍼지면 마무리한다.',
-        descriptionEn: 'Thicken lightly with starch slurry, then drizzle in the egg white so it spreads into white threads to finish.',
+        descriptionEn:
+            'Thicken lightly with starch slurry, then drizzle in the egg white so it spreads into white threads to finish.',
         timerSec: 30,
+        imageAsset: 'assets/images/steps/recipe_34_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_35',
     title: '알싸하고 매콤한 황금비율 라조기',
     titleEn: 'Sharp Spicy Golden-Ratio Rajogi Chicken',
     emoji: '🌶️',
@@ -2834,38 +3281,50 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '닭다리살 300g을 한입 크기로 썰어 전분가루 3큰술을 고루 묻힌다.',
-        descriptionEn: 'Cut 300g chicken thigh into bite-sized pieces and coat evenly with 3 tbsp starch.',
+        descriptionEn:
+            'Cut 300g chicken thigh into bite-sized pieces and coat evenly with 3 tbsp starch.',
+        imageAsset: 'assets/images/steps/recipe_35_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '식용유 2큰술을 달궈 닭다리살을 노릇하게 튀기듯 굽는다.',
-        descriptionEn: 'Heat 2 tbsp cooking oil and pan-fry the chicken thigh until golden.',
+        descriptionEn:
+            'Heat 2 tbsp cooking oil and pan-fry the chicken thigh until golden.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_35_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '대파 3/10단은 굵게 썰고 청양고추 1개는 어슷 썰며, 마늘 10g은 편으로 썬다.',
-        descriptionEn: 'Thickly slice 3/10 bunch of green onion, diagonally slice 1 cheongyang chili pepper, and thinly slice 10g garlic.',
+        descriptionEn:
+            'Thickly slice 3/10 bunch of green onion, diagonally slice 1 cheongyang chili pepper, and thinly slice 10g garlic.',
+        imageAsset: 'assets/images/steps/recipe_35_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '팬에 마늘과 대파, 고추를 넣고 매운 향이 올라올 때까지 볶는다.',
-        descriptionEn: 'Add the garlic, green onion, and chili pepper to a pan and stir-fry until the spicy aroma rises.',
+        descriptionEn:
+            'Add the garlic, green onion, and chili pepper to a pan and stir-fry until the spicy aroma rises.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_35_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '간장 1과 1/2큰술, 설탕 1큰술, 고춧가루 1큰술을 넣고 튀긴 닭을 더해 재빨리 버무린다.',
-        descriptionEn: 'Add 1 1/2 tbsp soy sauce, 1 tbsp sugar, and 1 tbsp gochugaru, then add the fried chicken and toss quickly.',
+        descriptionEn:
+            'Add 1 1/2 tbsp soy sauce, 1 tbsp sugar, and 1 tbsp gochugaru, then add the fried chicken and toss quickly.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_35_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_52',
     title: '고소하고 짭짤한 황금비율 까르보나라',
     titleEn: 'Savory Golden-Ratio Carbonara',
     emoji: '🍝',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Carbonara_2025.jpg/960px-Carbonara_2025.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Carbonara_2025.jpg/960px-Carbonara_2025.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '양식',
@@ -2878,7 +3337,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '스파게티면', quantity: 100, unit: 'g'),
       RecipeIngredient(name: '베이컨', quantity: 80, unit: 'g'),
       RecipeIngredient(name: '계란', quantity: 2, unit: '개'),
-      RecipeIngredient(name: '슬라이스치즈', quantity: 1, unit: '장', isOptional: true),
+      RecipeIngredient(
+          name: '슬라이스치즈', quantity: 1, unit: '장', isOptional: true),
       RecipeIngredient(name: '우유', quantity: 50, unit: 'ml', isOptional: true),
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
@@ -2887,34 +3347,44 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '끓는 물에 소금을 약간 넣고 스파게티면 100g을 8분간 삶는다.',
-        descriptionEn: 'Add a pinch of salt to boiling water and cook 100g spaghetti for 8 minutes.',
+        descriptionEn:
+            'Add a pinch of salt to boiling water and cook 100g spaghetti for 8 minutes.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_52_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '베이컨 80g을 채 썰어 팬에 다진 마늘 5g과 함께 바삭하게 굽는다.',
-        descriptionEn: 'Slice 80g bacon and pan-fry it with 5g minced garlic until crispy.',
+        descriptionEn:
+            'Slice 80g bacon and pan-fry it with 5g minced garlic until crispy.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_52_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '볼에 계란 2개, 슬라이스치즈 1장, 우유 50ml, 후추 한 꼬집을 넣어 소스를 만든다.',
-        descriptionEn: 'In a bowl, whisk together 2 eggs, 1 slice of cheese, 50ml milk, and a pinch of pepper to make the sauce.',
+        descriptionEn:
+            'In a bowl, whisk together 2 eggs, 1 slice of cheese, 50ml milk, and a pinch of pepper to make the sauce.',
+        imageAsset: 'assets/images/steps/recipe_52_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '삶은 면을 베이컨 팬에 넣고 불을 끈 뒤 소스를 부어 잔열로 빠르게 버무린다.',
-        descriptionEn: 'Add the boiled pasta to the bacon pan, turn off the heat, then pour in the sauce and toss quickly with residual heat.',
+        descriptionEn:
+            'Add the boiled pasta to the bacon pan, turn off the heat, then pour in the sauce and toss quickly with residual heat.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_52_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '후추를 톡톡 뿌려 마무리한다.',
         descriptionEn: 'Finish with a sprinkle of pepper.',
+        imageAsset: 'assets/images/steps/recipe_52_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_53',
     title: '깔끔하고 신선한 황금비율 토마토 파스타',
     titleEn: 'Fresh Clean Golden-Ratio Tomato Pasta',
     emoji: '🍝',
@@ -2936,40 +3406,52 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '올리브유', quantity: 2, unit: '큰술'),
       RecipeIngredient(name: '바질', quantity: 2, unit: '장', isOptional: true),
       RecipeIngredient(name: '소금', quantity: 0.3, unit: '작은술'),
-      RecipeIngredient(name: '설탕', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '설탕', quantity: 0.5, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '끓는 물에 소금을 약간 넣고 스파게티면 100g을 8분간 삶는다.',
-        descriptionEn: 'Add a pinch of salt to boiling water and cook 100g spaghetti for 8 minutes.',
+        descriptionEn:
+            'Add a pinch of salt to boiling water and cook 100g spaghetti for 8 minutes.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_53_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '토마토 2개는 잘게 다지고, 마늘 8g과 양파 1/5개도 다진다.',
-        descriptionEn: 'Finely dice 2 tomatoes, and mince 8g garlic and 1/5 onion.',
+        descriptionEn:
+            'Finely dice 2 tomatoes, and mince 8g garlic and 1/5 onion.',
+        imageAsset: 'assets/images/steps/recipe_53_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '팬에 올리브유 2큰술을 두르고 마늘과 양파를 볶아 향을 낸다.',
-        descriptionEn: 'Heat 2 tbsp olive oil in a pan and stir-fry the garlic and onion to release their aroma.',
+        descriptionEn:
+            'Heat 2 tbsp olive oil in a pan and stir-fry the garlic and onion to release their aroma.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_53_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '다진 토마토를 넣고 소금 3/10작은술, 설탕 1/2작은술을 더해 10분간 졸인다.',
-        descriptionEn: 'Add the diced tomatoes with 3/10 tsp salt and 1/2 tsp sugar, and simmer for 10 minutes.',
+        descriptionEn:
+            'Add the diced tomatoes with 3/10 tsp salt and 1/2 tsp sugar, and simmer for 10 minutes.',
         timerSec: 600,
+        imageAsset: 'assets/images/steps/recipe_53_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '삶은 면을 소스에 넣고 버무린 뒤 바질을 올려 마무리한다.',
-        descriptionEn: 'Toss the boiled pasta into the sauce and finish with fresh basil leaves.',
+        descriptionEn:
+            'Toss the boiled pasta into the sauce and finish with fresh basil leaves.',
+        imageAsset: 'assets/images/steps/recipe_53_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_54',
     title: '진하고 부드러운 황금비율 버섯 리조또',
     titleEn: 'Rich Creamy Golden-Ratio Mushroom Risotto',
     emoji: '🍚',
@@ -2990,42 +3472,55 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '마늘', quantity: 5, unit: 'g'),
       RecipeIngredient(name: '버터', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '우유', quantity: 100, unit: 'ml', isOptional: true),
-      RecipeIngredient(name: '슬라이스치즈', quantity: 1, unit: '장', isOptional: true),
+      RecipeIngredient(
+          name: '슬라이스치즈', quantity: 1, unit: '장', isOptional: true),
       RecipeIngredient(name: '소금', quantity: 0.3, unit: '작은술'),
     ],
     steps: [
       RecipeStep(
         order: 1,
-        description: '쌀 1컵은 씻지 않고 그대로 준비하고, 양송이버섯 100g과 양파 3/10개, 마늘 5g을 잘게 썬다.',
-        descriptionEn: 'Prepare 1 cup of rice unwashed, and finely chop 100g mushrooms, 3/10 onion, and 5g garlic.',
+        description:
+            '쌀 1컵은 씻지 않고 그대로 준비하고, 양송이버섯 100g과 양파 3/10개, 마늘 5g을 잘게 썬다.',
+        descriptionEn:
+            'Prepare 1 cup of rice unwashed, and finely chop 100g mushrooms, 3/10 onion, and 5g garlic.',
+        imageAsset: 'assets/images/steps/recipe_54_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 버터 1큰술을 녹이고 양파와 마늘을 볶아 향을 낸다.',
-        descriptionEn: 'Melt 1 tbsp butter in a pot and stir-fry the onion and garlic to release their aroma.',
+        descriptionEn:
+            'Melt 1 tbsp butter in a pot and stir-fry the onion and garlic to release their aroma.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_54_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '양송이버섯과 쌀을 넣고 쌀알이 투명해질 때까지 볶는다.',
-        descriptionEn: 'Add the mushrooms and rice, and stir-fry until the rice grains turn translucent.',
+        descriptionEn:
+            'Add the mushrooms and rice, and stir-fry until the rice grains turn translucent.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_54_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '뜨거운 물을 조금씩 부어가며 저어주고, 쌀이 익을 때까지 15분간 끓인다.',
-        descriptionEn: 'Gradually add hot water while stirring, and simmer for 15 minutes until the rice is cooked through.',
+        descriptionEn:
+            'Gradually add hot water while stirring, and simmer for 15 minutes until the rice is cooked through.',
         timerSec: 900,
+        imageAsset: 'assets/images/steps/recipe_54_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '우유와 슬라이스치즈, 소금을 넣어 부드럽게 저은 뒤 마무리한다.',
-        descriptionEn: 'Stir in the milk, cheese, and salt until creamy to finish.',
+        descriptionEn:
+            'Stir in the milk, cheese, and salt until creamy to finish.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_54_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_55',
     title: '육즙 가득한 황금비율 함박스테이크',
     titleEn: 'Juicy Golden-Ratio Hamburg Steak',
     emoji: '🍔',
@@ -3054,39 +3549,52 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '양파 3/10개를 잘게 다져 팬에 투명해질 때까지 볶아 식힌다.',
-        descriptionEn: 'Finely chop 3/10 onion and stir-fry until translucent, then let it cool.',
+        descriptionEn:
+            'Finely chop 3/10 onion and stir-fry until translucent, then let it cool.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_55_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '빵가루 3큰술을 우유 2큰술에 불린다.',
         descriptionEn: 'Soak 3 tbsp breadcrumbs in 2 tbsp milk.',
+        imageAsset: 'assets/images/steps/recipe_55_2.png',
       ),
       RecipeStep(
         order: 3,
-        description: '다진 소고기 150g에 볶은 양파, 불린 빵가루, 계란 1개, 소금 3/10작은술, 후추 한 꼬집을 넣고 끈기가 생길 때까지 치댄다.',
-        descriptionEn: 'Combine 150g ground beef with the cooled onion, soaked breadcrumbs, 1 egg, 3/10 tsp salt, and a pinch of pepper, and knead until sticky.',
+        description:
+            '다진 소고기 150g에 볶은 양파, 불린 빵가루, 계란 1개, 소금 3/10작은술, 후추 한 꼬집을 넣고 끈기가 생길 때까지 치댄다.',
+        descriptionEn:
+            'Combine 150g ground beef with the cooled onion, soaked breadcrumbs, 1 egg, 3/10 tsp salt, and a pinch of pepper, and knead until sticky.',
+        imageAsset: 'assets/images/steps/recipe_55_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '반죽을 둥글납작하게 빚어 가운데를 살짝 눌러준다.',
-        descriptionEn: 'Shape the mixture into a flat oval patty and press a slight dimple in the center.',
+        descriptionEn:
+            'Shape the mixture into a flat oval patty and press a slight dimple in the center.',
+        imageAsset: 'assets/images/steps/recipe_55_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '달군 팬에 버터 1큰술을 두르고 중약불에서 앞뒤로 노릇하게 굽는다.',
-        descriptionEn: 'Heat 1 tbsp butter in a pan and cook the patty over medium-low heat until golden on both sides.',
+        descriptionEn:
+            'Heat 1 tbsp butter in a pan and cook the patty over medium-low heat until golden on both sides.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_55_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '뚜껑을 덮어 속까지 익힌 뒤 케첩을 곁들여 낸다.',
-        descriptionEn: 'Cover with a lid to cook through, then serve with ketchup on the side.',
+        descriptionEn:
+            'Cover with a lid to cook through, then serve with ketchup on the side.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_55_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_56',
     title: '알싸한 마늘향 황금비율 감바스 알 아히요',
     titleEn: 'Garlicky Golden-Ratio Gambas al Ajillo',
     emoji: '🍤',
@@ -3112,28 +3620,37 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '새우 200g은 껍질과 내장을 제거하고, 마늘 15g은 편으로 썬다.',
-        descriptionEn: 'Peel and devein 200g shrimp, and thinly slice 15g garlic.',
+        descriptionEn:
+            'Peel and devein 200g shrimp, and thinly slice 15g garlic.',
+        imageAsset: 'assets/images/steps/recipe_56_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '작은 팬에 올리브유 5큰술과 마늘, 페페론치노 3개를 넣고 약불에서 마늘이 노릇해질 때까지 끓인다.',
-        descriptionEn: 'In a small pan, combine 5 tbsp olive oil, garlic, and 3 dried chili peppers, and simmer over low heat until the garlic turns golden.',
+        descriptionEn:
+            'In a small pan, combine 5 tbsp olive oil, garlic, and 3 dried chili peppers, and simmer over low heat until the garlic turns golden.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_56_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '새우를 넣고 소금 3/10작은술로 간해 중불에서 2~3분간 익힌다.',
-        descriptionEn: 'Add the shrimp, season with 3/10 tsp salt, and cook over medium heat for 2-3 minutes.',
+        descriptionEn:
+            'Add the shrimp, season with 3/10 tsp salt, and cook over medium heat for 2-3 minutes.',
         timerSec: 150,
+        imageAsset: 'assets/images/steps/recipe_56_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '뜨거운 팬 그대로 바게트빵을 곁들여 올리브유에 찍어 먹는다.',
-        descriptionEn: 'Serve the pan hot with baguette slices for dipping in the olive oil.',
+        descriptionEn:
+            'Serve the pan hot with baguette slices for dipping in the olive oil.',
+        imageAsset: 'assets/images/steps/recipe_56_4.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_57',
     title: '달콤 고소한 황금비율 프렌치토스트',
     titleEn: 'Sweet Savory Golden-Ratio French Toast',
     emoji: '🍞',
@@ -3153,35 +3670,45 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '우유', quantity: 100, unit: 'ml'),
       RecipeIngredient(name: '설탕', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '버터', quantity: 1, unit: '큰술'),
-      RecipeIngredient(name: '시나몬가루', quantity: 1, unit: '꼬집', isOptional: true),
-      RecipeIngredient(name: '메이플시럽', quantity: 1, unit: '큰술', isOptional: true),
+      RecipeIngredient(
+          name: '시나몬가루', quantity: 1, unit: '꼬집', isOptional: true),
+      RecipeIngredient(
+          name: '메이플시럽', quantity: 1, unit: '큰술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '볼에 계란 2개, 우유 100ml, 설탕 1큰술, 시나몬가루 한 꼬집을 넣어 잘 섞는다.',
-        descriptionEn: 'In a bowl, whisk together 2 eggs, 100ml milk, 1 tbsp sugar, and a pinch of cinnamon.',
+        descriptionEn:
+            'In a bowl, whisk together 2 eggs, 100ml milk, 1 tbsp sugar, and a pinch of cinnamon.',
+        imageAsset: 'assets/images/steps/recipe_57_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '식빵 2장을 계란물에 앞뒤로 충분히 적셔 5분간 스며들게 둔다.',
-        descriptionEn: 'Soak 2 slices of bread thoroughly on both sides in the egg mixture and let sit for 5 minutes to absorb.',
+        descriptionEn:
+            'Soak 2 slices of bread thoroughly on both sides in the egg mixture and let sit for 5 minutes to absorb.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_57_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 버터 1큰술을 녹이고 약불에서 빵을 앞뒤로 노릇하게 굽는다.',
-        descriptionEn: 'Melt 1 tbsp butter in a pan and cook the bread over low heat until golden on both sides.',
+        descriptionEn:
+            'Melt 1 tbsp butter in a pan and cook the bread over low heat until golden on both sides.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_57_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '접시에 담고 메이플시럽을 뿌려 마무리한다.',
         descriptionEn: 'Plate and drizzle with maple syrup to finish.',
+        imageAsset: 'assets/images/steps/recipe_57_4.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_58',
     title: '폭신폭신한 황금비율 팬케이크',
     titleEn: 'Fluffy Golden-Ratio Pancakes',
     emoji: '🥞',
@@ -3200,43 +3727,56 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '계란', quantity: 1, unit: '개'),
       RecipeIngredient(name: '우유', quantity: 150, unit: 'ml'),
       RecipeIngredient(name: '버터', quantity: 1, unit: '큰술'),
-      RecipeIngredient(name: '메이플시럽', quantity: 2, unit: '큰술', isOptional: true),
+      RecipeIngredient(
+          name: '메이플시럽', quantity: 2, unit: '큰술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '볼에 팬케이크가루 150g, 계란 1개, 우유 150ml를 넣고 덩어리 없이 섞는다.',
-        descriptionEn: 'In a bowl, combine 150g pancake mix, 1 egg, and 150ml milk, and mix until smooth.',
+        descriptionEn:
+            'In a bowl, combine 150g pancake mix, 1 egg, and 150ml milk, and mix until smooth.',
+        imageAsset: 'assets/images/steps/recipe_58_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '반죽을 10분간 그대로 두어 글루텐을 안정시킨다.',
-        descriptionEn: 'Let the batter rest for 10 minutes to relax the gluten.',
+        descriptionEn:
+            'Let the batter rest for 10 minutes to relax the gluten.',
         timerSec: 600,
+        imageAsset: 'assets/images/steps/recipe_58_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 버터를 살짝 두르고 약불에서 반죽을 동그랗게 부어 굽는다.',
-        descriptionEn: 'Lightly grease a heated pan with butter and pour the batter into rounds over low heat.',
+        descriptionEn:
+            'Lightly grease a heated pan with butter and pour the batter into rounds over low heat.',
+        imageAsset: 'assets/images/steps/recipe_58_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '표면에 기포가 올라오면 뒤집어 반대쪽도 노릇하게 굽는다.',
-        descriptionEn: 'Once bubbles appear on the surface, flip and cook the other side until golden.',
+        descriptionEn:
+            'Once bubbles appear on the surface, flip and cook the other side until golden.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_58_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '접시에 쌓아 담고 메이플시럽을 뿌려 마무리한다.',
-        descriptionEn: 'Stack on a plate and drizzle with maple syrup to finish.',
+        descriptionEn:
+            'Stack on a plate and drizzle with maple syrup to finish.',
+        imageAsset: 'assets/images/steps/recipe_58_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_59',
     title: '든든하고 풍성한 황금비율 라자냐',
     titleEn: 'Hearty Golden-Ratio Lasagna',
     emoji: '🍝',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Lasagna_4.jpg/960px-Lasagna_4.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Lasagna_4.jpg/960px-Lasagna_4.jpg',
     cookTimeMin: 50,
     difficulty: '상',
     cuisineType: '양식',
@@ -3259,35 +3799,47 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '라자냐면 6장을 끓는 물에 10분간 삶아 건진다.',
-        descriptionEn: 'Boil 6 sheets of lasagna noodles for 10 minutes and drain.',
+        descriptionEn:
+            'Boil 6 sheets of lasagna noodles for 10 minutes and drain.',
         timerSec: 600,
+        imageAsset: 'assets/images/steps/recipe_59_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '팬에 다진 양파 3/10개, 마늘 8g, 다진 소고기 150g을 넣어 볶은 뒤 토마토소스 200g을 더해 끓인다.',
-        descriptionEn: 'Stir-fry 3/10 onion, 8g garlic, and 150g ground beef in a pan, then add 200g tomato sauce and simmer.',
+        description:
+            '팬에 다진 양파 3/10개, 마늘 8g, 다진 소고기 150g을 넣어 볶은 뒤 토마토소스 200g을 더해 끓인다.',
+        descriptionEn:
+            'Stir-fry 3/10 onion, 8g garlic, and 150g ground beef in a pan, then add 200g tomato sauce and simmer.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_59_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '작은 냄비에 버터 1큰술과 우유 200ml를 데워 부드러운 화이트소스를 만든다.',
-        descriptionEn: 'Warm 1 tbsp butter and 200ml milk in a small pot to make a light white sauce.',
+        descriptionEn:
+            'Warm 1 tbsp butter and 200ml milk in a small pot to make a light white sauce.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_59_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '내열 용기에 면, 고기소스, 화이트소스, 치즈 순으로 층층이 쌓는 것을 2번 반복한다.',
-        descriptionEn: 'In an oven-safe dish, layer noodles, meat sauce, white sauce, and cheese, repeating the order twice.',
+        descriptionEn:
+            'In an oven-safe dish, layer noodles, meat sauce, white sauce, and cheese, repeating the order twice.',
+        imageAsset: 'assets/images/steps/recipe_59_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '180도로 예열한 오븐에서 20분간 노릇하게 굽는다.',
-        descriptionEn: 'Bake in an oven preheated to 180°C for 20 minutes until golden.',
+        descriptionEn:
+            'Bake in an oven preheated to 180°C for 20 minutes until golden.',
         timerSec: 1200,
+        imageAsset: 'assets/images/steps/recipe_59_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_60',
     title: '진한 토마토향 황금비율 미트볼 스파게티',
     titleEn: 'Rich Tomato Golden-Ratio Spaghetti and Meatballs',
     emoji: '🍝',
@@ -3314,35 +3866,46 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '다진 소고기 150g에 빵가루 2큰술, 계란 1개, 다진 양파 1/5개, 소금 3/10작은술을 넣고 치대 완자를 빚는다.',
-        descriptionEn: 'Combine 150g ground beef with 2 tbsp breadcrumbs, 1 egg, 1/5 minced onion, and 3/10 tsp salt, knead, and shape into meatballs.',
+        description:
+            '다진 소고기 150g에 빵가루 2큰술, 계란 1개, 다진 양파 1/5개, 소금 3/10작은술을 넣고 치대 완자를 빚는다.',
+        descriptionEn:
+            'Combine 150g ground beef with 2 tbsp breadcrumbs, 1 egg, 1/5 minced onion, and 3/10 tsp salt, knead, and shape into meatballs.',
+        imageAsset: 'assets/images/steps/recipe_60_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '팬에 기름을 살짝 두르고 완자를 굴려가며 겉면을 노릇하게 굽는다.',
-        descriptionEn: 'Lightly oil a pan and roll the meatballs while cooking until golden on the outside.',
+        descriptionEn:
+            'Lightly oil a pan and roll the meatballs while cooking until golden on the outside.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_60_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '다진 마늘 8g을 넣고 향을 낸 뒤 토마토소스 200g을 부어 10분간 졸인다.',
-        descriptionEn: 'Add 8g minced garlic to release its aroma, then pour in 200g tomato sauce and simmer for 10 minutes.',
+        descriptionEn:
+            'Add 8g minced garlic to release its aroma, then pour in 200g tomato sauce and simmer for 10 minutes.',
         timerSec: 600,
+        imageAsset: 'assets/images/steps/recipe_60_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '끓는 물에 스파게티면 100g을 8분간 삶는다.',
         descriptionEn: 'Boil 100g spaghetti in boiling water for 8 minutes.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_60_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '삶은 면을 그릇에 담고 미트볼과 소스를 올려 낸다.',
-        descriptionEn: 'Place the boiled pasta in a bowl and top with the meatballs and sauce.',
+        descriptionEn:
+            'Place the boiled pasta in a bowl and top with the meatballs and sauce.',
+        imageAsset: 'assets/images/steps/recipe_60_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_61',
     title: '든든하고 부드러운 황금비율 클램차우더',
     titleEn: 'Hearty Creamy Golden-Ratio Clam Chowder',
     emoji: '🍲',
@@ -3371,37 +3934,47 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '감자 1/2개와 양파 3/10개를 작게 깍둑 썬다.',
         descriptionEn: 'Dice 1/2 potato and 3/10 onion into small cubes.',
+        imageAsset: 'assets/images/steps/recipe_61_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 버터 1큰술을 녹이고 양파와 감자를 볶다가 밀가루 1큰술을 넣어 골고루 볶는다.',
-        descriptionEn: 'Melt 1 tbsp butter in a pot, stir-fry the onion and potato, then add 1 tbsp flour and mix evenly.',
+        descriptionEn:
+            'Melt 1 tbsp butter in a pot, stir-fry the onion and potato, then add 1 tbsp flour and mix evenly.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_61_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '물 1컵(200ml)을 조금씩 부어가며 덩어리 없이 풀고 감자가 익을 때까지 끓인다.',
-        descriptionEn: 'Gradually add 1 cup (200ml) water while stirring to avoid lumps, and simmer until the potato is cooked.',
+        descriptionEn:
+            'Gradually add 1 cup (200ml) water while stirring to avoid lumps, and simmer until the potato is cooked.',
         timerSec: 600,
+        imageAsset: 'assets/images/steps/recipe_61_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '조개살 150g과 우유 200ml를 넣고 끓지 않도록 약불에서 데운다.',
-        descriptionEn: 'Add 150g clam meat and 200ml milk, and warm gently over low heat without boiling.',
+        descriptionEn:
+            'Add 150g clam meat and 200ml milk, and warm gently over low heat without boiling.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_61_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '소금과 후추로 간을 맞춰 마무리한다.',
         descriptionEn: 'Season with salt and pepper to finish.',
+        imageAsset: 'assets/images/steps/recipe_61_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_62',
     title: '달콤 짭짤한 황금비율 규동',
     titleEn: 'Sweet Savory Golden-Ratio Gyudon',
     emoji: '🍚',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Gyuu-don_001.jpg/960px-Gyuu-don_001.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Gyuu-don_001.jpg/960px-Gyuu-don_001.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '일식',
@@ -3425,36 +3998,46 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '소고기 등심 150g을 얇게 저미고 양파 1/2개를 채 썬다.',
         descriptionEn: 'Thinly slice 150g beef sirloin and julienne 1/2 onion.',
+        imageAsset: 'assets/images/steps/recipe_62_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 물 1/2컵(100ml), 간장 2큰술, 미림 1큰술, 설탕 1큰술을 넣고 끓인다.',
-        descriptionEn: 'In a pot, combine 1/2 cup (100ml) water, 2 tbsp soy sauce, 1 tbsp mirin, and 1 tbsp sugar, and bring to a boil.',
+        descriptionEn:
+            'In a pot, combine 1/2 cup (100ml) water, 2 tbsp soy sauce, 1 tbsp mirin, and 1 tbsp sugar, and bring to a boil.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_62_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '양파를 넣고 부드러워질 때까지 끓인 뒤 소고기를 넣어 익힌다.',
-        descriptionEn: 'Add the onion and simmer until softened, then add the beef and cook through.',
+        descriptionEn:
+            'Add the onion and simmer until softened, then add the beef and cook through.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_62_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '밥 1공기 위에 소고기와 양파, 국물을 올린다.',
         descriptionEn: 'Top 1 bowl of rice with the beef, onion, and broth.',
+        imageAsset: 'assets/images/steps/recipe_62_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '반숙 계란과 대파를 고명으로 올려 마무리한다.',
-        descriptionEn: 'Garnish with a soft-boiled egg and green onion to finish.',
+        descriptionEn:
+            'Garnish with a soft-boiled egg and green onion to finish.',
+        imageAsset: 'assets/images/steps/recipe_62_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_63',
     title: '보들보들한 황금비율 오야코동',
     titleEn: 'Silky Golden-Ratio Oyakodon',
     emoji: '🍚',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Oyakodon_003.jpg/960px-Oyakodon_003.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Oyakodon_003.jpg/960px-Oyakodon_003.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '일식',
@@ -3477,34 +4060,46 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '닭다리살 150g을 한입 크기로 썰고 양파 3/10개를 채 썬다.',
-        descriptionEn: 'Cut 150g chicken thigh into bite-sized pieces and julienne 3/10 onion.',
+        descriptionEn:
+            'Cut 150g chicken thigh into bite-sized pieces and julienne 3/10 onion.',
+        imageAsset: 'assets/images/steps/recipe_63_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '작은 팬에 물 1/3컵(70ml), 간장 1과 1/2큰술, 미림 1큰술, 설탕 1/2큰술을 넣고 끓인다.',
-        descriptionEn: 'In a small pan, combine 1/3 cup (70ml) water, 1 1/2 tbsp soy sauce, 1 tbsp mirin, and 1/2 tbsp sugar, and bring to a boil.',
+        description:
+            '작은 팬에 물 1/3컵(70ml), 간장 1과 1/2큰술, 미림 1큰술, 설탕 1/2큰술을 넣고 끓인다.',
+        descriptionEn:
+            'In a small pan, combine 1/3 cup (70ml) water, 1 1/2 tbsp soy sauce, 1 tbsp mirin, and 1/2 tbsp sugar, and bring to a boil.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_63_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '양파와 닭다리살을 넣고 닭고기가 익을 때까지 끓인다.',
-        descriptionEn: 'Add the onion and chicken, and simmer until the chicken is cooked through.',
+        descriptionEn:
+            'Add the onion and chicken, and simmer until the chicken is cooked through.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_63_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '계란 2개를 풀어 반은 두르고 반숙이 되면 나머지를 부어 뚜껑을 덮는다.',
-        descriptionEn: 'Beat 2 eggs, pour in half, and once softly set, pour in the rest and cover with a lid.',
+        descriptionEn:
+            'Beat 2 eggs, pour in half, and once softly set, pour in the rest and cover with a lid.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_63_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '밥 1공기 위에 통째로 미끄러뜨리듯 올리고 대파를 뿌려 마무리한다.',
-        descriptionEn: 'Slide the whole mixture onto 1 bowl of rice and sprinkle with green onion to finish.',
+        descriptionEn:
+            'Slide the whole mixture onto 1 bowl of rice and sprinkle with green onion to finish.',
+        imageAsset: 'assets/images/steps/recipe_63_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_64',
     title: '겉바속촉 황금비율 가라아게',
     titleEn: 'Crispy Juicy Golden-Ratio Karaage',
     emoji: '🍗',
@@ -3532,33 +4127,43 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '닭다리살 300g을 한입 크기로 썬다.',
         descriptionEn: 'Cut 300g chicken thigh into bite-sized pieces.',
+        imageAsset: 'assets/images/steps/recipe_64_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '간장 1과 1/2큰술, 미림 1큰술, 다진 마늘 8g, 다진 생강 5g을 섞어 닭고기를 20분간 재운다.',
-        descriptionEn: 'Mix 1 1/2 tbsp soy sauce, 1 tbsp mirin, 8g minced garlic, and 5g minced ginger, and marinate the chicken for 20 minutes.',
+        description:
+            '간장 1과 1/2큰술, 미림 1큰술, 다진 마늘 8g, 다진 생강 5g을 섞어 닭고기를 20분간 재운다.',
+        descriptionEn:
+            'Mix 1 1/2 tbsp soy sauce, 1 tbsp mirin, 8g minced garlic, and 5g minced ginger, and marinate the chicken for 20 minutes.',
         timerSec: 1200,
+        imageAsset: 'assets/images/steps/recipe_64_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '재운 닭고기에 전분가루 4큰술을 고루 묻힌다.',
         descriptionEn: 'Coat the marinated chicken evenly with 4 tbsp starch.',
+        imageAsset: 'assets/images/steps/recipe_64_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '식용유 3큰술을 170도로 달궈 닭고기를 5분간 튀긴다.',
-        descriptionEn: 'Heat 3 tbsp cooking oil to 170°C and deep-fry the chicken for 5 minutes.',
+        descriptionEn:
+            'Heat 3 tbsp cooking oil to 170°C and deep-fry the chicken for 5 minutes.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_64_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '한 번 건졌다가 다시 2분간 튀겨 겉을 바삭하게 마무리한다.',
-        descriptionEn: 'Remove briefly, then fry again for 2 minutes to make the outside extra crispy.',
+        descriptionEn:
+            'Remove briefly, then fry again for 2 minutes to make the outside extra crispy.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_64_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_65',
     title: '든든한 황금비율 가케우동',
     titleEn: 'Comforting Golden-Ratio Kake Udon',
     emoji: '🍜',
@@ -3584,37 +4189,48 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '냄비에 멸치육수 500ml를 붓고 끓인다.',
-        descriptionEn: 'Pour 500ml anchovy stock into a pot and bring to a boil.',
+        descriptionEn:
+            'Pour 500ml anchovy stock into a pot and bring to a boil.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_65_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '간장 1과 1/2큰술과 미림 1큰술을 넣어 간을 맞춘다.',
         descriptionEn: 'Season with 1 1/2 tbsp soy sauce and 1 tbsp mirin.',
+        imageAsset: 'assets/images/steps/recipe_65_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '유부 2장을 넣고 한소끔 더 끓인다.',
-        descriptionEn: 'Add 2 pieces of fried tofu pouch and simmer a bit longer.',
+        descriptionEn:
+            'Add 2 pieces of fried tofu pouch and simmer a bit longer.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_65_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '따로 삶은 우동면 1인분을 그릇에 담고 뜨거운 국물을 붓는다.',
-        descriptionEn: 'Place 1 serving of separately boiled udon noodles in a bowl and pour the hot broth over.',
+        descriptionEn:
+            'Place 1 serving of separately boiled udon noodles in a bowl and pour the hot broth over.',
+        imageAsset: 'assets/images/steps/recipe_65_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '대파 1/5단을 송송 썰어 올려 마무리한다.',
-        descriptionEn: 'Top with thinly sliced 1/5 bunch of green onion to finish.',
+        descriptionEn:
+            'Top with thinly sliced 1/5 bunch of green onion to finish.',
+        imageAsset: 'assets/images/steps/recipe_65_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_66',
     title: '진한 국물 황금비율 스키야키',
     titleEn: 'Rich Broth Golden-Ratio Sukiyaki',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Sukiyaki_01.jpg/960px-Sukiyaki_01.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Sukiyaki_01.jpg/960px-Sukiyaki_01.jpg',
     cookTimeMin: 30,
     difficulty: '중',
     cuisineType: '일식',
@@ -3637,33 +4253,43 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '두부 1/2모는 큼직하게 썰고, 대파 3/10단은 어슷 썰며, 팽이버섯은 밑동을 잘라 정리한다.',
-        descriptionEn: 'Cut 1/2 block of tofu into large pieces, diagonally slice 3/10 bunch of green onion, and trim the enoki mushrooms.',
+        descriptionEn:
+            'Cut 1/2 block of tofu into large pieces, diagonally slice 3/10 bunch of green onion, and trim the enoki mushrooms.',
+        imageAsset: 'assets/images/steps/recipe_66_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 물 1컵(200ml), 간장 2큰술, 설탕 1과 1/2큰술, 미림 2큰술을 넣고 끓인다.',
-        descriptionEn: 'In a pot, combine 1 cup (200ml) water, 2 tbsp soy sauce, 1 1/2 tbsp sugar, and 2 tbsp mirin, and bring to a boil.',
+        descriptionEn:
+            'In a pot, combine 1 cup (200ml) water, 2 tbsp soy sauce, 1 1/2 tbsp sugar, and 2 tbsp mirin, and bring to a boil.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_66_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '대파와 두부, 팽이버섯을 넣고 끓으면 소고기 등심 150g을 얇게 펴 넣는다.',
-        descriptionEn: 'Add the green onion, tofu, and mushrooms, and once boiling, add thin slices of 150g beef sirloin.',
+        descriptionEn:
+            'Add the green onion, tofu, and mushrooms, and once boiling, add thin slices of 150g beef sirloin.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_66_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '고기가 살짝 익으면 바로 건져 그릇에 담는다.',
-        descriptionEn: 'Once the beef is lightly cooked, remove it right away and place it in a bowl.',
+        descriptionEn:
+            'Once the beef is lightly cooked, remove it right away and place it in a bowl.',
+        imageAsset: 'assets/images/steps/recipe_66_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '풀어둔 계란에 찍어가며 뜨거울 때 먹는다.',
         descriptionEn: 'Dip in beaten egg and enjoy while hot.',
+        imageAsset: 'assets/images/steps/recipe_66_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_67',
     title: '바삭 촉촉한 황금비율 오코노미야키',
     titleEn: 'Crispy Moist Golden-Ratio Okonomiyaki',
     emoji: '🥞',
@@ -3683,7 +4309,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '계란', quantity: 1, unit: '개'),
       RecipeIngredient(name: '삼겹살', quantity: 60, unit: 'g', isOptional: true),
       RecipeIngredient(name: '마요네즈', quantity: 2, unit: '큰술', isOptional: true),
-      RecipeIngredient(name: '돈까스소스', quantity: 2, unit: '큰술', isOptional: true),
+      RecipeIngredient(
+          name: '돈까스소스', quantity: 2, unit: '큰술', isOptional: true),
       RecipeIngredient(name: '가쓰오부시', quantity: 1, unit: '줌', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 1, unit: '큰술'),
     ],
@@ -3692,31 +4319,41 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '양배추 200g을 가늘게 채 썬다.',
         descriptionEn: 'Finely shred 200g cabbage.',
+        imageAsset: 'assets/images/steps/recipe_67_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '볼에 부침가루 100g, 물 100ml, 계란 1개를 섞고 양배추를 넣어 반죽을 만든다.',
-        descriptionEn: 'Mix 100g pancake flour, 100ml water, and 1 egg in a bowl, then fold in the cabbage to make the batter.',
+        descriptionEn:
+            'Mix 100g pancake flour, 100ml water, and 1 egg in a bowl, then fold in the cabbage to make the batter.',
+        imageAsset: 'assets/images/steps/recipe_67_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 식용유 1큰술을 두르고 반죽을 동그랗게 올린 뒤 삼겹살 60g을 얹는다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan, pour the batter into a round shape, and top with 60g pork belly.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan, pour the batter into a round shape, and top with 60g pork belly.',
+        imageAsset: 'assets/images/steps/recipe_67_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '중약불에서 5분씩 앞뒤로 뒤집어가며 속까지 익힌다.',
-        descriptionEn: 'Cook over medium-low heat, flipping every 5 minutes, until cooked through.',
+        descriptionEn:
+            'Cook over medium-low heat, flipping every 5 minutes, until cooked through.',
         timerSec: 600,
+        imageAsset: 'assets/images/steps/recipe_67_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '돈까스소스와 마요네즈를 뿌리고 가쓰오부시를 올려 마무리한다.',
-        descriptionEn: 'Drizzle with tonkatsu sauce and mayonnaise, and top with bonito flakes to finish.',
+        descriptionEn:
+            'Drizzle with tonkatsu sauce and mayonnaise, and top with bonito flakes to finish.',
+        imageAsset: 'assets/images/steps/recipe_67_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_68',
     title: '시원하고 쫄깃한 황금비율 자루소바',
     titleEn: 'Refreshing Chewy Golden-Ratio Zaru Soba',
     emoji: '🍜',
@@ -3737,38 +4374,50 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '미림', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '대파', quantity: 0.1, unit: '단', isOptional: true),
       RecipeIngredient(name: '김', quantity: 0.2, unit: '봉', isOptional: true),
-      RecipeIngredient(name: '고추냉이', quantity: 1, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '고추냉이', quantity: 1, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '끓는 물에 메밀면 1인분을 3분간 삶는다.',
-        descriptionEn: 'Boil 1 serving of soba noodles in boiling water for 3 minutes.',
+        descriptionEn:
+            'Boil 1 serving of soba noodles in boiling water for 3 minutes.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_68_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '삶은 면을 찬물에 여러 번 헹궈 전분기를 빼고 물기를 뺀다.',
-        descriptionEn: 'Rinse the boiled noodles several times in cold water to remove excess starch, then drain.',
+        descriptionEn:
+            'Rinse the boiled noodles several times in cold water to remove excess starch, then drain.',
+        imageAsset: 'assets/images/steps/recipe_68_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '멸치육수 150ml에 간장 2큰술, 미림 1큰술을 섞어 차갑게 식힌 소스를 만든다.',
-        descriptionEn: 'Mix 150ml anchovy stock with 2 tbsp soy sauce and 1 tbsp mirin, and chill to make the dipping sauce.',
+        descriptionEn:
+            'Mix 150ml anchovy stock with 2 tbsp soy sauce and 1 tbsp mirin, and chill to make the dipping sauce.',
+        imageAsset: 'assets/images/steps/recipe_68_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '면을 대나무 채반에 담고 채 썬 김과 대파를 올린다.',
-        descriptionEn: 'Arrange the noodles on a bamboo tray and top with shredded seaweed and green onion.',
+        descriptionEn:
+            'Arrange the noodles on a bamboo tray and top with shredded seaweed and green onion.',
+        imageAsset: 'assets/images/steps/recipe_68_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '고추냉이를 곁들여 소스에 찍어 먹는다.',
-        descriptionEn: 'Serve with wasabi on the side for dipping in the sauce.',
+        descriptionEn:
+            'Serve with wasabi on the side for dipping in the sauce.',
+        imageAsset: 'assets/images/steps/recipe_68_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_69',
     title: '바삭 두툼한 황금비율 돈카츠동',
     titleEn: 'Crispy Hearty Golden-Ratio Katsudon',
     emoji: '🍚',
@@ -3797,38 +4446,51 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '돼지고기 등심 150g에 칼집을 살짝 넣고, 계란 1개와 빵가루 4큰술로 튀김옷을 입힌다.',
-        descriptionEn: 'Lightly score 150g pork loin, then coat with 1 beaten egg and 4 tbsp breadcrumbs.',
+        descriptionEn:
+            'Lightly score 150g pork loin, then coat with 1 beaten egg and 4 tbsp breadcrumbs.',
+        imageAsset: 'assets/images/steps/recipe_69_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '식용유 3큰술을 달궈 돈카츠를 앞뒤로 노릇하게 튀긴다.',
-        descriptionEn: 'Heat 3 tbsp cooking oil and fry the pork cutlet until golden on both sides.',
+        descriptionEn:
+            'Heat 3 tbsp cooking oil and fry the pork cutlet until golden on both sides.',
         timerSec: 360,
+        imageAsset: 'assets/images/steps/recipe_69_2.png',
       ),
       RecipeStep(
         order: 3,
-        description: '작은 팬에 양파 1/5개, 물 1/3컵(70ml), 간장 1과 1/2큰술, 미림 1큰술, 설탕 1/2큰술을 넣고 끓인다.',
-        descriptionEn: 'In a small pan, combine 1/5 onion, 1/3 cup (70ml) water, 1 1/2 tbsp soy sauce, 1 tbsp mirin, and 1/2 tbsp sugar, and bring to a boil.',
+        description:
+            '작은 팬에 양파 1/5개, 물 1/3컵(70ml), 간장 1과 1/2큰술, 미림 1큰술, 설탕 1/2큰술을 넣고 끓인다.',
+        descriptionEn:
+            'In a small pan, combine 1/5 onion, 1/3 cup (70ml) water, 1 1/2 tbsp soy sauce, 1 tbsp mirin, and 1/2 tbsp sugar, and bring to a boil.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_69_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '튀긴 돈카츠를 썰어 넣고 남은 계란 1개를 풀어 반숙으로 익힌다.',
-        descriptionEn: 'Add the sliced pork cutlet, then pour in the remaining beaten egg and cook until softly set.',
+        descriptionEn:
+            'Add the sliced pork cutlet, then pour in the remaining beaten egg and cook until softly set.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_69_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '밥 1공기 위에 통째로 올려 마무리한다.',
-        descriptionEn: 'Slide the whole mixture on top of 1 bowl of rice to finish.',
+        descriptionEn:
+            'Slide the whole mixture on top of 1 bowl of rice to finish.',
+        imageAsset: 'assets/images/steps/recipe_69_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_70',
     title: '구수한 황금비율 미소시루',
     titleEn: 'Savory Golden-Ratio Miso Soup',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Miso_Soup_001.jpg/960px-Miso_Soup_001.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Miso_Soup_001.jpg/960px-Miso_Soup_001.jpg',
     cookTimeMin: 10,
     difficulty: '하',
     cuisineType: '일식',
@@ -3848,34 +4510,43 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '미역 5g을 찬물에 5분간 불려 물기를 짠다.',
-        descriptionEn: 'Soak 5g dried seaweed in cold water for 5 minutes, then squeeze out the water.',
+        descriptionEn:
+            'Soak 5g dried seaweed in cold water for 5 minutes, then squeeze out the water.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_70_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 멸치육수 400ml를 붓고 끓인다.',
-        descriptionEn: 'Pour 400ml anchovy stock into a pot and bring to a boil.',
+        descriptionEn:
+            'Pour 400ml anchovy stock into a pot and bring to a boil.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_70_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '된장 1큰술을 체에 걸러 풀어 넣는다.',
         descriptionEn: 'Strain and dissolve 1 tbsp miso paste into the broth.',
+        imageAsset: 'assets/images/steps/recipe_70_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '두부 1/5모와 불린 미역을 넣고 살짝 더 끓인다.',
-        descriptionEn: 'Add 1/5 block of tofu and the soaked seaweed, and simmer briefly.',
+        descriptionEn:
+            'Add 1/5 block of tofu and the soaked seaweed, and simmer briefly.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_70_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '대파를 뿌려 마무리한다.',
         descriptionEn: 'Sprinkle with green onion to finish.',
+        imageAsset: 'assets/images/steps/recipe_70_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_71',
     title: '깊고 달콤한 황금비율 카레라이스',
     titleEn: 'Deep Sweet Golden-Ratio Japanese Curry Rice',
     emoji: '🍛',
@@ -3903,30 +4574,39 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '소고기 등심 150g과 감자 1/2개, 당근 3/10개, 양파 1/2개를 한입 크기로 썬다.',
-        descriptionEn: 'Cut 150g beef sirloin, 1/2 potato, 3/10 carrot, and 1/2 onion into bite-sized pieces.',
+        descriptionEn:
+            'Cut 150g beef sirloin, 1/2 potato, 3/10 carrot, and 1/2 onion into bite-sized pieces.',
+        imageAsset: 'assets/images/steps/recipe_71_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '냄비에 식용유 1큰술과 버터 1큰술을 녹이고 소고기와 양파를 볶는다.',
-        descriptionEn: 'Melt 1 tbsp cooking oil and 1 tbsp butter in a pot, and stir-fry the beef and onion.',
+        descriptionEn:
+            'Melt 1 tbsp cooking oil and 1 tbsp butter in a pot, and stir-fry the beef and onion.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_71_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '감자와 당근을 넣고 물 2컵(400ml)을 부어 15분간 끓인다.',
-        descriptionEn: 'Add the potato and carrot, pour in 2 cups (400ml) of water, and simmer for 15 minutes.',
+        descriptionEn:
+            'Add the potato and carrot, pour in 2 cups (400ml) of water, and simmer for 15 minutes.',
         timerSec: 900,
+        imageAsset: 'assets/images/steps/recipe_71_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '불을 끄고 카레가루 100g을 넣어 완전히 녹인 뒤 다시 약불에서 5분간 끓인다.',
-        descriptionEn: 'Turn off the heat, dissolve in 100g curry roux completely, then simmer again over low heat for 5 minutes.',
+        descriptionEn:
+            'Turn off the heat, dissolve in 100g curry roux completely, then simmer again over low heat for 5 minutes.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_71_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '밥 1공기 위에 카레를 부어 마무리한다.',
         descriptionEn: 'Pour the curry over 1 bowl of rice to finish.',
+        imageAsset: 'assets/images/steps/recipe_71_5.png',
       ),
     ],
   ),
@@ -3934,10 +4614,12 @@ const recipeCatalog = <Recipe>[
   // 코팅하기, 대파 육수 내기)을 참고해 구성 — 조리 단계 지문은 앱 고유의 문체로
   // 새로 작성했다. 화면에는 출처가 노출되지 않는다.
   Recipe(
+    id: 'recipe_72',
     title: '깊고 진한 황금비율 김치찌개',
     titleEn: 'Deep Rich Golden-Ratio Kimchi Jjigae',
     emoji: '🍲',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Korean.cuisine-Kimchi_jjigae-01.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/d/d6/Korean.cuisine-Kimchi_jjigae-01.jpg',
     cookTimeMin: 25,
     difficulty: '하',
     cuisineType: '한식',
@@ -3960,40 +4642,54 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '삼겹살 120g을 한입 크기로 썰어 냄비에 물 2컵(400ml)과 함께 넣고 중약불에서 고기 기름이 뽀얗게 우러날 때까지 충분히 끓인다.',
-        descriptionEn: 'Cut 120g pork belly into bite-sized pieces, add to a pot with 2 cups (400ml) water, and simmer over medium-low heat until the fat renders into the broth.',
+        description:
+            '삼겹살 120g을 한입 크기로 썰어 냄비에 물 2컵(400ml)과 함께 넣고 중약불에서 고기 기름이 뽀얗게 우러날 때까지 충분히 끓인다.',
+        descriptionEn:
+            'Cut 120g pork belly into bite-sized pieces, add to a pot with 2 cups (400ml) water, and simmer over medium-low heat until the fat renders into the broth.',
         timerSec: 600,
+        imageAsset: 'assets/images/steps/recipe_72_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '김치 150g을 한입 크기로 썰어 넣고 함께 끓여 국물에 감칠맛이 배어들게 한다.',
-        descriptionEn: 'Add 150g kimchi cut into bite-sized pieces and simmer together to infuse the broth with flavor.',
+        descriptionEn:
+            'Add 150g kimchi cut into bite-sized pieces and simmer together to infuse the broth with flavor.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_72_2.png',
       ),
       RecipeStep(
         order: 3,
-        description: '새우젓 1큰술과 국간장 1큰술로 기본 간을 하고, 고춧가루 1과 1/2큰술과 다진 마늘 10g을 더해 칼칼하게 끓인다.',
-        descriptionEn: 'Season with 1 tbsp salted shrimp and 1 tbsp guk-ganjang, then add 1 1/2 tbsp gochugaru and 10g minced garlic for a spicy kick.',
+        description:
+            '새우젓 1큰술과 국간장 1큰술로 기본 간을 하고, 고춧가루 1과 1/2큰술과 다진 마늘 10g을 더해 칼칼하게 끓인다.',
+        descriptionEn:
+            'Season with 1 tbsp salted shrimp and 1 tbsp guk-ganjang, then add 1 1/2 tbsp gochugaru and 10g minced garlic for a spicy kick.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_72_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '두부 1/4모를 큼직하게 썰어 넣고 한소끔 더 끓인다.',
-        descriptionEn: 'Add 1/4 block of tofu cut into large pieces and simmer a bit longer.',
+        descriptionEn:
+            'Add 1/4 block of tofu cut into large pieces and simmer a bit longer.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_72_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '대파 1/2대와 청양고추 1개를 어슷 썰어 올리고 불을 끈다.',
-        descriptionEn: 'Top with 1/2 stalk of green onion and 1 cheongyang chili pepper, both diagonally sliced, and turn off the heat.',
+        descriptionEn:
+            'Top with 1/2 stalk of green onion and 1 cheongyang chili pepper, both diagonally sliced, and turn off the heat.',
+        imageAsset: 'assets/images/steps/recipe_72_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_73',
     title: '달콤하게 코팅한 황금비율 제육볶음',
     titleEn: 'Sweet-Glazed Golden-Ratio Spicy Pork Stir-fry',
     emoji: '🥘',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/95/Jeyuk-bokkeum%2C_Korean_food_02.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/9/95/Jeyuk-bokkeum%2C_Korean_food_02.jpg',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '한식',
@@ -4018,37 +4714,49 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '돼지고기 앞다리살 200g을 한입 크기로 썬다.',
         descriptionEn: 'Cut 200g pork shoulder into bite-sized pieces.',
+        imageAsset: 'assets/images/steps/recipe_73_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '팬을 기름 없이 센 불로 달궈 돼지고기를 먼저 볶다가 겉면이 노릇해지면 설탕 1과 1/2큰술을 뿌려 재빨리 버무려 겉면에 단맛을 입힌다.',
-        descriptionEn: 'Heat a dry pan over high heat and stir-fry the pork first; once golden on the outside, sprinkle in 1 1/2 tbsp sugar and toss quickly to coat the surface with sweetness.',
+        description:
+            '팬을 기름 없이 센 불로 달궈 돼지고기를 먼저 볶다가 겉면이 노릇해지면 설탕 1과 1/2큰술을 뿌려 재빨리 버무려 겉면에 단맛을 입힌다.',
+        descriptionEn:
+            'Heat a dry pan over high heat and stir-fry the pork first; once golden on the outside, sprinkle in 1 1/2 tbsp sugar and toss quickly to coat the surface with sweetness.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_73_2.png',
       ),
       RecipeStep(
         order: 3,
-        description: '물 2큰술과 고추장 1과 1/2큰술, 간장 1과 1/2큰술, 고춧가루 1과 1/2큰술, 다진 마늘 10g을 넣고 국물이 자작해질 때까지 조리듯 볶는다.',
-        descriptionEn: 'Add 2 tbsp water, 1 1/2 tbsp gochujang, 1 1/2 tbsp soy sauce, 1 1/2 tbsp gochugaru, and 10g minced garlic, and stir-fry until the sauce reduces to a light glaze.',
+        description:
+            '물 2큰술과 고추장 1과 1/2큰술, 간장 1과 1/2큰술, 고춧가루 1과 1/2큰술, 다진 마늘 10g을 넣고 국물이 자작해질 때까지 조리듯 볶는다.',
+        descriptionEn:
+            'Add 2 tbsp water, 1 1/2 tbsp gochujang, 1 1/2 tbsp soy sauce, 1 1/2 tbsp gochugaru, and 10g minced garlic, and stir-fry until the sauce reduces to a light glaze.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_73_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '양파 1/2개와 대파 1대를 큼직하게 썰어 넣고 센 불에서 채소의 숨이 살짝 죽을 때까지 볶는다.',
-        descriptionEn: 'Add 1/2 onion and 1 stalk of green onion cut into large pieces, and stir-fry over high heat until just slightly wilted.',
+        descriptionEn:
+            'Add 1/2 onion and 1 stalk of green onion cut into large pieces, and stir-fry over high heat until just slightly wilted.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_73_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '참기름 1작은술을 둘러 향을 더해 마무리한다.',
         descriptionEn: 'Finish with a drizzle of 1 tsp sesame oil for aroma.',
+        imageAsset: 'assets/images/steps/recipe_73_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_74',
     title: '든든한 황금비율 계란라면',
     titleEn: 'Hearty Golden-Ratio Egg Ramyeon',
     emoji: '🍜',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/12/Shin_ramyun.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/1/12/Shin_ramyun.jpg',
     cookTimeMin: 10,
     difficulty: '하',
     cuisineType: '분식',
@@ -4061,51 +4769,65 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '라면', quantity: 1, unit: '봉지'),
       RecipeIngredient(name: '대파', quantity: 0.5, unit: '단'),
       RecipeIngredient(name: '계란', quantity: 1, unit: '개'),
-      RecipeIngredient(name: '고춧가루', quantity: 1, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '고춧가루', quantity: 1, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '식용유', quantity: 1, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '대파 1/2대를 큼직하게 썰어 냄비에 식용유 1작은술을 두르고 볶아 파기름을 낸다.',
-        descriptionEn: 'Cut 1/2 stalk of green onion into large pieces and stir-fry in 1 tsp cooking oil in a pot to make scallion oil.',
+        descriptionEn:
+            'Cut 1/2 stalk of green onion into large pieces and stir-fry in 1 tsp cooking oil in a pot to make scallion oil.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_74_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '물 550ml를 붓고 끓으면 분말스프와 건더기스프를 넣어 함께 끓인다.',
-        descriptionEn: 'Pour in 550ml water, and once boiling, add the soup powder and dried garnish packet.',
+        descriptionEn:
+            'Pour in 550ml water, and once boiling, add the soup powder and dried garnish packet.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_74_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '면을 넣고 취향에 맞게 익힌 뒤 고춧가루 1작은술을 더해 칼칼함을 살린다.',
-        descriptionEn: 'Add the noodles and cook to your preference, then stir in 1 tsp gochugaru for extra heat.',
+        descriptionEn:
+            'Add the noodles and cook to your preference, then stir in 1 tsp gochugaru for extra heat.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_74_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '면을 먼저 그릇에 옮겨 담는다.',
         descriptionEn: 'Transfer the noodles to a bowl first.',
+        imageAsset: 'assets/images/steps/recipe_74_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '남은 뜨거운 국물의 불을 줄이고 계란 1개를 깨뜨려 넣어 젓지 않고 반숙으로 살짝 익힌다.',
-        descriptionEn: 'Lower the heat under the remaining broth, crack in 1 egg without stirring, and let it gently cook until softly set.',
+        descriptionEn:
+            'Lower the heat under the remaining broth, crack in 1 egg without stirring, and let it gently cook until softly set.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_74_5.png',
       ),
       RecipeStep(
         order: 6,
         description: '반숙 계란을 국물과 함께 면 위에 조심스럽게 올려 마무리한다.',
-        descriptionEn: 'Carefully spoon the soft-set egg and broth over the noodles to finish.',
+        descriptionEn:
+            'Carefully spoon the soft-set egg and broth over the noodles to finish.',
+        imageAsset: 'assets/images/steps/recipe_74_6.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_75',
     title: '아삭한 황금비율 감자채볶음',
     titleEn: 'Crisp Golden-Ratio Stir-Fried Potato Julienne',
     emoji: '🥔',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Gamjachaebokkeum.jpg/960px-Gamjachaebokkeum.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Gamjachaebokkeum.jpg/960px-Gamjachaebokkeum.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '한식',
@@ -4126,33 +4848,44 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '감자 2개를 가늘게 채 썰어 찬물에 담가 겉면의 전분기를 헹궈낸다.',
-        descriptionEn: 'Julienne 2 potatoes and soak in cold water to rinse off the surface starch.',
+        descriptionEn:
+            'Julienne 2 potatoes and soak in cold water to rinse off the surface starch.',
+        imageAsset: 'assets/images/steps/recipe_75_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '끓는 물에 소금을 약간 넣고 채 썬 감자를 1~2분간 살짝 데쳐 건진다.',
-        descriptionEn: 'Add a pinch of salt to boiling water and briefly blanch the potato julienne for 1-2 minutes, then drain.',
+        descriptionEn:
+            'Add a pinch of salt to boiling water and briefly blanch the potato julienne for 1-2 minutes, then drain.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_75_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '당근 1/4개와 양파 1/2개를 감자와 비슷한 굵기로 채 썬다.',
-        descriptionEn: 'Julienne 1/4 carrot and 1/2 onion to a similar thickness as the potato.',
+        descriptionEn:
+            'Julienne 1/4 carrot and 1/2 onion to a similar thickness as the potato.',
+        imageAsset: 'assets/images/steps/recipe_75_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '달군 팬에 식용유 2큰술을 두르고 데친 감자와 당근, 양파를 넣어 센 불에서 빠르게 볶는다.',
-        descriptionEn: 'Heat 2 tbsp cooking oil in a pan and quickly stir-fry the blanched potato, carrot, and onion over high heat.',
+        descriptionEn:
+            'Heat 2 tbsp cooking oil in a pan and quickly stir-fry the blanched potato, carrot, and onion over high heat.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_75_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '소금 1/2작은술로 간하고 참기름을 둘러 마무리한다.',
-        descriptionEn: 'Season with 1/2 tsp salt and finish with a drizzle of sesame oil.',
+        descriptionEn:
+            'Season with 1/2 tsp salt and finish with a drizzle of sesame oil.',
+        imageAsset: 'assets/images/steps/recipe_75_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_76',
     title: '쫄깃한 황금비율 밀떡볶이',
     titleEn: 'Chewy Golden-Ratio Tteokbokki',
     emoji: '🌶️',
@@ -4181,34 +4914,46 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '대파 1대를 길게 반으로 갈라 냄비 바닥에 깔고 물 3컵(600ml)을 부어 끓여 파 육수를 낸다.',
-        descriptionEn: 'Split 1 stalk of green onion lengthwise, line the bottom of a pot with it, add 3 cups (600ml) water, and boil to make a scallion broth.',
+        descriptionEn:
+            'Split 1 stalk of green onion lengthwise, line the bottom of a pot with it, add 3 cups (600ml) water, and boil to make a scallion broth.',
         timerSec: 300,
+        imageAsset: 'assets/images/steps/recipe_76_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '대파를 건져내고 고추장 2큰술, 고춧가루 2큰술, 간장 1큰술, 굴소스 1큰술, 설탕 2큰술을 풀어 양념 국물을 만든다.',
-        descriptionEn: 'Remove the green onion, then dissolve in 2 tbsp gochujang, 2 tbsp gochugaru, 1 tbsp soy sauce, 1 tbsp oyster sauce, and 2 tbsp sugar to make the seasoned broth.',
+        description:
+            '대파를 건져내고 고추장 2큰술, 고춧가루 2큰술, 간장 1큰술, 굴소스 1큰술, 설탕 2큰술을 풀어 양념 국물을 만든다.',
+        descriptionEn:
+            'Remove the green onion, then dissolve in 2 tbsp gochujang, 2 tbsp gochugaru, 1 tbsp soy sauce, 1 tbsp oyster sauce, and 2 tbsp sugar to make the seasoned broth.',
+        imageAsset: 'assets/images/steps/recipe_76_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '떡 300g과 어묵 2장을 넣고 중약불에서 눌어붙지 않게 저어가며 은근히 졸인다.',
-        descriptionEn: 'Add 300g rice cakes and 2 sheets of fish cake, and simmer gently over medium-low heat, stirring to prevent sticking.',
+        descriptionEn:
+            'Add 300g rice cakes and 2 sheets of fish cake, and simmer gently over medium-low heat, stirring to prevent sticking.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_76_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '국물이 걸쭉해지면 물엿 1큰술을 넣어 윤기와 깊은 단맛을 더한다.',
-        descriptionEn: 'Once the sauce thickens, stir in 1 tbsp corn syrup for shine and a deeper sweetness.',
+        descriptionEn:
+            'Once the sauce thickens, stir in 1 tbsp corn syrup for shine and a deeper sweetness.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_76_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '떡이 부드럽게 익으면 불을 끈다.',
-        descriptionEn: 'Once the rice cakes are cooked through and tender, turn off the heat.',
+        descriptionEn:
+            'Once the rice cakes are cooked through and tender, turn off the heat.',
+        imageAsset: 'assets/images/steps/recipe_76_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_77',
     title: '고소한 황금비율 원팬 갈릭버터파스타',
     titleEn: 'Savory Golden-Ratio One-Pan Garlic Butter Pasta',
     emoji: '🍝',
@@ -4235,36 +4980,47 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '마늘 15g을 얇게 편으로 썬다.',
         descriptionEn: 'Thinly slice 15g garlic.',
+        imageAsset: 'assets/images/steps/recipe_77_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '팬에 물 3컵(600ml), 스파게티면 100g, 소금 한 꼬집, 참치액 1큰술을 한번에 넣고 8분간 끓여 면을 익히며 감칠맛을 배게 한다.',
-        descriptionEn: 'In a pan, combine 3 cups (600ml) water, 100g spaghetti, a pinch of salt, and 1 tbsp tuna seasoning sauce, and boil for 8 minutes so the noodles cook while absorbing flavor.',
+        description:
+            '팬에 물 3컵(600ml), 스파게티면 100g, 소금 한 꼬집, 참치액 1큰술을 한번에 넣고 8분간 끓여 면을 익히며 감칠맛을 배게 한다.',
+        descriptionEn:
+            'In a pan, combine 3 cups (600ml) water, 100g spaghetti, a pinch of salt, and 1 tbsp tuna seasoning sauce, and boil for 8 minutes so the noodles cook while absorbing flavor.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_77_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '국물이 자작하게 줄어들면 불을 약하게 줄인다.',
-        descriptionEn: 'Once the liquid reduces to a shallow pool, lower the heat.',
+        descriptionEn:
+            'Once the liquid reduces to a shallow pool, lower the heat.',
+        imageAsset: 'assets/images/steps/recipe_77_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '버터 20g과 편 마늘을 넣어 골고루 버무리며 향을 낸다.',
-        descriptionEn: 'Add 20g butter and the sliced garlic, and toss evenly to release their aroma.',
+        descriptionEn:
+            'Add 20g butter and the sliced garlic, and toss evenly to release their aroma.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_77_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '후추를 뿌려 마무리한다.',
         descriptionEn: 'Finish with a sprinkle of pepper.',
+        imageAsset: 'assets/images/steps/recipe_77_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_78',
     title: '매콤달콤 황금비율 10분 닭갈비',
     titleEn: 'Sweet Spicy Golden-Ratio 10-Minute Dakgalbi',
     emoji: '🍗',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Dak-galbi_1.jpg/960px-Dak-galbi_1.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Dak-galbi_1.jpg/960px-Dak-galbi_1.jpg',
     cookTimeMin: 15,
     difficulty: '중',
     cuisineType: '한식',
@@ -4290,37 +5046,50 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '닭다리살 300g을 한입 크기로 썬다.',
         descriptionEn: 'Cut 300g chicken thigh into bite-sized pieces.',
+        imageAsset: 'assets/images/steps/recipe_78_1.png',
       ),
       RecipeStep(
         order: 2,
-        description: '고추장 2큰술, 간장 2큰술, 카레가루 1큰술, 설탕 2큰술, 다진 마늘 10g, 식초 1큰술을 섞어 양념장을 만든다.',
-        descriptionEn: 'Mix 2 tbsp gochujang, 2 tbsp soy sauce, 1 tbsp curry powder, 2 tbsp sugar, 10g minced garlic, and 1 tbsp vinegar to make the sauce.',
+        description:
+            '고추장 2큰술, 간장 2큰술, 카레가루 1큰술, 설탕 2큰술, 다진 마늘 10g, 식초 1큰술을 섞어 양념장을 만든다.',
+        descriptionEn:
+            'Mix 2 tbsp gochujang, 2 tbsp soy sauce, 1 tbsp curry powder, 2 tbsp sugar, 10g minced garlic, and 1 tbsp vinegar to make the sauce.',
+        imageAsset: 'assets/images/steps/recipe_78_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 닭다리살을 껍질 쪽이 바닥에 닿도록 올려 기름이 배어나올 때까지 먼저 굽는다.',
-        descriptionEn: 'Place the chicken thigh skin-side down in a heated pan and cook first until the fat renders out.',
+        descriptionEn:
+            'Place the chicken thigh skin-side down in a heated pan and cook first until the fat renders out.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_78_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '양념장을 넣고 센 불에서 골고루 버무리며 볶는다.',
-        descriptionEn: 'Add the sauce and stir-fry over high heat, tossing to coat evenly.',
+        descriptionEn:
+            'Add the sauce and stir-fry over high heat, tossing to coat evenly.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_78_4.png',
       ),
       RecipeStep(
         order: 5,
-        description: '양배추 200g과 양파 1/2개, 대파 1대를 큼직하게 썰어 넣고 채소의 숨이 살짝 죽을 때까지 볶아 마무리한다.',
-        descriptionEn: 'Add 200g cabbage, 1/2 onion, and 1 stalk of green onion cut into large pieces, and stir-fry until just slightly wilted to finish.',
+        description:
+            '양배추 200g과 양파 1/2개, 대파 1대를 큼직하게 썰어 넣고 채소의 숨이 살짝 죽을 때까지 볶아 마무리한다.',
+        descriptionEn:
+            'Add 200g cabbage, 1/2 onion, and 1 stalk of green onion cut into large pieces, and stir-fry until just slightly wilted to finish.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_78_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_79',
     title: '새콤달콤 황금비율 참간초 비빔국수',
     titleEn: 'Tangy Sweet Golden-Ratio Sesame Soy Bibim Guksu',
     emoji: '🍜',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Bibim-guksu.jpg/960px-Bibim-guksu.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Bibim-guksu.jpg/960px-Bibim-guksu.jpg',
     cookTimeMin: 15,
     difficulty: '하',
     cuisineType: '분식',
@@ -4343,37 +5112,49 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '끓는 물에 계란 1개를 8분간 삶아 찬물에 식힌 뒤 반으로 자른다.',
-        descriptionEn: 'Boil 1 egg for 8 minutes, cool in cold water, then cut in half.',
+        descriptionEn:
+            'Boil 1 egg for 8 minutes, cool in cold water, then cut in half.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_79_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '참기름 3큰술, 간장 3큰술, 식초 2큰술, 설탕 2큰술을 섞어 참간초 양념장을 만든다.',
-        descriptionEn: 'Mix 3 tbsp sesame oil, 3 tbsp soy sauce, 2 tbsp vinegar, and 2 tbsp sugar to make the sesame-soy-vinegar sauce.',
+        descriptionEn:
+            'Mix 3 tbsp sesame oil, 3 tbsp soy sauce, 2 tbsp vinegar, and 2 tbsp sugar to make the sesame-soy-vinegar sauce.',
+        imageAsset: 'assets/images/steps/recipe_79_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '끓는 물에 소면 100g을 삶아 찬물에 여러 번 헹궈 전분기를 뺀다.',
-        descriptionEn: 'Boil 100g thin wheat noodles, then rinse several times in cold water to remove excess starch.',
+        descriptionEn:
+            'Boil 100g thin wheat noodles, then rinse several times in cold water to remove excess starch.',
         timerSec: 150,
+        imageAsset: 'assets/images/steps/recipe_79_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '헹군 소면에 양념장을 부어 골고루 비빈다.',
-        descriptionEn: 'Pour the sauce over the rinsed noodles and toss evenly.',
+        descriptionEn:
+            'Pour the sauce over the rinsed noodles and toss evenly.',
+        imageAsset: 'assets/images/steps/recipe_79_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '오이 1/4개를 채 썰어 올리고 삶은 계란과 통깨 1큰술을 고명으로 올려 마무리한다.',
-        descriptionEn: 'Top with 1/4 julienned cucumber, the boiled egg, and 1 tbsp sesame seeds to finish.',
+        descriptionEn:
+            'Top with 1/4 julienned cucumber, the boiled egg, and 1 tbsp sesame seeds to finish.',
+        imageAsset: 'assets/images/steps/recipe_79_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_36',
     title: '스타 셰프 비법 멘보샤',
     titleEn: "Star Chef's Secret Shrimp Toast",
     emoji: '🍤',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Shrimp_Toast.jpg/960px-Shrimp_Toast.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Shrimp_Toast.jpg/960px-Shrimp_Toast.jpg',
     cookTimeMin: 25,
     difficulty: '중',
     cuisineType: '중식',
@@ -4394,36 +5175,48 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '새우 150g을 굵게 다져 전분가루 1큰술, 소금 1/2작은술과 함께 치대 탄력 있는 반죽을 만든다.',
-        descriptionEn: 'Roughly chop 150g shrimp and knead with 1 tbsp starch and 1/2 tsp salt until springy.',
+        descriptionEn:
+            'Roughly chop 150g shrimp and knead with 1 tbsp starch and 1/2 tsp salt until springy.',
+        imageAsset: 'assets/images/steps/recipe_36_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '계란 1개의 흰자만 곱게 풀어 새우 반죽에 섞어 더 찰지게 만든다.',
-        descriptionEn: 'Beat just the egg white from 1 egg and mix into the shrimp paste to make it stickier.',
+        descriptionEn:
+            'Beat just the egg white from 1 egg and mix into the shrimp paste to make it stickier.',
+        imageAsset: 'assets/images/steps/recipe_36_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '식빵 1장 위에 새우 반죽을 두껍게 펴 바르고 남은 식빵 1장으로 덮어 꾹 눌러 붙인다.',
-        descriptionEn: 'Spread the shrimp paste thickly on 1 slice of bread, cover with the other slice, and press firmly to seal.',
+        descriptionEn:
+            'Spread the shrimp paste thickly on 1 slice of bread, cover with the other slice, and press firmly to seal.',
+        imageAsset: 'assets/images/steps/recipe_36_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '팬에 식용유 3큰술을 두르고 140도로 달군 뒤 식빵을 앞뒤로 노릇하게 튀기듯 굽는다.',
-        descriptionEn: 'Heat 3 tbsp oil to 140°C (285°F) in a pan and fry the bread on both sides until golden brown.',
+        descriptionEn:
+            'Heat 3 tbsp oil to 140°C (285°F) in a pan and fry the bread on both sides until golden brown.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_36_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '한 김 식힌 뒤 먹기 좋은 크기로 썰어 담아낸다.',
-        descriptionEn: 'Let cool slightly, then cut into bite-sized pieces and serve.',
+        descriptionEn:
+            'Let cool slightly, then cut into bite-sized pieces and serve.',
+        imageAsset: 'assets/images/steps/recipe_36_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_80',
     title: '스타 셰프 비법 타마고야키',
     titleEn: "Star Chef's Secret Tamagoyaki",
     emoji: '🥚',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tamagoyaki.jpg/960px-Tamagoyaki.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tamagoyaki.jpg/960px-Tamagoyaki.jpg',
     cookTimeMin: 15,
     difficulty: '중',
     cuisineType: '일식',
@@ -4437,39 +5230,51 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '멸치육수', quantity: 4, unit: '큰술'),
       RecipeIngredient(name: '설탕', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '간장', quantity: 1, unit: '작은술'),
-      RecipeIngredient(name: '식용유', quantity: 0.5, unit: '큰술', isOptional: true),
+      RecipeIngredient(
+          name: '식용유', quantity: 0.5, unit: '큰술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
-        description: '계란 4개를 풀어 멸치육수 4큰술, 설탕 1큰술, 간장 1작은술을 넣고 섞은 뒤 체에 걸러 알끈을 제거한다.',
-        descriptionEn: 'Beat 4 eggs, mix in 4 tbsp anchovy broth, 1 tbsp sugar, and 1 tsp soy sauce, then strain to remove the chalazae.',
+        description:
+            '계란 4개를 풀어 멸치육수 4큰술, 설탕 1큰술, 간장 1작은술을 넣고 섞은 뒤 체에 걸러 알끈을 제거한다.',
+        descriptionEn:
+            'Beat 4 eggs, mix in 4 tbsp anchovy broth, 1 tbsp sugar, and 1 tsp soy sauce, then strain to remove the chalazae.',
+        imageAsset: 'assets/images/steps/recipe_80_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '사각팬을 약불로 달구고 식용유를 얇게 바른 뒤 달걀물을 한 국자 부어 얇게 펴 익힌다.',
-        descriptionEn: 'Heat a rectangular pan over low heat, coat thinly with oil, then pour in a ladle of the egg mixture and spread thin.',
+        descriptionEn:
+            'Heat a rectangular pan over low heat, coat thinly with oil, then pour in a ladle of the egg mixture and spread thin.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_80_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '반쯤 익으면 팬 한쪽으로 돌돌 말아 밀어둔다.',
         descriptionEn: 'Once half-set, roll it up toward one side of the pan.',
+        imageAsset: 'assets/images/steps/recipe_80_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '빈 공간에 다시 기름을 바르고 달걀물을 부어 말아둔 계란을 굴리며 3~4번 반복해 층을 쌓는다.',
-        descriptionEn: 'Oil the empty space again, pour in more egg mixture, and roll the rolled egg through it, repeating 3-4 times to build layers.',
+        descriptionEn:
+            'Oil the empty space again, pour in more egg mixture, and roll the rolled egg through it, repeating 3-4 times to build layers.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_80_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '김발로 모양을 잡아 식힌 뒤 먹기 좋게 썬다.',
-        descriptionEn: 'Shape with a bamboo mat, let cool, then slice into pieces.',
+        descriptionEn:
+            'Shape with a bamboo mat, let cool, then slice into pieces.',
+        imageAsset: 'assets/images/steps/recipe_80_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_81',
     title: '스타 셰프 비법 알리오 올리오',
     titleEn: "Star Chef's Secret Aglio e Olio",
     emoji: '🍝',
@@ -4496,32 +5301,40 @@ const recipeCatalog = <Recipe>[
         description: '끓는 물에 소금을 넣고 스파게티면 100g을 삶는다.',
         descriptionEn: 'Add salt to boiling water and cook 100g spaghetti.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_81_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '마늘 25g을 얇게 편 썰어 올리브유 4큰술과 함께 약불에서 노릇해질 때까지 튀기듯 향을 낸다.',
-        descriptionEn: 'Thinly slice 25g garlic and gently fry in 4 tbsp olive oil over low heat until golden and fragrant.',
+        descriptionEn:
+            'Thinly slice 25g garlic and gently fry in 4 tbsp olive oil over low heat until golden and fragrant.',
         timerSec: 180,
+        imageAsset: 'assets/images/steps/recipe_81_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '페페론치노 3개를 부숴 넣어 매콤한 향을 더한다.',
         descriptionEn: 'Crumble in 3 dried chili peppers for a spicy kick.',
+        imageAsset: 'assets/images/steps/recipe_81_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '삶은 면과 면수 한 국자를 팬에 넣고 강한 불에서 빠르게 흔들어 유화(에멀전)시킨다.',
-        descriptionEn: 'Add the cooked pasta and a ladle of pasta water, then shake vigorously over high heat to emulsify the sauce.',
+        descriptionEn:
+            'Add the cooked pasta and a ladle of pasta water, then shake vigorously over high heat to emulsify the sauce.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_81_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '소금으로 간을 맞추고 그릇에 담아낸다.',
         descriptionEn: 'Season with salt and plate.',
+        imageAsset: 'assets/images/steps/recipe_81_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_82',
     title: '스타 셰프 비법 봉골레',
     titleEn: "Star Chef's Secret Vongole",
     emoji: '🍝',
@@ -4548,37 +5361,47 @@ const recipeCatalog = <Recipe>[
         description: '끓는 물에 소금을 넣고 스파게티면 100g을 삶는다.',
         descriptionEn: 'Add salt to boiling water and cook 100g spaghetti.',
         timerSec: 480,
+        imageAsset: 'assets/images/steps/recipe_82_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '팬에 올리브유 3큰술과 다진 마늘 10g을 넣고 약불에서 향을 낸다.',
-        descriptionEn: 'Heat 3 tbsp olive oil with 10g minced garlic in a pan over low heat until fragrant.',
+        descriptionEn:
+            'Heat 3 tbsp olive oil with 10g minced garlic in a pan over low heat until fragrant.',
         timerSec: 60,
+        imageAsset: 'assets/images/steps/recipe_82_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '조개살 150g과 미림 2큰술을 넣고 센 불에서 조개 육수가 우러나도록 끓인다.',
-        descriptionEn: 'Add 150g clam meat and 2 tbsp mirin, and boil over high heat until the clam broth releases.',
+        descriptionEn:
+            'Add 150g clam meat and 2 tbsp mirin, and boil over high heat until the clam broth releases.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_82_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '삶은 면과 면수 한 국자를 넣어 소스가 배어들도록 강하게 흔들며 볶는다.',
-        descriptionEn: 'Add the cooked pasta and a ladle of pasta water, tossing vigorously so the sauce absorbs into the noodles.',
+        descriptionEn:
+            'Add the cooked pasta and a ladle of pasta water, tossing vigorously so the sauce absorbs into the noodles.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_82_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '그릇에 담고 올리브유를 살짝 둘러 마무리한다.',
         descriptionEn: 'Plate and finish with a light drizzle of olive oil.',
+        imageAsset: 'assets/images/steps/recipe_82_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_83',
     title: '스타 셰프 비법 통마늘 구이',
     titleEn: "Star Chef's Secret Whole Roasted Garlic",
     emoji: '🧄',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Roasted_garlic_1.jpg/960px-Roasted_garlic_1.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Roasted_garlic_1.jpg/960px-Roasted_garlic_1.jpg',
     cookTimeMin: 40,
     difficulty: '하',
     cuisineType: '양식',
@@ -4597,32 +5420,42 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '통마늘 2개(약 100g)의 윗부분을 살짝 잘라 단면이 보이게 손질한다.',
-        descriptionEn: 'Slice off the top of 2 whole garlic bulbs (about 100g) to expose the cloves.',
+        descriptionEn:
+            'Slice off the top of 2 whole garlic bulbs (about 100g) to expose the cloves.',
+        imageAsset: 'assets/images/steps/recipe_83_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '잘린 단면 위에 올리브유 2큰술과 소금 1/2작은술을 골고루 뿌린다.',
-        descriptionEn: 'Drizzle 2 tbsp olive oil and 1/2 tsp salt evenly over the cut surface.',
+        descriptionEn:
+            'Drizzle 2 tbsp olive oil and 1/2 tsp salt evenly over the cut surface.',
+        imageAsset: 'assets/images/steps/recipe_83_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '180도로 예열한 오븐에서 마늘이 부드러워질 때까지 굽는다.',
-        descriptionEn: 'Roast in an oven preheated to 180°C (355°F) until the garlic turns soft.',
+        descriptionEn:
+            'Roast in an oven preheated to 180°C (355°F) until the garlic turns soft.',
         timerSec: 1800,
+        imageAsset: 'assets/images/steps/recipe_83_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '구운 마늘을 살짝 식힌 뒤 속을 짜내어 부드러운 페이스트로 만든다.',
-        descriptionEn: 'Let the roasted garlic cool slightly, then squeeze out the cloves into a soft paste.',
+        descriptionEn:
+            'Let the roasted garlic cool slightly, then squeeze out the cloves into a soft paste.',
+        imageAsset: 'assets/images/steps/recipe_83_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '양배추 50g을 곁들여 접시에 담아낸다.',
         descriptionEn: 'Serve alongside 50g cabbage.',
+        imageAsset: 'assets/images/steps/recipe_83_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_84',
     title: '스타 셰프 비법 들기름 비빔면',
     titleEn: "Star Chef's Secret Perilla Oil Noodles",
     emoji: '🍜',
@@ -4647,31 +5480,40 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '끓는 물에 소면 100g을 삶아 찬물에 헹궈 물기를 뺀다.',
-        descriptionEn: 'Boil 100g thin wheat noodles, then rinse in cold water and drain.',
+        descriptionEn:
+            'Boil 100g thin wheat noodles, then rinse in cold water and drain.',
         timerSec: 150,
+        imageAsset: 'assets/images/steps/recipe_84_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '볼에 참기름 2.5큰술과 간장 1.5큰술을 섞어 양념을 만든다.',
-        descriptionEn: 'Mix 2.5 tbsp sesame oil and 1.5 tbsp soy sauce in a bowl to make the sauce.',
+        descriptionEn:
+            'Mix 2.5 tbsp sesame oil and 1.5 tbsp soy sauce in a bowl to make the sauce.',
+        imageAsset: 'assets/images/steps/recipe_84_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '삶은 소면에 양념을 넣고 골고루 비빈다.',
         descriptionEn: 'Add the sauce to the noodles and toss evenly.',
+        imageAsset: 'assets/images/steps/recipe_84_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '김 1장을 살짝 구워 부순 뒤 면 위에 얹고 통깨 1큰술을 뿌려 마무리한다.',
-        descriptionEn: 'Lightly toast and crumble 1 sheet of seaweed over the noodles, then finish with 1 tbsp sesame seeds.',
+        descriptionEn:
+            'Lightly toast and crumble 1 sheet of seaweed over the noodles, then finish with 1 tbsp sesame seeds.',
+        imageAsset: 'assets/images/steps/recipe_84_4.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_85',
     title: '스타 셰프 비법 소고기 찹스테이크',
     titleEn: "Star Chef's Secret Beef Chopsteak",
     emoji: '🥩',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Fajita.JPG/960px-Fajita.JPG',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Fajita.JPG/960px-Fajita.JPG',
     cookTimeMin: 20,
     difficulty: '중',
     cuisineType: '양식',
@@ -4687,39 +5529,50 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '돈까스소스', quantity: 2, unit: '큰술'),
       RecipeIngredient(name: '굴소스', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '버터', quantity: 10, unit: 'g'),
-      RecipeIngredient(name: '후추', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '후추', quantity: 0.25, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '소고기 등심 200g을 한입 크기로 썰어 후추로 밑간한다.',
-        descriptionEn: 'Cut 200g beef sirloin into bite-sized cubes and season with pepper.',
+        descriptionEn:
+            'Cut 200g beef sirloin into bite-sized cubes and season with pepper.',
+        imageAsset: 'assets/images/steps/recipe_85_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '양파 1/2개와 당근 1/2개를 큼직하게 썬다.',
         descriptionEn: 'Cut 1/2 onion and 1/2 carrot into large chunks.',
+        imageAsset: 'assets/images/steps/recipe_85_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '달군 팬에 버터 10g을 녹이고 소고기를 센 불에서 겉면만 빠르게 굽는다.',
-        descriptionEn: 'Melt 10g butter in a heated pan and quickly sear the beef over high heat to seal in the juices.',
+        descriptionEn:
+            'Melt 10g butter in a heated pan and quickly sear the beef over high heat to seal in the juices.',
         timerSec: 90,
+        imageAsset: 'assets/images/steps/recipe_85_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '채소를 넣고 함께 볶다가 돈까스소스 2큰술과 굴소스 1큰술을 넣어 버무린다.',
-        descriptionEn: 'Add the vegetables and stir-fry, then add 2 tbsp tonkatsu sauce and 1 tbsp oyster sauce and toss to coat.',
+        descriptionEn:
+            'Add the vegetables and stir-fry, then add 2 tbsp tonkatsu sauce and 1 tbsp oyster sauce and toss to coat.',
         timerSec: 120,
+        imageAsset: 'assets/images/steps/recipe_85_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '소스가 고루 배어들면 불을 끄고 그릇에 담는다.',
-        descriptionEn: 'Once the sauce coats everything evenly, turn off the heat and plate.',
+        descriptionEn:
+            'Once the sauce coats everything evenly, turn off the heat and plate.',
+        imageAsset: 'assets/images/steps/recipe_85_5.png',
       ),
     ],
   ),
   Recipe(
+    id: 'recipe_86',
     title: '스타 셰프 비법 소불고기',
     titleEn: "Star Chef's Secret Beef Bulgogi",
     emoji: '🍖',
@@ -4746,28 +5599,37 @@ const recipeCatalog = <Recipe>[
         order: 1,
         description: '소고기 등심 200g을 얇게 썬다.',
         descriptionEn: 'Thinly slice 200g beef sirloin.',
+        imageAsset: 'assets/images/steps/recipe_86_1.png',
       ),
       RecipeStep(
         order: 2,
         description: '간장 2.5큰술, 설탕 1.5큰술, 물엿 1큰술을 섞어 양념장을 만들고 고기를 재운다.',
-        descriptionEn: 'Mix 2.5 tbsp soy sauce, 1.5 tbsp sugar, and 1 tbsp corn syrup to make the marinade, then marinate the beef.',
+        descriptionEn:
+            'Mix 2.5 tbsp soy sauce, 1.5 tbsp sugar, and 1 tbsp corn syrup to make the marinade, then marinate the beef.',
         timerSec: 1200,
+        imageAsset: 'assets/images/steps/recipe_86_2.png',
       ),
       RecipeStep(
         order: 3,
         description: '양파 1/2개를 채 썰고 대파 1/2단을 어슷 썬다.',
-        descriptionEn: 'Julienne 1/2 onion and diagonally slice 1/2 bunch of green onion.',
+        descriptionEn:
+            'Julienne 1/2 onion and diagonally slice 1/2 bunch of green onion.',
+        imageAsset: 'assets/images/steps/recipe_86_3.png',
       ),
       RecipeStep(
         order: 4,
         description: '달군 팬에 재운 고기와 채소를 넣고 센 불에서 빠르게 볶는다.',
-        descriptionEn: 'Add the marinated beef and vegetables to a heated pan and stir-fry quickly over high heat.',
+        descriptionEn:
+            'Add the marinated beef and vegetables to a heated pan and stir-fry quickly over high heat.',
         timerSec: 240,
+        imageAsset: 'assets/images/steps/recipe_86_4.png',
       ),
       RecipeStep(
         order: 5,
         description: '국물이 자작해지면 불을 끄고 그릇에 담는다.',
-        descriptionEn: 'Once the sauce reduces slightly, turn off the heat and plate.',
+        descriptionEn:
+            'Once the sauce reduces slightly, turn off the heat and plate.',
+        imageAsset: 'assets/images/steps/recipe_86_5.png',
       ),
     ],
   ),
@@ -4796,25 +5658,29 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '소고기 등심 250g을 실온에 20분간 두어 온도를 맞추고 소금 1작은술로 밑간한다.',
-        descriptionEn: 'Let 250g beef sirloin sit at room temperature for 20 minutes, then season with 1 tsp salt.',
+        descriptionEn:
+            'Let 250g beef sirloin sit at room temperature for 20 minutes, then season with 1 tsp salt.',
         timerSec: 1200,
       ),
       RecipeStep(
         order: 2,
         description: '달군 팬에 식용유 3큰술을 두르고 고기를 올려 센 불에서 마이야르가 강하게 나도록 앞뒤로 굽는다.',
-        descriptionEn: 'Heat 3 tbsp oil in a pan and sear the beef over high heat on both sides for a strong Maillard crust.',
+        descriptionEn:
+            'Heat 3 tbsp oil in a pan and sear the beef over high heat on both sides for a strong Maillard crust.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 3,
         description: '버터 20g과 마늘 15g을 넣고 녹인 버터를 고기에 끼얹어가며(버터 바스팅) 굽는다.',
-        descriptionEn: 'Add 20g butter and 15g garlic, then continuously spoon the melted butter over the meat (butter basting).',
+        descriptionEn:
+            'Add 20g butter and 15g garlic, then continuously spoon the melted butter over the meat (butter basting).',
         timerSec: 60,
       ),
       RecipeStep(
         order: 4,
         description: '불을 끄고 고기를 꺼내 5분간 레스팅한다.',
-        descriptionEn: 'Turn off the heat, remove the steak, and let it rest for 5 minutes.',
+        descriptionEn:
+            'Turn off the heat, remove the steak, and let it rest for 5 minutes.',
         timerSec: 300,
       ),
       RecipeStep(
@@ -4828,7 +5694,8 @@ const recipeCatalog = <Recipe>[
     title: '셰프의 간장 양파 돼지덮밥',
     titleEn: "Chef's Soy-Onion Pork Rice Bowl (Butadon Style)",
     emoji: '🍚',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Butadon.jpg/960px-Butadon.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Butadon.jpg/960px-Butadon.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '일식',
@@ -4853,12 +5720,14 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '양파 1/2개는 결대로 채 썰고 대파 3/10단은 얇게 송송 썬다.',
-        descriptionEn: 'Cut 1/2 onion into strips along the grain and thinly slice 3/10 bunch of green onion.',
+        descriptionEn:
+            'Cut 1/2 onion into strips along the grain and thinly slice 3/10 bunch of green onion.',
       ),
       RecipeStep(
         order: 2,
         description: '달군 팬에 식용유 1작은술을 두르고 양파가 투명해질 때까지 중불에서 볶는다.',
-        descriptionEn: 'Heat 1 tsp cooking oil in a pan and stir-fry the onion over medium heat until translucent.',
+        descriptionEn:
+            'Heat 1 tsp cooking oil in a pan and stir-fry the onion over medium heat until translucent.',
         timerSec: 180,
       ),
       RecipeStep(
@@ -4869,14 +5738,17 @@ const recipeCatalog = <Recipe>[
       ),
       RecipeStep(
         order: 4,
-        description: '간장 3큰술, 미림 3큰술, 설탕 1.5큰술, 다진 생강 3g을 붓고 국물이 자작해질 때까지 센 불에서 조린다.',
-        descriptionEn: 'Pour in 3 tbsp soy sauce, 3 tbsp mirin, 1.5 tbsp sugar, and 3g minced ginger, then simmer over high heat until the sauce thickens.',
+        description:
+            '간장 3큰술, 미림 3큰술, 설탕 1.5큰술, 다진 생강 3g을 붓고 국물이 자작해질 때까지 센 불에서 조린다.',
+        descriptionEn:
+            'Pour in 3 tbsp soy sauce, 3 tbsp mirin, 1.5 tbsp sugar, and 3g minced ginger, then simmer over high heat until the sauce thickens.',
         timerSec: 240,
       ),
       RecipeStep(
         order: 5,
         description: '밥 위에 고기와 볶은 양파를 얹은 뒤 중앙에 달걀노른자와 송송 썬 대파를 올려 완성한다.',
-        descriptionEn: 'Top a bowl of rice with the meat and sautéed onion, then finish with the egg yolk and sliced green onion in the center.',
+        descriptionEn:
+            'Top a bowl of rice with the meat and sautéed onion, then finish with the egg yolk and sliced green onion in the center.',
       ),
     ],
   ),
@@ -4907,26 +5779,32 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '냄비에 물 100ml와 간장 3큰술, 미림 3큰술, 설탕 1.5큰술, 참치액 1/2큰술을 넣고 먼저 끓여 소스를 만든다.',
-        descriptionEn: 'In a pot, combine 100ml water with 3 tbsp soy sauce, 3 tbsp mirin, 1.5 tbsp sugar, and 1/2 tbsp tuna seasoning sauce, then bring to a boil to make the sauce.',
+        description:
+            '냄비에 물 100ml와 간장 3큰술, 미림 3큰술, 설탕 1.5큰술, 참치액 1/2큰술을 넣고 먼저 끓여 소스를 만든다.',
+        descriptionEn:
+            'In a pot, combine 100ml water with 3 tbsp soy sauce, 3 tbsp mirin, 1.5 tbsp sugar, and 1/2 tbsp tuna seasoning sauce, then bring to a boil to make the sauce.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 2,
         description: '소스가 끓어오르면 얇게 썬 양파 1/2개를 넣고 숨이 죽을 때까지 익힌다.',
-        descriptionEn: 'Once the sauce boils, add 1/2 thinly sliced onion and cook until softened.',
+        descriptionEn:
+            'Once the sauce boils, add 1/2 thinly sliced onion and cook until softened.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 3,
         description: '소고기 양지 150g을 겹치지 않게 펼쳐 넣으며 익혀 불순물 유막을 걷어낸다.',
-        descriptionEn: 'Lay 150g beef brisket in without overlapping, cook through, and skim off any impurities that rise to the surface.',
+        descriptionEn:
+            'Lay 150g beef brisket in without overlapping, cook through, and skim off any impurities that rise to the surface.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 4,
-        description: '소고기가 부드럽게 익으면 다진 생강 3g을 더해 향을 낸 뒤 불을 끄고 밥 위에 소스째 부어 마무리한다.',
-        descriptionEn: 'Once the beef is tender, stir in 3g minced ginger for aroma, then turn off the heat and pour it all over a bowl of rice.',
+        description:
+            '소고기가 부드럽게 익으면 다진 생강 3g을 더해 향을 낸 뒤 불을 끄고 밥 위에 소스째 부어 마무리한다.',
+        descriptionEn:
+            'Once the beef is tender, stir in 3g minced ginger for aroma, then turn off the heat and pour it all over a bowl of rice.',
       ),
     ],
   ),
@@ -4951,36 +5829,43 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '레몬', quantity: 0.5, unit: '개'),
       RecipeIngredient(name: '버터', quantity: 25, unit: 'g'),
       RecipeIngredient(name: '올리브유', quantity: 3, unit: '큰술'),
-      RecipeIngredient(name: '페페론치노', quantity: 1, unit: '꼬집', isOptional: true),
+      RecipeIngredient(
+          name: '페페론치노', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '마늘 15g은 얇게 편 썰고, 파슬리 5g은 잎만 골라 곱게 다진다.',
-        descriptionEn: 'Thinly slice 15g garlic and finely chop 5g parsley leaves.',
+        descriptionEn:
+            'Thinly slice 15g garlic and finely chop 5g parsley leaves.',
       ),
       RecipeStep(
         order: 2,
         description: '소금물에 스파게티면 90g을 알덴테보다 약간 꼬들하게 삶는다.',
-        descriptionEn: 'Cook 90g spaghetti in salted water until slightly firmer than al dente.',
+        descriptionEn:
+            'Cook 90g spaghetti in salted water until slightly firmer than al dente.',
         timerSec: 480,
       ),
       RecipeStep(
         order: 3,
         description: '팬에 올리브유 3큰술을 두르고 편마늘을 약불에서 노릇하게 볶아 향을 낸다.',
-        descriptionEn: 'Heat 3 tbsp olive oil in a pan and cook the sliced garlic over low heat until golden and fragrant.',
+        descriptionEn:
+            'Heat 3 tbsp olive oil in a pan and cook the sliced garlic over low heat until golden and fragrant.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 4,
-        description: '마늘 향이 올라오면 페페론치노와 삶은 면, 면수 1.5국자를 넣고 빠르게 저어 오일과 면수를 유화시킨다.',
-        descriptionEn: 'Once fragrant, add the pepper flakes, cooked pasta, and 1.5 ladles of pasta water, then toss quickly to emulsify the oil and water.',
+        description:
+            '마늘 향이 올라오면 페페론치노와 삶은 면, 면수 1.5국자를 넣고 빠르게 저어 오일과 면수를 유화시킨다.',
+        descriptionEn:
+            'Once fragrant, add the pepper flakes, cooked pasta, and 1.5 ladles of pasta water, then toss quickly to emulsify the oil and water.',
         timerSec: 60,
       ),
       RecipeStep(
         order: 5,
         description: '불을 끄고 버터 25g과 다진 파슬리, 레몬 1/2개의 즙을 짜 넣어 비빈 뒤 그릇에 담는다.',
-        descriptionEn: 'Turn off the heat, mix in 25g butter, the chopped parsley, and the juice of 1/2 lemon, then plate.',
+        descriptionEn:
+            'Turn off the heat, mix in 25g butter, the chopped parsley, and the juice of 1/2 lemon, then plate.',
       ),
     ],
   ),
@@ -5008,8 +5893,10 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '볼에 달걀노른자 2개, 파르메산 치즈 20g, 굵게 빻은 통후추를 넣고 섞어 크림 형태의 소스를 만들어 둔다.',
-        descriptionEn: 'In a bowl, mix 2 egg yolks, 20g grated Parmesan, and coarsely ground whole peppercorns into a creamy sauce.',
+        description:
+            '볼에 달걀노른자 2개, 파르메산 치즈 20g, 굵게 빻은 통후추를 넣고 섞어 크림 형태의 소스를 만들어 둔다.',
+        descriptionEn:
+            'In a bowl, mix 2 egg yolks, 20g grated Parmesan, and coarsely ground whole peppercorns into a creamy sauce.',
       ),
       RecipeStep(
         order: 2,
@@ -5019,14 +5906,18 @@ const recipeCatalog = <Recipe>[
       ),
       RecipeStep(
         order: 3,
-        description: '기름 없이 팬에 베이컨 50g을 바삭해질 때까지 볶아 기름을 낸 뒤, 삶은 면을 넣고 불을 끈 상태에서 한 김 식힌다.',
-        descriptionEn: 'In a dry pan, fry 50g bacon until crisp to render fat, add the cooked pasta, then turn off the heat and let it cool slightly.',
+        description:
+            '기름 없이 팬에 베이컨 50g을 바삭해질 때까지 볶아 기름을 낸 뒤, 삶은 면을 넣고 불을 끈 상태에서 한 김 식힌다.',
+        descriptionEn:
+            'In a dry pan, fry 50g bacon until crisp to render fat, add the cooked pasta, then turn off the heat and let it cool slightly.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 4,
-        description: '팬의 열기가 식으면 준비한 달걀노른자 치즈 소스를 넣고 비벼 매끄러운 농도로 만든다 (열이 세면 계란이 익으므로 주의).',
-        descriptionEn: 'Once the pan has cooled slightly, add the egg yolk and cheese sauce and toss to a smooth consistency (be careful — too much heat will scramble the eggs).',
+        description:
+            '팬의 열기가 식으면 준비한 달걀노른자 치즈 소스를 넣고 비벼 매끄러운 농도로 만든다 (열이 세면 계란이 익으므로 주의).',
+        descriptionEn:
+            'Once the pan has cooled slightly, add the egg yolk and cheese sauce and toss to a smooth consistency (be careful — too much heat will scramble the eggs).',
       ),
     ],
   ),
@@ -5055,25 +5946,31 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '소고기 등심 200g 표면의 수분을 키친타월로 완전히 제거하고 소금 1/2작은술, 후추 한 꼬집으로 밑간한다.',
-        descriptionEn: 'Thoroughly pat 200g beef sirloin dry with paper towels, then season with 1/2 tsp salt and a pinch of pepper.',
+        description:
+            '소고기 등심 200g 표면의 수분을 키친타월로 완전히 제거하고 소금 1/2작은술, 후추 한 꼬집으로 밑간한다.',
+        descriptionEn:
+            'Thoroughly pat 200g beef sirloin dry with paper towels, then season with 1/2 tsp salt and a pinch of pepper.',
       ),
       RecipeStep(
         order: 2,
         description: '강하게 달군 팬에 오일을 두르고 고기 겉면을 바삭하게 굽는다 (시어링).',
-        descriptionEn: 'Heat oil in a very hot pan and sear the surface of the steak until crisp (searing).',
+        descriptionEn:
+            'Heat oil in a very hot pan and sear the surface of the steak until crisp (searing).',
         timerSec: 180,
       ),
       RecipeStep(
         order: 3,
-        description: '고기를 뒤집을 때 버터 30g, 으깬 마늘 10g, 로즈마리 1줄기를 넣고 녹은 버터를 스푼으로 고기에 끼얹으며 굽는다 (아로제).',
-        descriptionEn: 'When flipping, add 30g butter, 10g crushed garlic, and 1 sprig of rosemary, then continuously spoon the melted butter over the meat (arroser).',
+        description:
+            '고기를 뒤집을 때 버터 30g, 으깬 마늘 10g, 로즈마리 1줄기를 넣고 녹은 버터를 스푼으로 고기에 끼얹으며 굽는다 (아로제).',
+        descriptionEn:
+            'When flipping, add 30g butter, 10g crushed garlic, and 1 sprig of rosemary, then continuously spoon the melted butter over the meat (arroser).',
         timerSec: 120,
       ),
       RecipeStep(
         order: 4,
         description: '원하는 익힘 정도가 되면 고기를 꺼내 5분간 레스팅한 후 썰어낸다.',
-        descriptionEn: 'Once cooked to your liking, remove the steak, let it rest for 5 minutes, then slice.',
+        descriptionEn:
+            'Once cooked to your liking, remove the steak, let it rest for 5 minutes, then slice.',
         timerSec: 300,
       ),
     ],
@@ -5099,26 +5996,32 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '바게트빵', quantity: 2, unit: '조각'),
       RecipeIngredient(name: '그뤼에르 치즈', quantity: 40, unit: 'g'),
       RecipeIngredient(name: '월계수잎', quantity: 1, unit: '장', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.3, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.3, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
-        description: '양파 2개를 얇게 채 썬 후 냄비에 버터 20g을 두르고 약불에서 25분 이상 짙은 갈색이 될 때까지 볶는다 (카라멜라이징).',
-        descriptionEn: 'Thinly slice 2 onions, then cook in 20g butter over low heat for at least 25 minutes until deep golden brown (caramelizing).',
+        description:
+            '양파 2개를 얇게 채 썬 후 냄비에 버터 20g을 두르고 약불에서 25분 이상 짙은 갈색이 될 때까지 볶는다 (카라멜라이징).',
+        descriptionEn:
+            'Thinly slice 2 onions, then cook in 20g butter over low heat for at least 25 minutes until deep golden brown (caramelizing).',
         timerSec: 1500,
       ),
       RecipeStep(
         order: 2,
         description: '양파가 짙은 갈색이 되면 비프육수 400ml와 월계수잎 1장을 넣어 15분간 끓여 깊은 맛을 낸다.',
-        descriptionEn: 'Once the onions turn deep brown, add 400ml beef stock and 1 bay leaf, then simmer for 15 minutes to deepen the flavor.',
+        descriptionEn:
+            'Once the onions turn deep brown, add 400ml beef stock and 1 bay leaf, then simmer for 15 minutes to deepen the flavor.',
         timerSec: 900,
       ),
       RecipeStep(
         order: 3,
-        description: '오븐 용기에 수프를 담고 바게트빵 2조각과 그뤼에르 치즈 40g을 듬뿍 올려 200도 오븐이나 에어프라이어에서 치즈가 녹을 때까지 굽는다.',
-        descriptionEn: 'Ladle the soup into an oven-safe bowl, top with 2 slices of baguette and 40g Gruyère cheese, then bake at 200°C (or air-fry) until the cheese melts.',
+        description:
+            '오븐 용기에 수프를 담고 바게트빵 2조각과 그뤼에르 치즈 40g을 듬뿍 올려 200도 오븐이나 에어프라이어에서 치즈가 녹을 때까지 굽는다.',
+        descriptionEn:
+            'Ladle the soup into an oven-safe bowl, top with 2 slices of baguette and 40g Gruyère cheese, then bake at 200°C (or air-fry) until the cheese melts.',
         timerSec: 600,
       ),
     ],
@@ -5144,7 +6047,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '간장', quantity: 0.5, unit: '큰술'),
       RecipeIngredient(name: '굴소스', quantity: 0.5, unit: '작은술'),
       RecipeIngredient(name: '설탕', quantity: 0.5, unit: '작은술'),
-      RecipeIngredient(name: '고춧가루', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '고춧가루', quantity: 0.5, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
@@ -5155,25 +6059,30 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '팬에 식용유 1큰술을 두르고 양파를 강불로 볶다가 간장 1/2큰술을 팬 테두리에 둘러 불향을 낸다.',
-        descriptionEn: 'Heat 1 tbsp cooking oil in a pan, stir-fry the onion over high heat, then drizzle 1/2 tbsp soy sauce around the pan edge for a smoky aroma.',
+        descriptionEn:
+            'Heat 1 tbsp cooking oil in a pan, stir-fry the onion over high heat, then drizzle 1/2 tbsp soy sauce around the pan edge for a smoky aroma.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 3,
         description: '냄비에 물 350ml만 넣고 끓여 물을 버리지 않고 면과 건더기 스프를 넣어 끓인다.',
-        descriptionEn: 'Boil 350ml water in a pot and, without draining, add the noodles and dried vegetable packet directly into it.',
+        descriptionEn:
+            'Boil 350ml water in a pot and, without draining, add the noodles and dried vegetable packet directly into it.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 4,
-        description: '면이 반쯤 익으면 볶아둔 양파와 짜장 분말스프, 굴소스 1/2작은술, 설탕 1/2작은술을 넣고 바짝 조려내며 비빈다.',
-        descriptionEn: 'Once the noodles are half-cooked, add the sautéed onion, jjajang powder packet, 1/2 tsp oyster sauce, and 1/2 tsp sugar, then reduce and toss until well coated.',
+        description:
+            '면이 반쯤 익으면 볶아둔 양파와 짜장 분말스프, 굴소스 1/2작은술, 설탕 1/2작은술을 넣고 바짝 조려내며 비빈다.',
+        descriptionEn:
+            'Once the noodles are half-cooked, add the sautéed onion, jjajang powder packet, 1/2 tsp oyster sauce, and 1/2 tsp sugar, then reduce and toss until well coated.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 5,
         description: '불을 끄고 유성스프와 고춧가루 1/2작은술을 살짝 뿌려 마무리한다.',
-        descriptionEn: 'Turn off the heat and finish with the flavored oil packet and 1/2 tsp gochugaru.',
+        descriptionEn:
+            'Turn off the heat and finish with the flavored oil packet and 1/2 tsp gochugaru.',
       ),
     ],
   ),
@@ -5205,20 +6114,24 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '냄비에 물 500ml를 붓고 고추장 1큰술, 간장 1/2큰술, 설탕 1.5큰술, 고춧가루 1/2큰술, 라면스프 1/2봉을 풀어 육수를 끓인다.',
-        descriptionEn: 'Pour 500ml water into a pot and dissolve 1 tbsp gochujang, 1/2 tbsp soy sauce, 1.5 tbsp sugar, 1/2 tbsp gochugaru, and 1/2 packet of ramyeon seasoning to make the broth.',
+        description:
+            '냄비에 물 500ml를 붓고 고추장 1큰술, 간장 1/2큰술, 설탕 1.5큰술, 고춧가루 1/2큰술, 라면스프 1/2봉을 풀어 육수를 끓인다.',
+        descriptionEn:
+            'Pour 500ml water into a pot and dissolve 1 tbsp gochujang, 1/2 tbsp soy sauce, 1.5 tbsp sugar, 1/2 tbsp gochugaru, and 1/2 packet of ramyeon seasoning to make the broth.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 2,
         description: '물이 끓으면 떡 200g과 어묵 1장, 대파 1/2단을 넣고 2분간 끓여 간이 배게 한다.',
-        descriptionEn: 'Once boiling, add 200g rice cake, 1 sheet of fish cake, and 1/2 bunch of green onion, then boil for 2 minutes to let the flavors soak in.',
+        descriptionEn:
+            'Once boiling, add 200g rice cake, 1 sheet of fish cake, and 1/2 bunch of green onion, then boil for 2 minutes to let the flavors soak in.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 3,
         description: '라면사리 1개를 넣고 국물이 자작해지고 면이 꼬들해질 때까지 저어가며 조린다.',
-        descriptionEn: 'Add 1 portion of ramyeon noodles and simmer, stirring, until the broth reduces and the noodles turn chewy.',
+        descriptionEn:
+            'Add 1 portion of ramyeon noodles and simmer, stirring, until the broth reduces and the noodles turn chewy.',
         timerSec: 240,
       ),
     ],
@@ -5244,24 +6157,29 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '연유', quantity: 0.5, unit: '큰술'),
       RecipeIngredient(name: '버터', quantity: 10, unit: 'g'),
       RecipeIngredient(name: '소금', quantity: 1, unit: '꼬집'),
-      RecipeIngredient(name: '고추냉이', quantity: 0.3, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '고추냉이', quantity: 0.3, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '계란 3개를 9분간 삶아 찬물에 식힌 뒤 껍질을 깐다.',
-        descriptionEn: 'Boil 3 eggs for 9 minutes, cool in cold water, then peel.',
+        descriptionEn:
+            'Boil 3 eggs for 9 minutes, cool in cold water, then peel.',
         timerSec: 540,
       ),
       RecipeStep(
         order: 2,
-        description: '삶은 계란을 포크로 부드럽게 으깬 뒤 마요네즈 2.5큰술, 연유 0.5큰술, 소금 1꼬집, 고추냉이 0.3작은술을 섞는다.',
-        descriptionEn: 'Gently mash the boiled eggs with a fork, then mix in 2.5 tbsp mayonnaise, 0.5 tbsp condensed milk, a pinch of salt, and 0.3 tsp wasabi.',
+        description:
+            '삶은 계란을 포크로 부드럽게 으깬 뒤 마요네즈 2.5큰술, 연유 0.5큰술, 소금 1꼬집, 고추냉이 0.3작은술을 섞는다.',
+        descriptionEn:
+            'Gently mash the boiled eggs with a fork, then mix in 2.5 tbsp mayonnaise, 0.5 tbsp condensed milk, a pinch of salt, and 0.3 tsp wasabi.',
       ),
       RecipeStep(
         order: 3,
         description: '식빵 2장 한 면에 버터 10g을 바르고 으깬 계란을 채운 후 테두리를 잘라낸다.',
-        descriptionEn: 'Spread 10g butter on one side of 2 slices of bread, fill with the mashed egg, and trim off the crusts.',
+        descriptionEn:
+            'Spread 10g butter on one side of 2 slices of bread, fill with the mashed egg, and trim off the crusts.',
       ),
     ],
   ),
@@ -5288,7 +6206,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '간장', quantity: 2, unit: '큰술'),
       RecipeIngredient(name: '미림', quantity: 2, unit: '큰술'),
       RecipeIngredient(name: '설탕', quantity: 1, unit: '큰술'),
-      RecipeIngredient(name: '혼다시', quantity: 0.3, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '혼다시', quantity: 0.3, unit: '작은술', isOptional: true),
     ],
     steps: [
       RecipeStep(
@@ -5299,14 +6218,17 @@ const recipeCatalog = <Recipe>[
       ),
       RecipeStep(
         order: 2,
-        description: '팬에 물 80ml, 간장 2큰술, 미림 2큰술, 설탕 1큰술, 혼다시 0.3작은술, 채 썬 양파 1/2개를 넣고 끓인다.',
-        descriptionEn: 'In a pan, combine 80ml water, 2 tbsp soy sauce, 2 tbsp mirin, 1 tbsp sugar, 0.3 tsp hondashi, and 1/2 sliced onion, then bring to a boil.',
+        description:
+            '팬에 물 80ml, 간장 2큰술, 미림 2큰술, 설탕 1큰술, 혼다시 0.3작은술, 채 썬 양파 1/2개를 넣고 끓인다.',
+        descriptionEn:
+            'In a pan, combine 80ml water, 2 tbsp soy sauce, 2 tbsp mirin, 1 tbsp sugar, 0.3 tsp hondashi, and 1/2 sliced onion, then bring to a boil.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 3,
         description: '새우튀김을 소스에 올린 뒤 푼 계란을 두르고 살짝 익혀 밥 위에 얹는다.',
-        descriptionEn: 'Add the fried shrimp to the sauce, drizzle with beaten egg, cook briefly, then serve over a bowl of rice.',
+        descriptionEn:
+            'Add the fried shrimp to the sauce, drizzle with beaten egg, cook briefly, then serve over a bowl of rice.',
         timerSec: 60,
       ),
     ],
@@ -5340,18 +6262,21 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '명란젓은 알만 긁어내고 아보카도 1/2개는 얇게 슬라이스한다.',
-        descriptionEn: 'Scrape the roe out of the mentaiko and thinly slice 1/2 avocado.',
+        descriptionEn:
+            'Scrape the roe out of the mentaiko and thinly slice 1/2 avocado.',
       ),
       RecipeStep(
         order: 2,
         description: '밥 위에 버터 10g, 아보카도, 명란을 올리고 반숙 계란프라이를 얹는다.',
-        descriptionEn: 'Top a bowl of rice with 10g butter, the avocado, and the mentaiko, then add a soft fried egg.',
+        descriptionEn:
+            'Top a bowl of rice with 10g butter, the avocado, and the mentaiko, then add a soft fried egg.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 3,
         description: '조미김을 부숴 얹고 참기름 1큰술과 통깨 1/2큰술, 간장 1/2큰술을 둘러 마무리한다.',
-        descriptionEn: 'Crumble seasoned seaweed snack on top, then drizzle with 1 tbsp sesame oil, 1/2 tbsp sesame seeds, and 1/2 tbsp soy sauce.',
+        descriptionEn:
+            'Crumble seasoned seaweed snack on top, then drizzle with 1 tbsp sesame oil, 1/2 tbsp sesame seeds, and 1/2 tbsp soy sauce.',
       ),
     ],
   ),
@@ -5374,7 +6299,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '삼겹살', quantity: 80, unit: 'g'),
       RecipeIngredient(name: '양배추', quantity: 100, unit: 'g'),
       RecipeIngredient(name: '숙주', quantity: 50, unit: 'g'),
-      RecipeIngredient(name: '마요네즈', quantity: 1, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '마요네즈', quantity: 1, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '우스터소스', quantity: 2, unit: '큰술'),
       RecipeIngredient(name: '굴소스', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '간장', quantity: 0.5, unit: '큰술'),
@@ -5385,19 +6311,23 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '팬에 삼겹살 80g과 채 썬 양배추 100g을 볶는다.',
-        descriptionEn: 'Stir-fry 80g pork belly and 100g shredded cabbage in a pan.',
+        descriptionEn:
+            'Stir-fry 80g pork belly and 100g shredded cabbage in a pan.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 2,
-        description: '삶은 면과 숙주 50g, 우스터소스 2큰술, 굴소스 1큰술, 간장 1/2큰술, 설탕 1/2큰술을 넣고 강불에서 빠르게 볶는다.',
-        descriptionEn: 'Add the cooked noodles, 50g bean sprouts, 2 tbsp Worcestershire sauce, 1 tbsp oyster sauce, 1/2 tbsp soy sauce, and 1/2 tbsp sugar, then stir-fry quickly over high heat.',
+        description:
+            '삶은 면과 숙주 50g, 우스터소스 2큰술, 굴소스 1큰술, 간장 1/2큰술, 설탕 1/2큰술을 넣고 강불에서 빠르게 볶는다.',
+        descriptionEn:
+            'Add the cooked noodles, 50g bean sprouts, 2 tbsp Worcestershire sauce, 1 tbsp oyster sauce, 1/2 tbsp soy sauce, and 1/2 tbsp sugar, then stir-fry quickly over high heat.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 3,
         description: '그릇에 담고 마요네즈와 가쓰오부시를 올려 완성한다.',
-        descriptionEn: 'Plate and finish with a drizzle of mayonnaise and a sprinkle of bonito flakes.',
+        descriptionEn:
+            'Plate and finish with a drizzle of mayonnaise and a sprinkle of bonito flakes.',
       ),
     ],
   ),
@@ -5427,8 +6357,10 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '한입 크기로 썬 닭다리살 250g에 간장 1.5큰술, 미림 1큰술, 다진 마늘 5g, 다진 생강 1g을 주물러 15분간 재운다.',
-        descriptionEn: 'Massage 250g bite-sized chicken thigh with 1.5 tbsp soy sauce, 1 tbsp mirin, 5g minced garlic, and 1g minced ginger, then marinate for 15 minutes.',
+        description:
+            '한입 크기로 썬 닭다리살 250g에 간장 1.5큰술, 미림 1큰술, 다진 마늘 5g, 다진 생강 1g을 주물러 15분간 재운다.',
+        descriptionEn:
+            'Massage 250g bite-sized chicken thigh with 1.5 tbsp soy sauce, 1 tbsp mirin, 5g minced garlic, and 1g minced ginger, then marinate for 15 minutes.',
         timerSec: 900,
       ),
       RecipeStep(
@@ -5448,7 +6380,8 @@ const recipeCatalog = <Recipe>[
     title: '카레 우동',
     titleEn: 'Curry Udon',
     emoji: '🍛',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Curry_Udon.jpg/960px-Curry_Udon.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Curry_Udon.jpg/960px-Curry_Udon.jpg',
     cookTimeMin: 20,
     difficulty: '하',
     cuisineType: '일식',
@@ -5469,19 +6402,23 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '냄비에 소고기 양지 50g과 양파 1/2개를 볶다가 물 300ml를 붓고 끓인다.',
-        descriptionEn: 'In a pot, stir-fry 50g beef brisket and 1/2 onion, then add 300ml water and bring to a boil.',
+        descriptionEn:
+            'In a pot, stir-fry 50g beef brisket and 1/2 onion, then add 300ml water and bring to a boil.',
         timerSec: 300,
       ),
       RecipeStep(
         order: 2,
-        description: '불을 줄이고 고형카레 1조각을 풀어 녹인 뒤 참치액 1/2큰술과 우유 50ml를 더해 부드럽게 만든다.',
-        descriptionEn: 'Lower the heat, dissolve 1 block of curry roux, then stir in 1/2 tbsp tuna seasoning sauce and 50ml milk for smoothness.',
+        description:
+            '불을 줄이고 고형카레 1조각을 풀어 녹인 뒤 참치액 1/2큰술과 우유 50ml를 더해 부드럽게 만든다.',
+        descriptionEn:
+            'Lower the heat, dissolve 1 block of curry roux, then stir in 1/2 tbsp tuna seasoning sauce and 50ml milk for smoothness.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 3,
         description: '삶은 우동면을 넣고 소스가 잘 배도록 1분간 조려낸다.',
-        descriptionEn: 'Add the cooked udon noodles and simmer for 1 minute so the sauce soaks in.',
+        descriptionEn:
+            'Add the cooked udon noodles and simmer for 1 minute so the sauce soaks in.',
         timerSec: 60,
       ),
     ],
@@ -5503,7 +6440,8 @@ const recipeCatalog = <Recipe>[
     ingredients: [
       RecipeIngredient(name: '연어', quantity: 120, unit: 'g'),
       RecipeIngredient(name: '양파', quantity: 0.25, unit: '개'),
-      RecipeIngredient(name: '고추냉이', quantity: 0.5, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '고추냉이', quantity: 0.5, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '밥', quantity: 1, unit: '공기'),
       RecipeIngredient(name: '간장', quantity: 2, unit: '큰술'),
       RecipeIngredient(name: '미림', quantity: 1, unit: '큰술'),
@@ -5513,18 +6451,21 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '양파 1/4개는 채 썰어 찬물에 담가 매운맛을 뺀다.',
-        descriptionEn: 'Thinly slice 1/4 onion and soak in cold water to mellow its sharpness.',
+        descriptionEn:
+            'Thinly slice 1/4 onion and soak in cold water to mellow its sharpness.',
       ),
       RecipeStep(
         order: 2,
         description: '간장 2큰술, 미림 1큰술, 물 1큰술, 설탕 1/2큰술을 한 번 살짝 끓여 식힌다.',
-        descriptionEn: 'Bring 2 tbsp soy sauce, 1 tbsp mirin, 1 tbsp water, and 1/2 tbsp sugar to a brief boil, then let cool.',
+        descriptionEn:
+            'Bring 2 tbsp soy sauce, 1 tbsp mirin, 1 tbsp water, and 1/2 tbsp sugar to a brief boil, then let cool.',
         timerSec: 60,
       ),
       RecipeStep(
         order: 3,
         description: '밥 위에 소스를 뿌리고 양파와 두툼하게 썬 연어 120g, 고추냉이를 올린다.',
-        descriptionEn: 'Drizzle the sauce over a bowl of rice, then top with the onion, 120g thickly sliced salmon, and wasabi.',
+        descriptionEn:
+            'Drizzle the sauce over a bowl of rice, then top with the onion, 120g thickly sliced salmon, and wasabi.',
       ),
     ],
   ),
@@ -5555,18 +6496,21 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '채 썬 양배추 150g, 부침가루 5큰술, 물 50ml, 계란 1개를 섞어 반죽을 만든다.',
-        descriptionEn: 'Mix 150g shredded cabbage, 5 tbsp pancake mix, 50ml water, and 1 egg into a batter.',
+        descriptionEn:
+            'Mix 150g shredded cabbage, 5 tbsp pancake mix, 50ml water, and 1 egg into a batter.',
       ),
       RecipeStep(
         order: 2,
         description: '팬에 반죽을 두껍게 올리고 위에 베이컨 40g을 얹어 앞뒤로 노릇하게 굽는다.',
-        descriptionEn: 'Pour the batter thickly into a pan, top with 40g bacon, and cook golden brown on both sides.',
+        descriptionEn:
+            'Pour the batter thickly into a pan, top with 40g bacon, and cook golden brown on both sides.',
         timerSec: 360,
       ),
       RecipeStep(
         order: 3,
         description: '돈까스소스 2큰술과 마요네즈 1.5큰술을 지그재그로 뿌리고 가쓰오부시를 얹어 마무리한다.',
-        descriptionEn: 'Drizzle 2 tbsp tonkatsu sauce and 1.5 tbsp mayonnaise in a zigzag, then top with bonito flakes.',
+        descriptionEn:
+            'Drizzle 2 tbsp tonkatsu sauce and 1.5 tbsp mayonnaise in a zigzag, then top with bonito flakes.',
       ),
     ],
   ),
@@ -5598,19 +6542,22 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '올리브유 2큰술에 양파 1/4개와 슬라이스한 양송이버섯 4개를 볶다가 쌀 1컵을 넣어 함께 볶는다.',
-        descriptionEn: 'Sauté 1/4 onion and 4 sliced mushrooms in 2 tbsp olive oil, then add 1 cup rice and stir-fry together.',
+        descriptionEn:
+            'Sauté 1/4 onion and 4 sliced mushrooms in 2 tbsp olive oil, then add 1 cup rice and stir-fry together.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 2,
         description: '따뜻한 치킨육수 300ml를 조금씩 나누어 부어가며 저어가며 쌀을 익힌다.',
-        descriptionEn: 'Gradually add 300ml warm chicken stock a little at a time, stirring continuously until the rice is cooked.',
+        descriptionEn:
+            'Gradually add 300ml warm chicken stock a little at a time, stirring continuously until the rice is cooked.',
         timerSec: 900,
       ),
       RecipeStep(
         order: 3,
         description: '불을 끄고 버터 20g, 파르메산 치즈 15g, 생크림 50ml를 넣고 농도를 잡아 완성한다.',
-        descriptionEn: 'Turn off the heat and stir in 20g butter, 15g Parmesan, and 50ml heavy cream to finish the creamy texture.',
+        descriptionEn:
+            'Turn off the heat and stir in 20g butter, 15g Parmesan, and 50ml heavy cream to finish the creamy texture.',
       ),
     ],
   ),
@@ -5633,25 +6580,29 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '마늘', quantity: 20, unit: 'g'),
       RecipeIngredient(name: '페페론치노', quantity: 3, unit: '개'),
       RecipeIngredient(name: '올리브유', quantity: 4, unit: '큰술'),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '통후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '마늘 20g은 편으로 썰고 페페론치노 3개는 쪼갠다.',
-        descriptionEn: 'Thinly slice 20g garlic and break apart 3 dried chili peppers.',
+        descriptionEn:
+            'Thinly slice 20g garlic and break apart 3 dried chili peppers.',
       ),
       RecipeStep(
         order: 2,
         description: '올리브유 4큰술에 마늘을 약불로 황금빛이 나게 구운 뒤 페페론치노를 넣는다.',
-        descriptionEn: 'Cook the garlic in 4 tbsp olive oil over low heat until golden, then add the chili peppers.',
+        descriptionEn:
+            'Cook the garlic in 4 tbsp olive oil over low heat until golden, then add the chili peppers.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 3,
         description: '삶은 면과 면수 2국자를 넣고 센 불에서 빠르게 비벼 유화시킨다.',
-        descriptionEn: 'Add the cooked pasta and 2 ladles of pasta water, then toss quickly over high heat to emulsify.',
+        descriptionEn:
+            'Add the cooked pasta and 2 ladles of pasta water, then toss quickly over high heat to emulsify.',
         timerSec: 60,
       ),
     ],
@@ -5676,24 +6627,28 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '바질', quantity: 3, unit: 'g'),
       RecipeIngredient(name: '올리브유', quantity: 2, unit: '큰술'),
       RecipeIngredient(name: '발사믹글레이즈', quantity: 1, unit: '큰술'),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '토마토 1개와 모짜렐라 치즈 100g을 같은 두께로 슬라이스한다.',
-        descriptionEn: 'Slice 1 tomato and 100g mozzarella to the same thickness.',
+        descriptionEn:
+            'Slice 1 tomato and 100g mozzarella to the same thickness.',
       ),
       RecipeStep(
         order: 2,
         description: '토마토, 치즈, 바질 잎을 교차로 겹쳐 담는다.',
-        descriptionEn: 'Arrange the tomato, cheese, and basil leaves alternately, overlapping each other.',
+        descriptionEn:
+            'Arrange the tomato, cheese, and basil leaves alternately, overlapping each other.',
       ),
       RecipeStep(
         order: 3,
         description: '올리브유 2큰술과 발사믹글레이즈 1큰술, 소금, 후추를 뿌려 마무리한다.',
-        descriptionEn: 'Finish with a drizzle of 2 tbsp olive oil, 1 tbsp balsamic glaze, salt, and pepper.',
+        descriptionEn:
+            'Finish with a drizzle of 2 tbsp olive oil, 1 tbsp balsamic glaze, salt, and pepper.',
       ),
     ],
   ),
@@ -5723,18 +6678,21 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '면을 삶아 찬물에 헹군 뒤 물기를 바짝 뺀다.',
-        descriptionEn: 'Cook the pasta, rinse in cold water, and drain thoroughly.',
+        descriptionEn:
+            'Cook the pasta, rinse in cold water, and drain thoroughly.',
         timerSec: 480,
       ),
       RecipeStep(
         order: 2,
         description: '볼에 면, 반으로 썬 방울토마토 4개, 모짜렐라 치즈 40g을 담는다.',
-        descriptionEn: 'In a bowl, combine the pasta, 4 halved cherry tomatoes, and 40g mozzarella.',
+        descriptionEn:
+            'In a bowl, combine the pasta, 4 halved cherry tomatoes, and 40g mozzarella.',
       ),
       RecipeStep(
         order: 3,
         description: '바질페스토 2큰술, 올리브유 1큰술, 레몬 1/5개의 즙을 넣고 차갑게 버무린다.',
-        descriptionEn: 'Toss with 2 tbsp basil pesto, 1 tbsp olive oil, and the juice of 1/5 lemon, then serve chilled.',
+        descriptionEn:
+            'Toss with 2 tbsp basil pesto, 1 tbsp olive oil, and the juice of 1/5 lemon, then serve chilled.',
       ),
     ],
   ),
@@ -5759,26 +6717,30 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '버터', quantity: 10, unit: 'g'),
       RecipeIngredient(name: '트러플오일', quantity: 0.5, unit: '작은술'),
       RecipeIngredient(name: '치킨육수', quantity: 1, unit: '큰술', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '뇨끼 150g은 삶은 뒤 팬에 버터 10g을 두르고 겉면을 바삭하게 굽는다.',
-        descriptionEn: 'Boil 150g gnocchi, then pan-fry in 10g butter until the surface turns crispy.',
+        descriptionEn:
+            'Boil 150g gnocchi, then pan-fry in 10g butter until the surface turns crispy.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 2,
         description: '팬에 슬라이스한 양송이버섯 3개, 생크림 150ml, 치킨육수 1큰술을 넣고 소스를 조린다.',
-        descriptionEn: 'Add 3 sliced mushrooms, 150ml heavy cream, and 1 tbsp chicken stock to the pan and simmer down the sauce.',
+        descriptionEn:
+            'Add 3 sliced mushrooms, 150ml heavy cream, and 1 tbsp chicken stock to the pan and simmer down the sauce.',
         timerSec: 240,
       ),
       RecipeStep(
         order: 3,
         description: '구운 뇨끼를 소스에 넣고 섞은 뒤 트러플오일 0.5작은술로 향을 입힌다.',
-        descriptionEn: 'Toss the fried gnocchi in the sauce, then finish with 0.5 tsp truffle oil for aroma.',
+        descriptionEn:
+            'Toss the fried gnocchi in the sauce, then finish with 0.5 tsp truffle oil for aroma.',
       ),
     ],
   ),
@@ -5810,20 +6772,24 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '올리브유 2큰술에 마늘 8g과 페페론치노 2개를 볶다가 바지락 8개, 새우 3마리, 오징어 50g과 화이트와인 2큰술을 넣고 익힌다.',
-        descriptionEn: 'Sauté 8g garlic and 2 chili peppers in 2 tbsp olive oil, then add 8 clams, 3 shrimp, 50g squid, and 2 tbsp white wine, and cook through.',
+        description:
+            '올리브유 2큰술에 마늘 8g과 페페론치노 2개를 볶다가 바지락 8개, 새우 3마리, 오징어 50g과 화이트와인 2큰술을 넣고 익힌다.',
+        descriptionEn:
+            'Sauté 8g garlic and 2 chili peppers in 2 tbsp olive oil, then add 8 clams, 3 shrimp, 50g squid, and 2 tbsp white wine, and cook through.',
         timerSec: 240,
       ),
       RecipeStep(
         order: 2,
         description: '토마토소스 200g과 면수 1국자를 넣고 끓여 해산물 육수를 낸다.',
-        descriptionEn: 'Add 200g tomato sauce and 1 ladle of pasta water, then simmer to build a seafood-infused sauce.',
+        descriptionEn:
+            'Add 200g tomato sauce and 1 ladle of pasta water, then simmer to build a seafood-infused sauce.',
         timerSec: 300,
       ),
       RecipeStep(
         order: 3,
         description: '삶은 면을 넣고 소스가 잘 배도록 자작하게 볶아낸다.',
-        descriptionEn: 'Add the cooked pasta and toss until the sauce coats it evenly.',
+        descriptionEn:
+            'Add the cooked pasta and toss until the sauce coats it evenly.',
         timerSec: 90,
       ),
     ],
@@ -5859,12 +6825,14 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 2,
         description: '모짜렐라 치즈 80g과 얇게 썬 방울토마토 3개를 고르게 올린다.',
-        descriptionEn: 'Evenly top with 80g mozzarella and 3 thinly sliced cherry tomatoes.',
+        descriptionEn:
+            'Evenly top with 80g mozzarella and 3 thinly sliced cherry tomatoes.',
       ),
       RecipeStep(
         order: 3,
         description: '에어프라이어 180도에서 7분간 구운 뒤 바질과 올리브유 1큰술을 얹는다.',
-        descriptionEn: 'Air-fry at 180°C for 7 minutes, then top with basil and 1 tbsp olive oil.',
+        descriptionEn:
+            'Air-fry at 180°C for 7 minutes, then top with basil and 1 tbsp olive oil.',
         timerSec: 420,
       ),
     ],
@@ -5895,19 +6863,23 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '올리브유 1큰술에 마늘 5g, 양파 1/5개, 다진 소고기 100g을 볶다가 토마토소스 150g을 넣어 라구 소스를 만든다.',
-        descriptionEn: 'Sauté 5g garlic, 1/5 onion, and 100g ground beef in 1 tbsp olive oil, then add 150g tomato sauce to make the ragù.',
+        description:
+            '올리브유 1큰술에 마늘 5g, 양파 1/5개, 다진 소고기 100g을 볶다가 토마토소스 150g을 넣어 라구 소스를 만든다.',
+        descriptionEn:
+            'Sauté 5g garlic, 1/5 onion, and 100g ground beef in 1 tbsp olive oil, then add 150g tomato sauce to make the ragù.',
         timerSec: 300,
       ),
       RecipeStep(
         order: 2,
         description: '오븐 용기에 라구 소스, 삶은 라자냐면 3장, 모짜렐라 치즈 80g 순으로 켜켜이 쌓는다.',
-        descriptionEn: 'Layer the ragù, 3 sheets of cooked lasagna, and 80g mozzarella in an oven dish, repeating the order.',
+        descriptionEn:
+            'Layer the ragù, 3 sheets of cooked lasagna, and 80g mozzarella in an oven dish, repeating the order.',
       ),
       RecipeStep(
         order: 3,
         description: '190도 오븐이나 에어프라이어에서 12분간 치즈가 노릇해질 때까지 굽는다.',
-        descriptionEn: 'Bake at 190°C (or air-fry) for 12 minutes until the cheese turns golden.',
+        descriptionEn:
+            'Bake at 190°C (or air-fry) for 12 minutes until the cheese turns golden.',
         timerSec: 720,
       ),
     ],
@@ -5942,19 +6914,23 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '베이컨 40g을 볶아 기름을 낸 뒤 닭다리살 500g 겉면을 바삭하게 굽는다.',
-        descriptionEn: 'Render fat from 40g bacon, then sear 500g chicken thigh until crisp on the outside.',
+        descriptionEn:
+            'Render fat from 40g bacon, then sear 500g chicken thigh until crisp on the outside.',
         timerSec: 300,
       ),
       RecipeStep(
         order: 2,
-        description: '당근 1/2개, 양파 1/2개, 양송이버섯 4개, 마늘 5g을 넣고 함께 볶다가 레드와인 300ml와 간장 1큰술, 월계수잎 1장을 붓는다.',
-        descriptionEn: 'Add 1/2 carrot, 1/2 onion, 4 mushrooms, and 5g garlic, stir-fry together, then pour in 300ml red wine, 1 tbsp soy sauce, and 1 bay leaf.',
+        description:
+            '당근 1/2개, 양파 1/2개, 양송이버섯 4개, 마늘 5g을 넣고 함께 볶다가 레드와인 300ml와 간장 1큰술, 월계수잎 1장을 붓는다.',
+        descriptionEn:
+            'Add 1/2 carrot, 1/2 onion, 4 mushrooms, and 5g garlic, stir-fry together, then pour in 300ml red wine, 1 tbsp soy sauce, and 1 bay leaf.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 3,
         description: '뚜껑을 덮고 약불에서 25분간 푹 조린 후 버터 15g을 섞어 완성한다.',
-        descriptionEn: 'Cover and simmer over low heat for 25 minutes, then stir in 15g butter to finish.',
+        descriptionEn:
+            'Cover and simmer over low heat for 25 minutes, then stir in 15g butter to finish.',
         timerSec: 1500,
       ),
     ],
@@ -5963,7 +6939,8 @@ const recipeCatalog = <Recipe>[
     title: '프로방스식 라타투이',
     titleEn: 'Provençal Ratatouille',
     emoji: '🍆',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Ratatouille.jpg/960px-Ratatouille.jpg',
+    photoUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Ratatouille.jpg/960px-Ratatouille.jpg',
     cookTimeMin: 30,
     difficulty: '하',
     cuisineType: '프랑스식',
@@ -5980,24 +6957,28 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '양파', quantity: 0.5, unit: '개'),
       RecipeIngredient(name: '올리브유', quantity: 3, unit: '큰술'),
       RecipeIngredient(name: '바질', quantity: 1, unit: 'g', isOptional: true),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '가지 1개, 애호박 1개, 토마토 2개는 동글동글하게 슬라이스한다.',
-        descriptionEn: 'Slice 1 eggplant, 1 zucchini, and 2 tomatoes into rounds.',
+        descriptionEn:
+            'Slice 1 eggplant, 1 zucchini, and 2 tomatoes into rounds.',
       ),
       RecipeStep(
         order: 2,
         description: '팬 바닥에 양파 1/2개와 토마토소스 200g을 깔고 채소를 예쁘게 겹쳐 올린다.',
-        descriptionEn: 'Spread 1/2 onion and 200g tomato sauce over the bottom of a pan, then arrange the sliced vegetables neatly on top, overlapping.',
+        descriptionEn:
+            'Spread 1/2 onion and 200g tomato sauce over the bottom of a pan, then arrange the sliced vegetables neatly on top, overlapping.',
       ),
       RecipeStep(
         order: 3,
         description: '올리브유 3큰술과 바질을 뿌리고 뚜껑을 덮어 약불에서 20분간 자작하게 익힌다.',
-        descriptionEn: 'Drizzle with 3 tbsp olive oil and basil, cover, and simmer over low heat for 20 minutes.',
+        descriptionEn:
+            'Drizzle with 3 tbsp olive oil and basil, cover, and simmer over low heat for 20 minutes.',
         timerSec: 1200,
       ),
     ],
@@ -6032,19 +7013,22 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '올리브유 2큰술에 마늘 5g, 양파 1/2개, 토마토 1개를 볶는다.',
-        descriptionEn: 'Sauté 5g garlic, 1/2 onion, and 1 tomato in 2 tbsp olive oil.',
+        descriptionEn:
+            'Sauté 5g garlic, 1/2 onion, and 1 tomato in 2 tbsp olive oil.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 2,
         description: '새우 4마리, 오징어 1/2마리, 바지락 10개와 화이트와인 50ml를 넣고 알코올을 날린다.',
-        descriptionEn: 'Add 4 shrimp, 1/2 squid, 10 clams, and 50ml white wine, then cook off the alcohol.',
+        descriptionEn:
+            'Add 4 shrimp, 1/2 squid, 10 clams, and 50ml white wine, then cook off the alcohol.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 3,
         description: '치킨육수 300ml와 토마토페이스트 2큰술을 넣고 끓여 소금, 후추로 간한다.',
-        descriptionEn: 'Add 300ml chicken stock and 2 tbsp tomato paste, simmer, then season with salt and pepper.',
+        descriptionEn:
+            'Add 300ml chicken stock and 2 tbsp tomato paste, simmer, then season with salt and pepper.',
         timerSec: 300,
       ),
     ],
@@ -6070,25 +7054,29 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '생크림', quantity: 3, unit: '큰술'),
       RecipeIngredient(name: '바게트빵', quantity: 2, unit: '조각'),
       RecipeIngredient(name: '미림', quantity: 2, unit: '큰술'),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '버터 50g에 양파 1/2개와 닭간 200g을 속까지 바싹 볶은 뒤 미림 2큰술로 잡내를 잡는다.',
-        descriptionEn: 'Cook 1/2 onion and 200g chicken liver thoroughly in 50g butter, then deglaze with 2 tbsp mirin to remove any gaminess.',
+        descriptionEn:
+            'Cook 1/2 onion and 200g chicken liver thoroughly in 50g butter, then deglaze with 2 tbsp mirin to remove any gaminess.',
         timerSec: 300,
       ),
       RecipeStep(
         order: 2,
         description: '볶은 재료에 생크림 3큰술을 넣고 믹서로 부드럽게 갈아낸다.',
-        descriptionEn: 'Add 3 tbsp heavy cream to the cooked mixture and blend until smooth.',
+        descriptionEn:
+            'Add 3 tbsp heavy cream to the cooked mixture and blend until smooth.',
       ),
       RecipeStep(
         order: 3,
         description: '냉장고에서 굳힌 뒤 구운 바게트빵 2조각에 발라낸다.',
-        descriptionEn: 'Chill in the refrigerator to set, then spread over 2 toasted slices of baguette.',
+        descriptionEn:
+            'Chill in the refrigerator to set, then spread over 2 toasted slices of baguette.',
         timerSec: 1800,
       ),
     ],
@@ -6117,19 +7105,23 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '달걀노른자 3개, 설탕 30g, 데운 생크림 200ml, 바닐라에센스 0.5작은술, 소금 한 꼬집을 잘 섞어 체에 거른다.',
-        descriptionEn: 'Mix 3 egg yolks, 30g sugar, 200ml warmed heavy cream, 0.5 tsp vanilla extract, and a pinch of salt, then strain through a sieve.',
+        description:
+            '달걀노른자 3개, 설탕 30g, 데운 생크림 200ml, 바닐라에센스 0.5작은술, 소금 한 꼬집을 잘 섞어 체에 거른다.',
+        descriptionEn:
+            'Mix 3 egg yolks, 30g sugar, 200ml warmed heavy cream, 0.5 tsp vanilla extract, and a pinch of salt, then strain through a sieve.',
       ),
       RecipeStep(
         order: 2,
         description: '용기에 담아 물을 채운 오븐틀에 넣고 150도 오븐에서 30분간 중탕으로 익힌다.',
-        descriptionEn: 'Pour into ramekins, place in a water bath, and bake at 150°C for 30 minutes.',
+        descriptionEn:
+            'Pour into ramekins, place in a water bath, and bake at 150°C for 30 minutes.',
         timerSec: 1800,
       ),
       RecipeStep(
         order: 3,
         description: '차갑게 식힌 후 표면에 설탕 20g을 뿌리고 토치로 갈색이 되도록 카라멜라이징한다.',
-        descriptionEn: 'Chill thoroughly, sprinkle 20g sugar on top, then caramelize with a torch until golden brown.',
+        descriptionEn:
+            'Chill thoroughly, sprinkle 20g sugar on top, then caramelize with a torch until golden brown.',
         timerSec: 120,
       ),
     ],
@@ -6163,19 +7155,23 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '소고기 양지 300g에 밀가루 1큰술을 묻혀 버터 20g에 겉면을 바삭하게 굽는다.',
-        descriptionEn: 'Coat 300g beef brisket with 1 tbsp flour, then sear until crisp in 20g butter.',
+        descriptionEn:
+            'Coat 300g beef brisket with 1 tbsp flour, then sear until crisp in 20g butter.',
         timerSec: 240,
       ),
       RecipeStep(
         order: 2,
-        description: '레드와인 400ml를 붓고 알코올을 날린 뒤 당근 1/2개, 양송이버섯 4개, 토마토페이스트 1큰술, 치킨육수 100ml, 월계수잎 1장을 넣는다.',
-        descriptionEn: 'Pour in 400ml red wine and cook off the alcohol, then add 1/2 carrot, 4 mushrooms, 1 tbsp tomato paste, 100ml chicken stock, and 1 bay leaf.',
+        description:
+            '레드와인 400ml를 붓고 알코올을 날린 뒤 당근 1/2개, 양송이버섯 4개, 토마토페이스트 1큰술, 치킨육수 100ml, 월계수잎 1장을 넣는다.',
+        descriptionEn:
+            'Pour in 400ml red wine and cook off the alcohol, then add 1/2 carrot, 4 mushrooms, 1 tbsp tomato paste, 100ml chicken stock, and 1 bay leaf.',
         timerSec: 300,
       ),
       RecipeStep(
         order: 3,
         description: '약불에서 1시간 이상 부드러워질 때까지 푹 조려낸다.',
-        descriptionEn: 'Simmer over low heat for over an hour until the beef is tender.',
+        descriptionEn:
+            'Simmer over low heat for over an hour until the beef is tender.',
         timerSec: 3600,
       ),
     ],
@@ -6203,24 +7199,29 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '올리브유', quantity: 2, unit: '큰술'),
       RecipeIngredient(name: '레몬', quantity: 0.2, unit: '개'),
       RecipeIngredient(name: '디종머스타드', quantity: 0.5, unit: '작은술'),
-      RecipeIngredient(name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
+      RecipeIngredient(
+          name: '소금', quantity: 0.25, unit: '작은술', isOptional: true),
       RecipeIngredient(name: '후추', quantity: 1, unit: '꼬집', isOptional: true),
     ],
     steps: [
       RecipeStep(
         order: 1,
         description: '볼에 로메인상추 50g과 기름을 뺀 캔참치 150g을 담는다.',
-        descriptionEn: 'In a bowl, combine 50g romaine lettuce and 150g drained canned tuna.',
+        descriptionEn:
+            'In a bowl, combine 50g romaine lettuce and 150g drained canned tuna.',
       ),
       RecipeStep(
         order: 2,
         description: '반으로 썬 삶은 계란 1개, 방울토마토 4개, 블랙올리브 5개를 올린다.',
-        descriptionEn: 'Top with 1 halved hard-boiled egg, 4 cherry tomatoes, and 5 black olives.',
+        descriptionEn:
+            'Top with 1 halved hard-boiled egg, 4 cherry tomatoes, and 5 black olives.',
       ),
       RecipeStep(
         order: 3,
-        description: '올리브유 2큰술, 레몬 1/5개의 즙, 디종머스타드 0.5작은술을 섞어 드레싱을 만들어 먹기 직전에 두른다.',
-        descriptionEn: 'Whisk together 2 tbsp olive oil, the juice of 1/5 lemon, and 0.5 tsp Dijon mustard, then drizzle on just before serving.',
+        description:
+            '올리브유 2큰술, 레몬 1/5개의 즙, 디종머스타드 0.5작은술을 섞어 드레싱을 만들어 먹기 직전에 두른다.',
+        descriptionEn:
+            'Whisk together 2 tbsp olive oil, the juice of 1/5 lemon, and 0.5 tsp Dijon mustard, then drizzle on just before serving.',
       ),
     ],
   ),
@@ -6251,20 +7252,24 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '냄비에 물 600ml와 고추장 1.5큰술, 고춧가루 2큰술, 간장 1.5큰술, 설탕 2큰술, 다진 마늘 20g을 듬뿍 넣고 끓인다.',
-        descriptionEn: 'In a pot, combine 600ml water with 1.5 tbsp gochujang, 2 tbsp gochugaru, 1.5 tbsp soy sauce, 2 tbsp sugar, and a generous 20g minced garlic, then bring to a boil.',
+        description:
+            '냄비에 물 600ml와 고추장 1.5큰술, 고춧가루 2큰술, 간장 1.5큰술, 설탕 2큰술, 다진 마늘 20g을 듬뿍 넣고 끓인다.',
+        descriptionEn:
+            'In a pot, combine 600ml water with 1.5 tbsp gochujang, 2 tbsp gochugaru, 1.5 tbsp soy sauce, 2 tbsp sugar, and a generous 20g minced garlic, then bring to a boil.',
         timerSec: 300,
       ),
       RecipeStep(
         order: 2,
         description: '떡 200g과 어묵 2장을 넣고 떡이 부풀어 오를 때까지 국물을 자작하게 끓인다.',
-        descriptionEn: 'Add 200g rice cake and 2 sheets of fish cake, and simmer until the rice cakes plump up and the broth reduces.',
+        descriptionEn:
+            'Add 200g rice cake and 2 sheets of fish cake, and simmer until the rice cakes plump up and the broth reduces.',
         timerSec: 480,
       ),
       RecipeStep(
         order: 3,
         description: '송송 썬 대파 1단을 듬뿍 올려 마무리한다.',
-        descriptionEn: 'Finish with a generous topping of 1 bunch of sliced green onion.',
+        descriptionEn:
+            'Finish with a generous topping of 1 bunch of sliced green onion.',
       ),
     ],
   ),
@@ -6295,17 +7300,20 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '삶은 당면 100g에 간장 1큰술, 참기름 0.5큰술, 설탕 0.3큰술로 밑간한다.',
-        descriptionEn: 'Season 100g boiled glass noodles with 1 tbsp soy sauce, 0.5 tbsp sesame oil, and 0.3 tbsp sugar.',
+        descriptionEn:
+            'Season 100g boiled glass noodles with 1 tbsp soy sauce, 0.5 tbsp sesame oil, and 0.3 tbsp sugar.',
       ),
       RecipeStep(
         order: 2,
         description: '김 위에 양념한 당면을 올리고 단단하게 말아 3등분한다.',
-        descriptionEn: 'Place the seasoned noodles on a sheet of seaweed, roll tightly, and cut into 3 pieces.',
+        descriptionEn:
+            'Place the seasoned noodles on a sheet of seaweed, roll tightly, and cut into 3 pieces.',
       ),
       RecipeStep(
         order: 3,
         description: '튀김가루 5큰술과 물 80ml로 반죽을 만들어 입힌 뒤 노릇하게 튀겨낸다.',
-        descriptionEn: 'Make a batter with 5 tbsp frying mix and 80ml water, coat the rolls, and deep-fry until golden.',
+        descriptionEn:
+            'Make a batter with 5 tbsp frying mix and 80ml water, coat the rolls, and deep-fry until golden.',
         timerSec: 300,
       ),
     ],
@@ -6330,7 +7338,8 @@ const recipeCatalog = <Recipe>[
       RecipeIngredient(name: '대파', quantity: 0.5, unit: '단'),
       RecipeIngredient(name: '모짜렐라 치즈', quantity: 50, unit: 'g'),
       RecipeIngredient(name: '식용유', quantity: 1.5, unit: '큰술'),
-      RecipeIngredient(name: '고춧가루', quantity: 0.5, unit: '큰술', isOptional: true),
+      RecipeIngredient(
+          name: '고춧가루', quantity: 0.5, unit: '큰술', isOptional: true),
       RecipeIngredient(name: '간장', quantity: 1, unit: '큰술'),
       RecipeIngredient(name: '설탕', quantity: 0.5, unit: '큰술'),
       RecipeIngredient(name: '참기름', quantity: 1, unit: '큰술'),
@@ -6338,20 +7347,24 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '식용유 1.5큰술에 대파 1/2단으로 파기름을 낸 뒤 쫑쫑 썬 김치 150g과 설탕 1/2큰술, 간장 1큰술을 넣고 볶는다.',
-        descriptionEn: 'Make scallion oil with 1/2 bunch of green onion in 1.5 tbsp cooking oil, then add 150g chopped kimchi with 1/2 tbsp sugar and 1 tbsp soy sauce, and stir-fry.',
+        description:
+            '식용유 1.5큰술에 대파 1/2단으로 파기름을 낸 뒤 쫑쫑 썬 김치 150g과 설탕 1/2큰술, 간장 1큰술을 넣고 볶는다.',
+        descriptionEn:
+            'Make scallion oil with 1/2 bunch of green onion in 1.5 tbsp cooking oil, then add 150g chopped kimchi with 1/2 tbsp sugar and 1 tbsp soy sauce, and stir-fry.',
         timerSec: 180,
       ),
       RecipeStep(
         order: 2,
         description: '밥 1공기를 넣고 골고루 볶아 팬 바닥에 넓게 펼친다.',
-        descriptionEn: 'Add 1 bowl of rice, stir-fry evenly, then spread it flat across the pan.',
+        descriptionEn:
+            'Add 1 bowl of rice, stir-fry evenly, then spread it flat across the pan.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 3,
         description: '모짜렐라 치즈 50g을 얹고 뚜껑을 덮어 치즈가 녹을 때까지 약불로 익힌다.',
-        descriptionEn: 'Top with 50g mozzarella, cover, and cook over low heat until the cheese melts.',
+        descriptionEn:
+            'Top with 50g mozzarella, cover, and cook over low heat until the cheese melts.',
         timerSec: 180,
       ),
     ],
@@ -6385,19 +7398,22 @@ const recipeCatalog = <Recipe>[
       RecipeStep(
         order: 1,
         description: '채 썬 양배추 80g과 계란 1개를 섞어 팬에서 네모나게 부쳐낸다.',
-        descriptionEn: 'Mix 80g shredded cabbage with 1 egg and pan-fry into a square shape.',
+        descriptionEn:
+            'Mix 80g shredded cabbage with 1 egg and pan-fry into a square shape.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 2,
         description: '버터 15g에 구운 식빵 2장 위에 양배추 부침, 햄 1장, 슬라이스치즈 1장을 올린다.',
-        descriptionEn: 'On 2 slices of bread toasted in 15g butter, layer the cabbage patty, 1 slice of ham, and 1 slice of cheese.',
+        descriptionEn:
+            'On 2 slices of bread toasted in 15g butter, layer the cabbage patty, 1 slice of ham, and 1 slice of cheese.',
         timerSec: 120,
       ),
       RecipeStep(
         order: 3,
         description: '설탕 1큰술을 넉넉히 뿌리고 케첩 1큰술과 마요네즈 1/2큰술을 둘러 식빵으로 덮는다.',
-        descriptionEn: 'Sprinkle generously with 1 tbsp sugar, drizzle with 1 tbsp ketchup and 1/2 tbsp mayonnaise, then close with the other slice of bread.',
+        descriptionEn:
+            'Sprinkle generously with 1 tbsp sugar, drizzle with 1 tbsp ketchup and 1/2 tbsp mayonnaise, then close with the other slice of bread.',
       ),
     ],
   ),
@@ -6427,19 +7443,23 @@ const recipeCatalog = <Recipe>[
     steps: [
       RecipeStep(
         order: 1,
-        description: '말랑한 떡 200g에 고춧가루 1.5큰술, 간장 1큰술, 설탕 1큰술, 참기름 0.5큰술을 넣고 먼저 주물러 양념한다.',
-        descriptionEn: 'Massage 200g soft rice cakes with 1.5 tbsp gochugaru, 1 tbsp soy sauce, 1 tbsp sugar, and 0.5 tbsp sesame oil to season first.',
+        description:
+            '말랑한 떡 200g에 고춧가루 1.5큰술, 간장 1큰술, 설탕 1큰술, 참기름 0.5큰술을 넣고 먼저 주물러 양념한다.',
+        descriptionEn:
+            'Massage 200g soft rice cakes with 1.5 tbsp gochugaru, 1 tbsp soy sauce, 1 tbsp sugar, and 0.5 tbsp sesame oil to season first.',
       ),
       RecipeStep(
         order: 2,
         description: '달군 팬에 식용유 2큰술을 두르고 양념한 떡과 송송 썬 대파 1/2단을 넣는다.',
-        descriptionEn: 'Heat 2 tbsp cooking oil in a pan and add the seasoned rice cakes with 1/2 bunch of sliced green onion.',
+        descriptionEn:
+            'Heat 2 tbsp cooking oil in a pan and add the seasoned rice cakes with 1/2 bunch of sliced green onion.',
         timerSec: 60,
       ),
       RecipeStep(
         order: 3,
         description: '약불에서 양념이 타지 않고 바삭해질 때까지 달달 볶아낸다.',
-        descriptionEn: 'Stir-fry over low heat until crispy, taking care not to burn the seasoning.',
+        descriptionEn:
+            'Stir-fry over low heat until crispy, taking care not to burn the seasoning.',
         timerSec: 240,
       ),
     ],
@@ -6450,5 +7470,6 @@ const recipeCatalog = <Recipe>[
 /// 레시피를 찾아야 하는 화면에서 공용으로 쓴다.
 final allRecipes = <Recipe>[...recipeCatalog, ...kfoodCatalog];
 
-Recipe? findRecipeByTitle(String title) =>
-    allRecipes.cast<Recipe?>().firstWhere((r) => r?.title == title, orElse: () => null);
+Recipe? findRecipeByTitle(String title) => allRecipes
+    .cast<Recipe?>()
+    .firstWhere((r) => r?.title == title, orElse: () => null);
