@@ -252,7 +252,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => CookingModeScreen(
-          title: recipe.title,
+          title: tr(recipe.title, recipe.titleEn),
           photoUrl: recipe.photoUrl,
           cuisineType: recipe.cuisineType,
           emoji: recipe.emoji,

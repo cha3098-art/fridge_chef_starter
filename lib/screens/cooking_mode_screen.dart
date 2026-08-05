@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../l10n/tr.dart';
 import '../services/voice_chef_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
@@ -84,8 +85,8 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
       onDone: () {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('⏰ 타이머가 끝났어요!'),
+          SnackBar(
+            content: Text(tr('⏰ 타이머가 끝났어요!', '⏰ Timer\'s up!')),
             backgroundColor: AppColors.green,
             behavior: SnackBarBehavior.floating,
           ),
@@ -125,8 +126,8 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '⏱ 타이머 설정',
+            Text(
+              tr('⏱ 타이머 설정', '⏱ Set timer'),
               style: TextStyle(
                   fontWeight: FontWeight.w800,
                   fontSize: 16,
@@ -147,7 +148,7 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(color: const Color(0xFFE2E8F0)),
                           ),
-                          child: Text('$m분',
+                          child: Text(tr('$m분', '$m min'),
                               style: const TextStyle(
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.ink)),
@@ -562,7 +563,7 @@ class _BottomControls extends StatelessWidget {
           Expanded(
             child: _ControlButton(
               icon: Icons.chevron_left_rounded,
-              label: '이전 단계',
+              label: tr('이전 단계', 'Previous'),
               onTap: onPrevious,
             ),
           ),
@@ -570,7 +571,7 @@ class _BottomControls extends StatelessWidget {
           Expanded(
             child: _ControlButton(
               icon: Icons.timer_outlined,
-              label: '타이머',
+              label: tr('타이머', 'Timer'),
               onTap: onTimer,
             ),
           ),
@@ -578,7 +579,7 @@ class _BottomControls extends StatelessWidget {
           Expanded(
             child: _ControlButton(
               icon: Icons.chevron_right_rounded,
-              label: '다음 단계',
+              label: tr('다음 단계', 'Next'),
               onTap: onNext,
             ),
           ),
