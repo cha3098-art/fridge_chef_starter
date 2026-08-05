@@ -853,17 +853,20 @@ class _RecipeCard extends StatelessWidget {
                             Expanded(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
+                                    horizontal: 8, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: AppColors.carrotSoft,
-                                  borderRadius: BorderRadius.circular(999),
+                                  color: const Color(0xFFFFF1F2),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: const Color(0xFFFECDD3)),
                                 ),
                                 child: Text(
                                   '${tr('부족한 재료', 'Missing')}: ${missing.map(trIngredientName).join(', ')}',
                                   style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.carrot,
-                                      fontWeight: FontWeight.w700),
+                                      fontSize: 11.5,
+                                      color: Color(0xFFE11D48),
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.4),
                                 ),
                               ),
                             ),

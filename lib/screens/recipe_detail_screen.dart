@@ -695,23 +695,32 @@ class _StepTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 56,
-            height: 56,
-            clipBehavior: Clip.antiAlias,
+            width: 92,
+            height: 92,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-            child: StepVisual(
-              imageAsset: step.imageAsset,
-              recipePhotoUrl: recipePhotoUrl,
-              stepDescription: step.description,
-              width: 56,
-              height: 56,
-              borderRadius: BorderRadius.zero,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: StepVisual(
+                imageAsset: step.imageAsset,
+                recipePhotoUrl: recipePhotoUrl,
+                stepDescription: step.description,
+                width: 92,
+                height: 92,
+                borderRadius: BorderRadius.zero,
+              ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Container(
             width: 24,
             height: 24,
