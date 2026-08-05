@@ -163,6 +163,11 @@
       "Scramble the eggs and set aside",
       "Stir-fry the tomato and green onion, season with oyster sauce",
       "Add the egg back in and toss lightly"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_06_1.png",
+      "assets/images/steps/quick_06_2.png",
+      "assets/images/steps/quick_06_3.png"
     ]
   },
   {
@@ -187,6 +192,11 @@
       "Stir-fry the meat, then add doubanjiang and oyster sauce",
       "Add 100ml water and the tofu, simmer for 3 minutes",
       "Thicken with a cornstarch slurry"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_07_1.png",
+      "assets/images/steps/quick_07_2.png",
+      "assets/images/steps/quick_07_3.png"
     ]
   },
   {
@@ -211,6 +221,11 @@
       "Make scallion oil with green onion and cooking oil",
       "Add soy sauce and sugar to make the scallion soy sauce",
       "Pour over the boiled noodles and toss"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_08_1.png",
+      "assets/images/steps/quick_08_2.png",
+      "assets/images/steps/quick_08_3.png"
     ]
   },
   {
@@ -235,6 +250,11 @@
       "Pan-fry the dumplings until golden",
       "Simmer the sauce ingredients in the pan",
       "Add the dumplings back and toss until glazed"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_09_1.png",
+      "assets/images/steps/quick_09_2.png",
+      "assets/images/steps/quick_09_3.png"
     ]
   },
   {
@@ -258,6 +278,11 @@
       "Stir-fry the garlic and chili in olive oil",
       "Add the boiled pasta and 3 tbsp pasta water, then toss",
       "Coat with olive oil and season with salt"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_10_1.png",
+      "assets/images/steps/quick_10_2.png",
+      "assets/images/steps/quick_10_3.png"
     ]
   },
   {
@@ -282,6 +307,11 @@
       "Stir-fry the ham and mushrooms in butter",
       "Add the milk and cold rice, stirring until soft",
       "Melt in the cheese and season"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_11_1.png",
+      "assets/images/steps/quick_11_2.png",
+      "assets/images/steps/quick_11_3.png"
     ]
   },
   {
@@ -305,6 +335,11 @@
       "Layer sauce, corn, and cheese on half the tortilla",
       "Fold in half and air-fry at 180°C for 5 minutes",
       "Cut into three pieces"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_12_1.png",
+      "assets/images/steps/quick_12_2.png",
+      "assets/images/steps/quick_12_3.png"
     ]
   },
   {
@@ -327,6 +362,11 @@
       "Boil the pasta in salted water for 7 minutes",
       "Add the cherry tomatoes and pasta to a bowl",
       "Toss with basil pesto and olive oil"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_13_1.png",
+      "assets/images/steps/quick_13_2.png",
+      "assets/images/steps/quick_13_3.png"
     ]
   },
   {
@@ -352,6 +392,11 @@
       "Simmer the onion with soy sauce, sugar, and water",
       "Swirl in beaten egg and cook until soft-set",
       "Spoon over rice"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_14_1.png",
+      "assets/images/steps/quick_14_2.png",
+      "assets/images/steps/quick_14_3.png"
     ]
   },
   {
@@ -376,6 +421,11 @@
       "Boil the udon noodles for 2 minutes and drain",
       "Top the hot noodles with butter, mentaiko, and tsuyu",
       "Toss well and sprinkle with seaweed flakes"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_15_1.png",
+      "assets/images/steps/quick_15_2.png",
+      "assets/images/steps/quick_15_3.png"
     ]
   },
   {
@@ -400,6 +450,11 @@
       "Stir-fry the beef brisket, then add the enoki mushrooms",
       "Add tsuyu, mirin, and water, and simmer for 2 minutes",
       "Spoon over rice and top with an egg yolk"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_16_1.png",
+      "assets/images/steps/quick_16_2.png",
+      "assets/images/steps/quick_16_3.png"
     ]
   },
   {
@@ -424,6 +479,11 @@
       "Boil the noodles and drain",
       "Stir-fry the cabbage, noodles, oyster sauce, and soy sauce over high heat",
       "Plate and drizzle with mayonnaise"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_17_1.png",
+      "assets/images/steps/quick_17_2.png",
+      "assets/images/steps/quick_17_3.png"
     ]
   },
   {
@@ -446,6 +506,10 @@
     "stepsEn": [
       "Dissolve the seasoning in 1 cup of water and bring to a boil",
       "Add the rice cakes and simmer for 5 minutes until the sauce reduces"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_18_1.png",
+      "assets/images/steps/quick_18_2.png"
     ]
   },
   {
@@ -469,6 +533,11 @@
       "Drain the corn",
       "Mix with mayonnaise and sugar in a dish",
       "Top with cheese and microwave for 2 min 30 sec"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_19_1.png",
+      "assets/images/steps/quick_19_2.png",
+      "assets/images/steps/quick_19_3.png"
     ]
   },
   {
@@ -492,6 +561,11 @@
       "Mix cold rice, kimchi, pancake mix, and sesame oil",
       "Spread thin in a pan and pan-fry",
       "Top with cheese, fold in half, and melt"
+    ],
+    "stepImages": [
+      "assets/images/steps/quick_20_1.png",
+      "assets/images/steps/quick_20_2.png",
+      "assets/images/steps/quick_20_3.png"
     ]
   }
 ]
