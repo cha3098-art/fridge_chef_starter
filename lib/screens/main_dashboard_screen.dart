@@ -571,7 +571,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
           crossAxisCount: 4,
           mainAxisSpacing: 20,
           crossAxisSpacing: 14,
-          childAspectRatio: 0.8,
+          childAspectRatio: 0.7,
         ),
         itemCount: menuItems.length,
         itemBuilder: (context, index) {

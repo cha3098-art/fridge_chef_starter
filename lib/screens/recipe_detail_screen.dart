@@ -286,7 +286,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           children: [
             SizedBox(
               width: double.infinity,
-              height: 44,
+              height: 52,
               child: ElevatedButton(
                 onPressed: _startCookingMode,
                 style: ElevatedButton.styleFrom(

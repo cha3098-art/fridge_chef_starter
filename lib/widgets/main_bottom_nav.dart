@@ -78,8 +78,10 @@ class MainBottomNav extends StatelessWidget {
     final glassColor = dark ? Colors.black.withValues(alpha: 0.55) : Colors.white.withValues(alpha: 0.88);
     final glassBorder = dark ? Colors.white.withValues(alpha: 0.12) : Colors.white.withValues(alpha: 0.6);
 
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + bottomInset),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
         child: BackdropFilter(

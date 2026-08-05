@@ -191,11 +191,11 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(12),
                 child: Image.asset('assets/icon/icon_recipe.png',
-                    width: 58, height: 58, fit: BoxFit.cover),
+                    width: 40, height: 40, fit: BoxFit.cover),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Flexible(
                 child: Text(tr('레시피 추천', 'Recipe Picks'),
                     overflow: TextOverflow.ellipsis),
