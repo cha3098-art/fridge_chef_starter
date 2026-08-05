@@ -151,6 +151,55 @@ class BannerDetailScreen extends StatelessWidget {
 
   const BannerDetailScreen({super.key, required this.bannerIndex});
 
+  Widget _sectionCard({
+    required String icon,
+    required String headline,
+    required String body,
+    required Color color,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.cardBorder, width: 1.2),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+              border: Border.all(color: color.withValues(alpha: 0.25)),
+            ),
+            child: Center(child: Text(icon, style: const TextStyle(fontSize: 22, height: 1.1))),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  headline,
+                  style: const TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  body,
+                  style: const TextStyle(color: AppColors.ink, fontSize: 14, height: 1.6),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final detail = _bannerDetails[bannerIndex];
@@ -203,47 +252,32 @@ class BannerDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     const Divider(color: AppColors.line, height: 32),
-                    ...detail.sections.map((section) => Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
-                            color: AppColors.card,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppColors.cardBorder, width: 1.2),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: detail.themeColor.withValues(alpha: 0.08),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: detail.themeColor.withValues(alpha: 0.25)),
-                                ),
-                                child: Center(child: Text(section.icon, style: const TextStyle(fontSize: 22, height: 1.1))),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      tr(section.headlineKo, section.headlineEn),
-                                      style: const TextStyle(color: AppColors.ink, fontSize: 15, fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      tr(section.bodyKo, section.bodyEn),
-                                      style: const TextStyle(color: AppColors.ink, fontSize: 14, height: 1.6),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                    ...detail.sections.map((section) => _sectionCard(
+                          icon: section.icon,
+                          headline: tr(section.headlineKo, section.headlineEn),
+                          body: tr(section.bodyKo, section.bodyEn),
+                          color: detail.themeColor,
                         )),
+                    if (bannerIndex == 2) ...[
+                      _sectionCard(
+                        icon: '🎙️',
+                        headline: tr('핸즈프리 음성 셰프 & 타이머',
+                            'Hands-free Voice Chef & Timer'),
+                        body: tr(
+                            '요리 중 손에 물이나 기름이 묻어도 걱정 마세요! 마이크를 켜고 \'다음\', \'이전\', \'5분 타이머\'라고 말하면 음성으로 조리 단계와 타이머를 손쉽게 제어할 수 있습니다.',
+                            "Don't worry if your hands are wet or greasy while cooking! Turn on the mic and say \"next\", \"previous\", or \"5-minute timer\" to control steps and the timer hands-free."),
+                        color: AppColors.green,
+                      ),
+                      _sectionCard(
+                        icon: '🔊',
+                        headline: tr('AI 음성 레시피 오디오 가이드',
+                            'AI Voice Recipe Audio Guide'),
+                        body: tr(
+                            '조리 과정을 일일이 눈으로 읽지 않아도 돼요. [설명 읽기] 버튼을 누르면 AI가 각 조리 단계를 친절한 한국어 음성으로 대신 읽어주며, 다음 단계 이동 시 자동으로 이어서 안내합니다.',
+                            "No need to read every step yourself. Tap the read-aloud button and AI reads each cooking step aloud for you, automatically continuing as you move to the next step."),
+                        color: AppColors.carrot,
+                      ),
+                    ],
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,

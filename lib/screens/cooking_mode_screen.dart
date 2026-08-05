@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../l10n/tr.dart';
+import '../services/tts_service.dart';
 import '../services/voice_chef_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
@@ -39,13 +40,19 @@ class CookingModeScreen extends StatefulWidget {
 
 class _CookingModeScreenState extends State<CookingModeScreen> {
   final VoiceChefService _voice = VoiceChefService.instance;
+  final TtsService _tts = TtsService.instance;
   int _stepIndex = 0;
+
+  /// true면 [다음 단계]/[이전 단계]로 이동할 때마다 새 스텝 설명을 자동으로 이어 읽는다.
+  bool _autoReadEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _voice.addListener(_onVoiceChanged);
     _voice.init();
+    _tts.addListener(_onVoiceChanged);
+    _tts.init();
   }
 
   @override
@@ -53,6 +60,8 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
     _voice.removeListener(_onVoiceChanged);
     _voice.stopListening();
     _voice.cancelTimer();
+    _tts.removeListener(_onVoiceChanged);
+    _tts.stop();
     super.dispose();
   }
 
@@ -61,14 +70,36 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
   }
 
   void _nextStep() {
-    if (_stepIndex < widget.steps.length - 1) setState(() => _stepIndex++);
+    if (_stepIndex < widget.steps.length - 1) {
+      setState(() => _stepIndex++);
+      _readCurrentStepIfEnabled();
+    }
   }
 
   void _previousStep() {
-    if (_stepIndex > 0) setState(() => _stepIndex--);
+    if (_stepIndex > 0) {
+      setState(() => _stepIndex--);
+      _readCurrentStepIfEnabled();
+    }
+  }
+
+  void _readCurrentStepIfEnabled() {
+    if (_autoReadEnabled) _tts.speak(widget.steps[_stepIndex]);
+  }
+
+  Future<void> _toggleReadAloud() async {
+    if (_autoReadEnabled) {
+      setState(() => _autoReadEnabled = false);
+      await _tts.stop();
+    } else {
+      setState(() => _autoReadEnabled = true);
+      await _tts.speak(widget.steps[_stepIndex]);
+    }
   }
 
   void _handleVoiceCommand(VoiceCommand command) {
+    // TTS가 읽는 중이어도 음성 명령이 인식되면 그 즉시 읽기를 멈추고 명령을 우선 처리한다.
+    if (_tts.isSpeaking) _tts.stop();
     switch (command.type) {
       case VoiceCommandType.nextStep:
         _nextStep();
@@ -244,10 +275,22 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
                     ),
                   ),
                 ),
-                _MicWaveform(
-                  isListening: _voice.isListening,
-                  unavailable: _voice.unavailableReason != null,
-                  onTap: _toggleMic,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _ReadAloudButton(
+                      active: _autoReadEnabled,
+                      speaking: _tts.isSpeaking,
+                      onTap: _toggleReadAloud,
+                    ),
+                    const SizedBox(width: 28),
+                    _MicWaveform(
+                      isListening: _voice.isListening,
+                      unavailable: _voice.unavailableReason != null,
+                      onTap: _toggleMic,
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 _BottomControls(
@@ -438,6 +481,97 @@ class _TimerRing extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// [🔊 설명 읽기] 토글 버튼 — 켜져 있으면 현재 스텝을 읽고, 스텝 이동 시 자동으로 이어 읽는다.
+/// 읽는 중일 때 민트/오렌지 그라데이션 글로우 펄스 애니메이션 + '읽는 중...' 라벨을 보여준다.
+class _ReadAloudButton extends StatefulWidget {
+  final bool active;
+  final bool speaking;
+  final VoidCallback onTap;
+
+  const _ReadAloudButton({
+    required this.active,
+    required this.speaking,
+    required this.onTap,
+  });
+
+  @override
+  State<_ReadAloudButton> createState() => _ReadAloudButtonState();
+}
+
+class _ReadAloudButtonState extends State<_ReadAloudButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1100),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          height: 18,
+          child: widget.speaking
+              ? Text(
+                  tr('읽는 중...', 'Reading...'),
+                  style: const TextStyle(
+                    color: AppColors.green,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                  ),
+                )
+              : null,
+        ),
+        const SizedBox(height: 10),
+        AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            final pulse = widget.speaking ? _controller.value : 0.0;
+            return GestureDetector(
+              onTap: widget.onTap,
+              child: Container(
+                width: 64,
+                height: 64,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: widget.active
+                      ? AppColors.carrot
+                      : Colors.white.withValues(alpha: 0.16),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+                  boxShadow: widget.speaking
+                      ? [
+                          BoxShadow(
+                            color: Color.lerp(AppColors.green, AppColors.carrot,
+                                    pulse)!
+                                .withValues(alpha: 0.55),
+                            blurRadius: 14 + pulse * 10,
+                            spreadRadius: 1 + pulse * 3,
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Icon(
+                  widget.active ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
