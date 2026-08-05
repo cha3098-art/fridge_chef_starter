@@ -3,10 +3,12 @@
 class QuickRecipe {
   final String id;
   final String title;
+  final String titleEn;
   final String cuisineType; // 한식/중식/양식/분식/일식
   final int cookTimeMin;
   final List<String> ingredients;
   final List<String> steps;
+  final List<String> stepsEn;
 
   /// steps와 같은 길이의 단계별 비주얼 이미지 경로 목록(assets/images/steps/...).
   /// JSON에 stepImages가 없으면(아직 이미지가 준비되지 않은 레시피) 전부 null로 채워지고,
@@ -16,10 +18,12 @@ class QuickRecipe {
   const QuickRecipe({
     required this.id,
     required this.title,
+    required this.titleEn,
     required this.cuisineType,
     required this.cookTimeMin,
     required this.ingredients,
     required this.steps,
+    required this.stepsEn,
     this.stepImages = const [],
   });
 
@@ -30,10 +34,12 @@ class QuickRecipe {
     return QuickRecipe(
       id: json['id'] as String,
       title: json['title'] as String,
+      titleEn: json['titleEn'] as String,
       cuisineType: json['cuisineType'] as String,
       cookTimeMin: json['cookTimeMin'] as int,
       ingredients: (json['ingredients'] as List).cast<String>(),
       steps: steps,
+      stepsEn: (json['stepsEn'] as List).cast<String>(),
       stepImages: stepImages,
     );
   }

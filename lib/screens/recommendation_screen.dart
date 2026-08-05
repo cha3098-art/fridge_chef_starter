@@ -567,10 +567,11 @@ class _QuickRecipeGridCard extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => CookingModeScreen(
-            title: recipe.title,
+            title: tr(recipe.title, recipe.titleEn),
             cuisineType: recipe.cuisineType,
             emoji: emoji,
-            steps: recipe.steps,
+            steps: List.generate(recipe.steps.length,
+                (i) => tr(recipe.steps[i], recipe.stepsEn[i])),
             stepImages: recipe.stepImages,
           ),
         ),
@@ -602,7 +603,7 @@ class _QuickRecipeGridCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              recipe.title,
+              tr(recipe.title, recipe.titleEn),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
