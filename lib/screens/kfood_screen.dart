@@ -97,11 +97,7 @@ class _KFoodScreenState extends State<KFoodScreen>
               width: double.infinity,
               padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF8B1E1E), Color(0xFF1B3A6B)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: AppColors.ink,
                 borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
               ),
               child: Stack(
@@ -199,7 +195,7 @@ class _KFoodScreenState extends State<KFoodScreen>
                             horizontal: 12, vertical: 7),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(999),
+                          borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.15),
@@ -213,7 +209,7 @@ class _KFoodScreenState extends State<KFoodScreen>
                             Text(
                               tr('포인트 2배', '2x Points'),
                               style: const TextStyle(
-                                  color: Color(0xFF8B1E1E),
+                                  color: AppColors.ink,
                                   fontWeight: FontWeight.w900,
                                   fontSize: 12),
                             ),
@@ -308,7 +304,7 @@ class _KFoodCard extends StatelessWidget {
                           horizontal: 7, vertical: 3),
                       decoration: BoxDecoration(
                         color: AppColors.green,
-                        borderRadius: BorderRadius.circular(999),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         tr('완성', 'Ready'),
@@ -348,7 +344,7 @@ class _KFoodCard extends StatelessWidget {
                     style: const TextStyle(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.green),
+                        color: AppColors.inkSoft),
                   ),
                 ],
               ),

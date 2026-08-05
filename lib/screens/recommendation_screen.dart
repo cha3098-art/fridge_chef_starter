@@ -221,12 +221,12 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                           horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: _activeFilterCount > 0
-                            ? AppColors.green
+                            ? AppColors.ink
                             : AppColors.paperDeep,
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                           color: _activeFilterCount > 0
-                              ? AppColors.green
+                              ? AppColors.ink
                               : AppColors.line,
                         ),
                       ),
@@ -264,7 +264,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                         height: 16,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
-                            color: AppColors.red, shape: BoxShape.circle),
+                            color: Color(0xFFBE123C), shape: BoxShape.circle),
                         child: Text(
                           '$_activeFilterCount',
                           style: const TextStyle(
@@ -330,14 +330,15 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(AppSpacing.sm),
                     decoration: BoxDecoration(
-                      color: AppColors.goldSoft,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                      color: AppColors.paperDeep,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.line),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Icon(Icons.info_outline,
-                            size: 14, color: AppColors.gold),
+                            size: 14, color: AppColors.inkSoft),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
@@ -346,7 +347,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                               'No recipe matches your fridge exactly, so here are the closest ones',
                             ),
                             style: const TextStyle(
-                                fontSize: 11, color: AppColors.gold),
+                                fontSize: 11, color: AppColors.inkSoft),
                           ),
                         ),
                       ],
@@ -443,11 +444,11 @@ class _CuisineCapsuleRow extends StatelessWidget {
                 decoration: BoxDecoration(
                   color:
                       selected == cuisine ? AppColors.ink : AppColors.paperDeep,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: selected == cuisine
                         ? AppColors.ink
-                        : AppColors.cardBorder,
+                        : AppColors.line,
                   ),
                   boxShadow: selected == cuisine
                       ? [
@@ -492,12 +493,10 @@ class _QuickRecipeBadge extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: active ? AppColors.carrot : AppColors.carrotSoft,
-          borderRadius: BorderRadius.circular(16),
+          color: active ? AppColors.ink : AppColors.paperDeep,
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: active
-                ? AppColors.carrot
-                : AppColors.carrot.withValues(alpha: 0.3),
+            color: active ? AppColors.ink : AppColors.line,
           ),
         ),
         child: Text(
@@ -505,7 +504,7 @@ class _QuickRecipeBadge extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w800,
-            color: active ? Colors.white : AppColors.carrot,
+            color: active ? Colors.white : AppColors.inkSoft,
           ),
         ),
       ),
@@ -618,15 +617,16 @@ class _QuickRecipeGridCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: AppColors.carrotSoft,
-                    borderRadius: BorderRadius.circular(999),
+                    color: AppColors.paperDeep,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.line, width: 1),
                   ),
                   child: Text(
                     '⚡ ${recipe.cookTimeMin}분',
                     style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.carrot),
+                        color: AppColors.ink),
                   ),
                 ),
                 const SizedBox(width: 6),
@@ -745,15 +745,16 @@ class _RecipeCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.redSoft,
+                  color: const Color(0xFFFFF1F2),
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFFECDD3)),
                 ),
                 child: Text(
                   tr('🔥 임박 재료 구출', '🔥 Use it up'),
                   style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.red),
+                      color: Color(0xFFBE123C)),
                 ),
               ),
               const SizedBox(height: 12),
@@ -864,7 +865,7 @@ class _RecipeCard extends StatelessWidget {
                                   '${tr('부족한 재료', 'Missing')}: ${missing.map(trIngredientName).join(', ')}',
                                   style: const TextStyle(
                                       fontSize: 11.5,
-                                      color: Color(0xFFE11D48),
+                                      color: Color(0xFFBE123C),
                                       fontWeight: FontWeight.w600,
                                       height: 1.4),
                                 ),
@@ -1164,7 +1165,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             const SizedBox(height: 16),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              activeThumbColor: AppColors.green,
+              activeThumbColor: AppColors.ink,
               title: Text(
                   tr('냉장고 재료만으로 만들 수 있는 레시피만', 'Only recipes I can fully make'),
                   style: const TextStyle(fontSize: 13, color: AppColors.ink)),
@@ -1287,16 +1288,18 @@ class _FilterSection extends StatelessWidget {
                 label:
                     Text(trTag(option), style: const TextStyle(fontSize: 12)),
                 selected: selected == option,
-                selectedColor: AppColors.green,
+                selectedColor: AppColors.ink,
                 backgroundColor: AppColors.paperDeep,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
                 labelStyle: TextStyle(
                   color:
-                      selected == option ? AppColors.paper : AppColors.inkSoft,
+                      selected == option ? Colors.white : AppColors.inkSoft,
                   fontWeight: FontWeight.w600,
                 ),
                 side: BorderSide(
                     color:
-                        selected == option ? AppColors.green : AppColors.line),
+                        selected == option ? AppColors.ink : AppColors.line),
                 onSelected: (_) => onSelected(option),
               ),
           ],

@@ -97,7 +97,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               ],
             ),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: AppColors.green,
+            backgroundColor: AppColors.ink,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             duration: const Duration(seconds: 3),
@@ -422,7 +422,7 @@ class _InfoChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: const Color(0xFFF1F5F9), // Slate 100
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         label,
@@ -615,17 +615,16 @@ class _IngredientRow extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFECFDF5),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(
-                        color: AppColors.green.withValues(alpha: 0.4)),
+                    color: AppColors.paperDeep,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.line),
                   ),
                   child: const Text(
                     '🔄 대체',
                     style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.greenDeep),
+                        color: AppColors.ink),
                   ),
                 ),
               ),
@@ -666,7 +665,7 @@ class _ServingsBreakdown extends StatelessWidget {
             '${trTag('$tier인분')} ${ingredient.localizedQuantityLabelForServings(tier)}',
         style: TextStyle(
           fontSize: 11,
-          color: isSelected ? AppColors.green : AppColors.inkSoft,
+          color: isSelected ? AppColors.ink : AppColors.inkSoft,
           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
         ),
       ));
@@ -695,27 +694,27 @@ class _StepTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 92,
-            height: 92,
+            width: 88,
+            height: 88,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFFE2E8F0)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
+                  color: Colors.black.withValues(alpha: 0.06),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(9),
               child: StepVisual(
                 imageAsset: step.imageAsset,
                 recipePhotoUrl: recipePhotoUrl,
                 stepDescription: step.description,
-                width: 92,
-                height: 92,
+                width: 88,
+                height: 88,
                 borderRadius: BorderRadius.zero,
               ),
             ),

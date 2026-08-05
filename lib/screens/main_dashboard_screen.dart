@@ -483,20 +483,19 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.greenSoft,
+                color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(
-                    color: AppColors.green.withValues(alpha: 0.4), width: 1.4),
+                border: Border.all(color: AppColors.line, width: 1.2),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.green.withValues(alpha: 0.18),
-                    blurRadius: 10,
+                    color: const Color(0xFF0F172A).withValues(alpha: 0.06),
+                    blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
                 ],
               ),
               child: const Icon(Icons.settings_outlined,
-                  size: 20, color: AppColors.greenDeep),
+                  size: 20, color: AppColors.ink),
             ),
           ),
         ],
@@ -623,20 +622,20 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
   Widget _buildRollingBanner() {
     final banners = [
       (
-        colors: [const Color(0xFF2E0854), const Color(0xFF1E1035)],
+        colors: [AppColors.ink, AppColors.ink],
         emoji: 'ℹ️',
         title: tr('장마철 식중독 조심! 🦠', 'Watch out for food poisoning! 🦠'),
         subtitle: tr('올바른 냉장고 관리 수칙 확인하기', 'Check proper fridge storage tips'),
       ),
       (
-        colors: [const Color(0xFF8B1E1E), const Color(0xFF3F1010)],
+        colors: [AppColors.ink, AppColors.ink],
         emoji: '🏆',
         title: tr('K-Food 챌린지 도전! 🇰🇷', 'Take the K-Food challenge! 🇰🇷'),
         subtitle: tr('다양한 한식을 요리하고 K-Food Master가 되어보세요',
             'Cook Korean dishes and become a K-Food Master'),
       ),
       (
-        colors: [const Color(0xFF0369A1), const Color(0xFF075985)],
+        colors: [AppColors.ink, AppColors.ink],
         emoji: '🚀',
         title: tr('냉장고 셰프 100% 활용법 💡', 'Get the most out of Fridge Chef 💡'),
         subtitle: tr('재료 등록부터 AI 추천, 요리 배틀, 커뮤니티까지 한눈에',
@@ -789,13 +788,14 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.carrotSoft,
+                    color: AppColors.paperDeep,
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.line, width: 1),
                   ),
                   child: Text(
                     tr('완성 시 +$points점', '+$points pts on finish'),
                     style: const TextStyle(
-                        color: AppColors.carrot,
+                        color: AppColors.ink,
                         fontSize: 11,
                         fontWeight: FontWeight.bold),
                   ),
@@ -1116,7 +1116,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                                 fontWeight: FontWeight.w600)),
                         Text('${rank.points} P',
                             style: const TextStyle(
-                                color: AppColors.green,
+                                color: AppColors.ink,
                                 fontWeight: FontWeight.bold)),
                       ],
                     ),
