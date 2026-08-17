@@ -8,6 +8,7 @@ import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import '../widgets/segmented_tab_bar.dart';
+import '../widgets/tab_tutorial_overlay.dart';
 import 'battle_screen.dart';
 import 'board_screen.dart';
 
@@ -21,6 +22,27 @@ class CategoryBattleScreen extends StatefulWidget {
 
 class _CategoryBattleScreenState extends State<CategoryBattleScreen> {
   int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      TabTutorialOverlay.showIfNeeded(
+        context,
+        prefsKey: 'hide_tutorial_tab_3_battle',
+        imageAsset: tr('assets/images/tutorial/tab_3_battle.png',
+            'assets/images/tutorial/tab_3_battle_en.png'),
+        title: tr('⚔️ 흥미진진한 1:1 푸드 배틀', '⚔️ Thrilling 1:1 food battles'),
+        bodyLines: [
+          tr('동일한 요리 주제로 다른 사용자들과 1:1 요리 대결을 펼쳐보세요.',
+              'Challenge other users to a 1:1 cook-off on the same theme.'),
+          tr('투표에 참여하거나 배틀에 승리하여 셰프 포인트를 획득할 수 있습니다.',
+              'Vote or win battles to earn chef points.'),
+        ],
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

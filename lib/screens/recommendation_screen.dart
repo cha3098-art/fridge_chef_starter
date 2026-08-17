@@ -216,10 +216,14 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: activeCount > 0 ? AppColors.ink : AppColors.paperDeep,
+                color: activeCount > 0
+                    ? AppColors.ink
+                    : AppColors.tealPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: activeCount > 0 ? AppColors.ink : AppColors.line,
+                  color: activeCount > 0
+                      ? AppColors.ink
+                      : AppColors.tealPrimary,
                 ),
               ),
               child: Row(
@@ -228,7 +232,9 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                   Icon(
                     Icons.tune,
                     size: 16,
-                    color: activeCount > 0 ? AppColors.paper : AppColors.ink,
+                    color: activeCount > 0
+                        ? AppColors.paper
+                        : AppColors.tealPrimary,
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -236,7 +242,9 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: activeCount > 0 ? AppColors.paper : AppColors.ink,
+                      color: activeCount > 0
+                          ? AppColors.paper
+                          : AppColors.tealPrimary,
                     ),
                   ),
                 ],

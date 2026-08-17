@@ -8,6 +8,7 @@ import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import '../widgets/segmented_tab_bar.dart';
+import '../widgets/tab_tutorial_overlay.dart';
 import 'kfood_screen.dart';
 import 'recommendation_screen.dart';
 
@@ -21,6 +22,27 @@ class CategoryCookingScreen extends StatefulWidget {
 
 class _CategoryCookingScreenState extends State<CategoryCookingScreen> {
   int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      TabTutorialOverlay.showIfNeeded(
+        context,
+        prefsKey: 'hide_tutorial_tab_2_cooking',
+        imageAsset: tr('assets/images/tutorial/tab_2_cooking.png',
+            'assets/images/tutorial/tab_2_cooking_en.png'),
+        title: tr('🍳 맞춤 레시피 추천 & K-Food', '🍳 Personalized recipes & K-Food'),
+        bodyLines: [
+          tr('내 냉장고 속 재료로 만들 수 있는 레시피를 매칭률순으로 추천해 드립니다.',
+              "We recommend recipes ranked by how well they match what's in your fridge."),
+          tr('인분, 난이도, 조리시간별 맞춤 필터를 설정하고 음성 가이드로 요리해 보세요.',
+              'Set filters for servings, difficulty, and cook time, then cook along with voice guidance.'),
+        ],
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

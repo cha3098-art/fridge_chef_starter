@@ -9,6 +9,7 @@ import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import '../widgets/segmented_tab_bar.dart';
+import '../widgets/tab_tutorial_overlay.dart';
 import 'board_screen.dart';
 import 'share_screen.dart';
 
@@ -22,6 +23,27 @@ class CategoryCommunityScreen extends StatefulWidget {
 
 class _CategoryCommunityScreenState extends State<CategoryCommunityScreen> {
   int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      TabTutorialOverlay.showIfNeeded(
+        context,
+        prefsKey: 'hide_tutorial_tab_4_community',
+        imageAsset: tr('assets/images/tutorial/tab_4_community.png',
+            'assets/images/tutorial/tab_4_community_en.png'),
+        title: tr('💬 요리 자랑 & 밥약속 초대장', '💬 Brag your dishes & meal invites'),
+        bodyLines: [
+          tr('완성된 나만의 요리 사진을 공유하고 자랑해 보세요.',
+              "Share and show off photos of the dishes you've made."),
+          tr('정성껏 만든 레시피로 친구에게 보낼 밥약속 초대장을 쉽게 생성할 수 있습니다.',
+              "Easily create a meal invite to send to friends for a recipe you'd like to share."),
+        ],
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

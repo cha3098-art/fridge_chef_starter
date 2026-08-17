@@ -755,7 +755,12 @@ class _CreateInviteSheetState extends State<_CreateInviteSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-          20, 20, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
+          20,
+          20,
+          20,
+          24 +
+              MediaQuery.of(context).viewInsets.bottom +
+              MediaQuery.of(context).padding.bottom),
       child: SingleChildScrollView(
         child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -964,7 +969,12 @@ class _CreateBragSheetState extends State<_CreateBragSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-          20, 20, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
+          20,
+          20,
+          20,
+          24 +
+              MediaQuery.of(context).viewInsets.bottom +
+              MediaQuery.of(context).padding.bottom),
       child: SingleChildScrollView(
         child: Column(
         mainAxisSize: MainAxisSize.min,

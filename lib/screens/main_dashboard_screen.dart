@@ -19,6 +19,7 @@ import '../theme/food_visuals.dart';
 import '../widgets/fridge_mascot.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
+import '../widgets/tab_tutorial_overlay.dart';
 import 'add_ingredient_screen.dart';
 import 'banner_detail_screen.dart';
 import '../models/battle.dart';
@@ -85,6 +86,23 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
       ..repeat(reverse: true);
     _tooltipBounce = Tween<double>(begin: 0.0, end: -8.0).animate(
         CurvedAnimation(parent: _tooltipController, curve: Curves.easeInOut));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      TabTutorialOverlay.showIfNeeded(
+        context,
+        prefsKey: 'hide_tutorial_tab_0_main',
+        imageAsset: tr('assets/images/tutorial/tab_0_main.png',
+            'assets/images/tutorial/tab_0_main_en.png'),
+        title: tr('👋 냉장고 셰프에 오신 것을 환영합니다!', '👋 Welcome to Fridge Chef!'),
+        bodyLines: [
+          tr(
+              '내 냉장고 재료 등록, 그 재료 활용하여 레시피 (AI)추천, 다른 사용자와 요리 배틀, 커뮤니티까지 한눈에',
+              'Register your fridge ingredients, get AI recipe recommendations using them, '
+                  'battle other users, and explore the community — all in one place'),
+        ],
+      );
+    });
   }
 
   @override
@@ -227,9 +245,11 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          // 영수증 스캔 탭(재료 추가 화면)으로 바로 이동 — "눌러서 써보기" 안내와 일치.
-          // 탭 순서: 0검색/1직접입력/2사진인식/3영수증스캔/4냉장고전체촬영.
-          onTap: () => _openAddIngredient(tab: 3),
+          // 로테이션 배너 3번째 슬라이드("냉장고 셰프 100% 활용법")와 자리를 바꿨다 —
+          // 신규 사용자 전체 가이드를 항상 보이는 상단 고정 자리로 올리고, 영수증스캔
+          // 원탭 숏컷은 로테이션 배너 쪽으로 내렸다(_buildRollingBanner 참고).
+          onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const BannerDetailScreen(bannerIndex: 2))),
           borderRadius: BorderRadius.circular(16),
           child: Container(
             margin: const EdgeInsets.only(bottom: 14),
@@ -250,15 +270,17 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                 Expanded(
                   child: Row(
                     children: [
-                      const Text('💡 ', style: TextStyle(fontSize: 16)),
+                      const Text('🚀 ', style: TextStyle(fontSize: 16)),
                       Expanded(
                         child: Text(
-                          tr('영수증만 찍으면 식재료 등록 끝! 바로 써보기',
-                              'Snap a receipt and your fridge is stocked instantly!'),
+                          tr('냉장고 셰프 100% 활용법 살펴보기',
+                              'See how to get the most out of Fridge Chef'),
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 13,
                               fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -535,7 +557,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
         crossAxisCount: 2,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-        mainAxisExtent: 110,
+        mainAxisExtent: 128,
       ),
       itemCount: cards.length,
       itemBuilder: (context, index) {
@@ -556,24 +578,24 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                     offset: const Offset(0, 2)),
               ],
             ),
-            child: Row(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(card.iconAsset,
-                      width: 64, height: 64, fit: BoxFit.cover),
+                      width: 56, height: 56, fit: BoxFit.cover),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(tr(card.koTitle, card.enTitle),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.ink,
-                          letterSpacing: -0.2)),
-                ),
+                const SizedBox(height: 8),
+                Text(tr(card.koTitle, card.enTitle),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.ink,
+                        letterSpacing: -0.2)),
               ],
             ),
           ),
@@ -585,24 +607,23 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
   Widget _buildRollingBanner() {
     final banners = [
       (
-        colors: [AppColors.ink, AppColors.ink],
+        colors: [const Color(0xFFE6F4F1), const Color(0xFFE6F4F1)],
         emoji: 'ℹ️',
         title: tr('장마철 식중독 조심! 🦠', 'Watch out for food poisoning! 🦠'),
         subtitle: tr('올바른 냉장고 관리 수칙 확인하기', 'Check proper fridge storage tips'),
       ),
       (
-        colors: [AppColors.ink, AppColors.ink],
+        colors: [const Color(0xFFE6F4F1), const Color(0xFFE6F4F1)],
         emoji: '🏆',
         title: tr('K-Food 챌린지 도전! 🇰🇷', 'Take the K-Food challenge! 🇰🇷'),
         subtitle: tr('다양한 한식을 요리하고 K-Food Master가 되어보세요',
             'Cook Korean dishes and become a K-Food Master'),
       ),
       (
-        colors: [AppColors.ink, AppColors.ink],
-        emoji: '🚀',
-        title: tr('냉장고 셰프 100% 활용법 💡', 'Get the most out of Fridge Chef 💡'),
-        subtitle: tr('재료 등록부터 AI 추천, 요리 배틀, 커뮤니티까지 한눈에',
-            'Ingredients, AI recipes, battles, and community — all in one place'),
+        colors: [const Color(0xFFE6F4F1), const Color(0xFFE6F4F1)],
+        emoji: '💡',
+        title: tr('영수증만 찍으면 식재료 등록 끝!', 'Snap a receipt and you\'re stocked!'),
+        subtitle: tr('바로 써보기', 'Try it now'),
       ),
     ];
     return Column(
@@ -617,18 +638,23 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
             itemBuilder: (context, index) {
               final banner = banners[index];
               return GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => BannerDetailScreen(bannerIndex: index)),
-                ),
+                // 영수증스캔 슬라이드(2번)는 가이드 페이지 대신 예전처럼 영수증스캔
+                // 탭으로 바로 점프한다 — 상단 고정 배너 자리를 "100% 활용법"에게
+                // 내주면서 노출 빈도는 줄었지만, 원탭 숏컷 기능 자체는 유지한다.
+                onTap: () => index == 2
+                    ? _openAddIngredient(tab: 3)
+                    : Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (_) =>
+                                BannerDetailScreen(bannerIndex: index)),
+                      ),
                 child: Container(
                   margin: const EdgeInsets.only(right: 8),
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(colors: banner.colors),
                     borderRadius: BorderRadius.circular(20),
-                    border:
-                        Border.all(color: Colors.white.withValues(alpha: 0.04)),
+                    border: Border.all(color: const Color(0xFFCBD5E1).withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -642,13 +668,13 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                    color: Colors.white,
+                                    color: AppColors.tealPrimary,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15)),
                             const SizedBox(height: 6),
                             Text(banner.subtitle,
-                                style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.8),
+                                style: const TextStyle(
+                                    color: Color(0xFF334155),
                                     fontSize: 12),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis),
@@ -660,7 +686,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.08),
+                            color: AppColors.tealPrimary.withValues(alpha: 0.12),
                             shape: BoxShape.circle),
                         child: Center(
                             child: Text(banner.emoji,
@@ -685,8 +711,8 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
               width: _currentBannerPage == index ? 16 : 5,
               decoration: BoxDecoration(
                 color: _currentBannerPage == index
-                    ? AppColors.green
-                    : AppColors.line,
+                    ? AppColors.tealPrimary
+                    : const Color(0xFFCBD5E1),
                 borderRadius: BorderRadius.circular(3),
               ),
             ),

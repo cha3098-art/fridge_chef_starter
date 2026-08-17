@@ -8,6 +8,7 @@ import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import '../widgets/segmented_tab_bar.dart';
+import '../widgets/tab_tutorial_overlay.dart';
 import 'add_ingredient_screen.dart';
 import 'fridge_management_screen.dart';
 
@@ -22,6 +23,27 @@ class CategoryFridgeScreen extends StatefulWidget {
 
 class _CategoryFridgeScreenState extends State<CategoryFridgeScreen> {
   int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      TabTutorialOverlay.showIfNeeded(
+        context,
+        prefsKey: 'hide_tutorial_tab_1_fridge',
+        imageAsset: tr('assets/images/tutorial/tab_1_fridge.png',
+            'assets/images/tutorial/tab_1_fridge_en.png'),
+        title: tr('🧊 스마트한 내 손안의 냉장고', '🧊 Your smart fridge, right in your hand'),
+        bodyLines: [
+          tr('냉장/냉동/실온별로 보유 중인 재료를 카테고리별로 관리합니다.',
+              'Manage what you have by fridge, freezer, and category.'),
+          tr('직접 입력, 사진 인식, 영수증 OCR 스캔 등 원하는 방식으로 재료를 추가하세요.',
+              "Add ingredients your way — manual entry, photo recognition, or receipt scanning."),
+        ],
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

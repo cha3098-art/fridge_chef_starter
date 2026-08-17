@@ -19,6 +19,73 @@ String resizedThumbUrl(String url, double physicalSize) {
 /// 난다. 유한한 값일 때만 디코드 크기 힌트를 주고, 아니면 힌트를 생략한다(원본 그대로 디코드).
 int? _safeCacheDim(double value) => value.isFinite ? value.round() : null;
 
+/// 사진이 아직 로딩 중일 때만 쓰는 반짝이는 시머 스윕 — 로딩과 실패(에러) 상태가 똑같은
+/// 그라데이션+이모지 플레이스홀더를 공유하다 보니, 로딩 중이라는 게 잘 안 느껴지고
+/// 순수 대기시간이 그대로 느리게 체감된다는 피드백이 있었다. 실제 로딩 속도 자체는
+/// (디스크 캐시/썸네일 축소로) 이미 최적화돼있어서, 여기선 "지금 뭔가 되고 있다"는
+/// 신호를 줘서 체감 대기시간만 줄인다 — errorWidget(진짜 실패)에는 안 붙인다.
+class ShimmerSweep extends StatefulWidget {
+  final Widget child;
+  final BorderRadius borderRadius;
+  final bool circular;
+
+  const ShimmerSweep({
+    super.key,
+    required this.child,
+    this.borderRadius = BorderRadius.zero,
+    this.circular = false,
+  });
+
+  @override
+  State<ShimmerSweep> createState() => _ShimmerSweepState();
+}
+
+class _ShimmerSweepState extends State<ShimmerSweep>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 1400))
+          ..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final overlay = AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final t = _controller.value;
+        return Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(-1.6 + 3.2 * t, -1),
+                end: Alignment(-0.6 + 3.2 * t, 1),
+                colors: const [
+                  Colors.transparent,
+                  Color(0x40FFFFFF),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    final stack = Stack(fit: StackFit.passthrough, children: [widget.child, overlay]);
+    return widget.circular ? ClipOval(child: stack) : ClipRRect(borderRadius: widget.borderRadius, child: stack);
+  }
+}
+
 /// 실제 사진을 불러오기 전/실패했을 때 쓰는 플레이스홀더용 색상/이모지 매핑.
 /// 어린아이 그림처럼 보이지 않도록 채도를 낮춘 톤 온 톤 그라데이션을 쓴다.
 
@@ -306,8 +373,10 @@ class IngredientPhoto extends StatelessWidget {
         memCacheWidth:
             _safeCacheDim(size * MediaQuery.of(context).devicePixelRatio),
         fadeInDuration: const Duration(milliseconds: 200),
-        placeholder: (context, url) =>
-            IngredientAvatar(name: name, category: category, size: size),
+        placeholder: (context, url) => ShimmerSweep(
+          circular: true,
+          child: IngredientAvatar(name: name, category: category, size: size),
+        ),
         errorWidget: (context, url, error) =>
             IngredientAvatar(name: name, category: category, size: size),
       ),
@@ -367,7 +436,8 @@ class RecipePhoto extends StatelessWidget {
         memCacheWidth: _safeCacheDim(width * dpr),
         memCacheHeight: _safeCacheDim(height * dpr),
         fadeInDuration: const Duration(milliseconds: 200),
-        placeholder: (context, url) => _placeholder(),
+        placeholder: (context, url) =>
+            ShimmerSweep(borderRadius: borderRadius, child: _placeholder()),
         errorWidget: (context, url, error) => _placeholder(),
       ),
     );

@@ -47,6 +47,16 @@ flutter:
   uses-material-design: true
   assets:
     - assets/videos/intro_logo.mp4
+    - assets/images/tutorial/tab_0_main.png
+    - assets/images/tutorial/tab_0_main_en.png
+    - assets/images/tutorial/tab_1_fridge.png
+    - assets/images/tutorial/tab_1_fridge_en.png
+    - assets/images/tutorial/tab_2_cooking.png
+    - assets/images/tutorial/tab_2_cooking_en.png
+    - assets/images/tutorial/tab_3_battle.png
+    - assets/images/tutorial/tab_3_battle_en.png
+    - assets/images/tutorial/tab_4_community.png
+    - assets/images/tutorial/tab_4_community_en.png
     - assets/data/quick_recipes.json
     - assets/sounds/timer_alarm.wav
     - assets/images/steps/

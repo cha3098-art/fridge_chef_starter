@@ -829,7 +829,12 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
     // 넘기면 오버플로우가 나므로, 시트 전체를 스크롤 가능하게 감싼다.
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
-          20, 20, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
+          20,
+          20,
+          20,
+          24 +
+              MediaQuery.of(context).viewInsets.bottom +
+              MediaQuery.of(context).padding.bottom),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

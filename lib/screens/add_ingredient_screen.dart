@@ -541,7 +541,12 @@ class _QuantitySheetState extends State<_QuantitySheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-          20, 20, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
+          20,
+          20,
+          20,
+          20 +
+              MediaQuery.of(context).viewInsets.bottom +
+              MediaQuery.of(context).padding.bottom),
       child: SingleChildScrollView(
         child: Column(
         mainAxisSize: MainAxisSize.min,
