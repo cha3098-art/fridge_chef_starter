@@ -26,6 +26,8 @@ dependencies:
   speech_to_text: ^7.0.0
   audioplayers: ^6.1.0
   flutter_tts: ^4.2.0
+  video_player: ^2.9.2
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
@@ -44,6 +46,7 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
+    - assets/videos/intro_logo.mp4
     - assets/data/quick_recipes.json
     - assets/sounds/timer_alarm.wav
     - assets/images/steps/
@@ -55,22 +58,24 @@ flutter:
     - assets/icon/icon_kfood_cooking.png
     - assets/icon/icon_challenge_rival.png
     - assets/icon/icon_board.png
+    - assets/icon/icon_additem.png
     - assets/icon/icon_my.png
     - assets/icon/icon_ranking.png
-    - assets/icon/menu_receipt.png
-    - assets/icon/menu_additem.png
-    - assets/icon/menu_airecipe.png
-    - assets/icon/menu_invite.png
-    - assets/icon/menu_kfood.png
-    - assets/icon/menu_expiring.png
-    - assets/icon/menu_battle.png
-    - assets/icon/menu_board.png
+    - assets/icon/icon_hub_fridge_glyph.png
+    - assets/icon/icon_hub_cook_glyph.png
+    - assets/icon/icon_hub_battle_glyph.png
+    - assets/icon/icon_hub_community_glyph.png
     - assets/battle_avatars/male_1.jpg
     - assets/battle_avatars/male_2.jpg
     - assets/battle_avatars/male_3.jpg
     - assets/battle_avatars/female_1.jpg
     - assets/battle_avatars/female_2.jpg
     - assets/battle_avatars/female_3.jpg
+    - assets/images/battle/battle_vs_1.jpg
+    - assets/images/battle/battle_vs_2.jpg
+    - assets/images/battle/battle_vs_3.jpg
+    - assets/images/battle/battle_vs_4.jpg
+    - assets/images/battle/battle_vs_5.jpg
     - assets/frames/han-sik-frame.png
     - assets/frames/Joon-sik-frame.png
     - assets/frames/il-sik-frame.png

@@ -1,4 +1,4 @@
-package com.example.fridge_chef
+package com.fourm.fridgechef
 
 import io.flutter.embedding.android.FlutterActivity
 

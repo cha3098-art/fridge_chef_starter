@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'l10n/tr.dart';
 import 'screens/auth_gate.dart';
+import 'screens/intro_video_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'services/deeplink_manager.dart';
 import 'services/locale_store.dart';
@@ -31,13 +32,19 @@ Future<void> main() async {
     await DeeplinkManager.instance.init();
     showOnboarding = !await OnboardingScreen.hasSeen();
   }
-  runApp(FridgeChefApp(showOnboarding: showOnboarding));
+  final showIntroVideo = !await IntroVideoScreen.hasSeen();
+  runApp(FridgeChefApp(
+    showOnboarding: showOnboarding,
+    showIntroVideo: showIntroVideo,
+  ));
 }
 
 class FridgeChefApp extends StatelessWidget {
   final bool showOnboarding;
+  final bool showIntroVideo;
 
-  const FridgeChefApp({super.key, required this.showOnboarding});
+  const FridgeChefApp(
+      {super.key, required this.showOnboarding, required this.showIntroVideo});
 
   @override
   Widget build(BuildContext context) {
@@ -45,16 +52,22 @@ class FridgeChefApp extends StatelessWidget {
       listenable: LocaleStore.instance,
       builder: (context, _) => MaterialApp(
         navigatorKey: DeeplinkManager.instance.navigatorKey,
-        title: '냉장고 셰프',
+        title: tr('냉장고 셰프', 'Fridge Chef'),
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),
-        home: !SupabaseConfig.isConfigured
-            ? const _SupabaseSetupNeededScreen()
-            : showOnboarding
-                ? const OnboardingScreen()
-                : const AuthGate(),
+        scrollBehavior: AppScrollBehavior(),
+        home: _buildHome(),
       ),
     );
+  }
+
+  Widget _buildHome() {
+    final next = !SupabaseConfig.isConfigured
+        ? const _SupabaseSetupNeededScreen()
+        : showOnboarding
+            ? const OnboardingScreen()
+            : const AuthGate();
+    return showIntroVideo ? IntroVideoScreen(next: next) : next;
   }
 }
 

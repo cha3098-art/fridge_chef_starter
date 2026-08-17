@@ -31,7 +31,7 @@
    `supabase secrets set OPENAI_API_KEY=sk-...`
 
 ### 배틀 모드 실시간 매칭/푸시알림/자동 마감(선택)
-1. [Firebase 콘솔](https://console.firebase.google.com)에서 프로젝트 생성 → Android 앱 등록(패키지명 `com.example.fridge_chef`) → `google-services.json` 다운로드해서 `android/app/`에 위치
+1. [Firebase 콘솔](https://console.firebase.google.com)에서 프로젝트 생성 → Android 앱 등록(패키지명 `com.fourm.fridgechef`) → `google-services.json` 다운로드해서 `android/app/`에 위치
 2. Firebase 콘솔 > 프로젝트 설정 > 서비스 계정 > 새 비공개 키 생성 → 받은 JSON을 그대로 시크릿으로 등록:
    `supabase secrets set FIREBASE_SERVICE_ACCOUNT='{"type":"service_account",...}'`
 3. `supabase functions deploy send-push` 와 `supabase functions deploy close-expired-battles --no-verify-jwt`
