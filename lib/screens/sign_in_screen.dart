@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/tr.dart';
 import '../services/auth_service.dart';
@@ -21,6 +22,40 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _submitting = false;
+  bool _rememberId = false;
+
+  static const _rememberIdKey = 'remember_id_enabled';
+  static const _savedEmailKey = 'remember_id_email';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedEmail();
+  }
+
+  /// 이전에 "아이디 기억하기"를 켜둔 채 로그인했다면 이메일을 미리 채워 넣어
+  /// 매번 다시 입력하지 않아도 되게 한다.
+  Future<void> _loadSavedEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    final remember = prefs.getBool(_rememberIdKey) ?? false;
+    final savedEmail = prefs.getString(_savedEmailKey);
+    if (!mounted || !remember || savedEmail == null) return;
+    setState(() {
+      _rememberId = true;
+      _emailController.text = savedEmail;
+    });
+  }
+
+  Future<void> _persistRememberId() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_rememberId) {
+      await prefs.setBool(_rememberIdKey, true);
+      await prefs.setString(_savedEmailKey, _emailController.text.trim());
+    } else {
+      await prefs.remove(_rememberIdKey);
+      await prefs.remove(_savedEmailKey);
+    }
+  }
 
   @override
   void dispose() {
@@ -36,6 +71,7 @@ class _SignInScreenState extends State<SignInScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+      await _persistRememberId();
       // 로그인 성공 시 main.dart의 AuthGate가 세션 스트림을 듣고 자동 전환한다
     } catch (e) {
       if (!mounted) return;
@@ -86,7 +122,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(labelText: tr('이메일', 'Email')),
+                  decoration: InputDecoration(
+                      hintText: tr('등록한 이메일 입력', 'Enter your registered email')),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 TextField(
@@ -94,7 +131,31 @@ class _SignInScreenState extends State<SignInScreen> {
                   obscureText: true,
                   decoration: InputDecoration(labelText: tr('비밀번호', 'Password')),
                 ),
-                const SizedBox(height: AppSpacing.md),
+                const SizedBox(height: AppSpacing.xs),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: Checkbox(
+                        value: _rememberId,
+                        onChanged: (value) =>
+                            setState(() => _rememberId = value ?? false),
+                        activeColor: AppColors.green,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      onTap: () => setState(() => _rememberId = !_rememberId),
+                      child: Text(
+                        tr('아이디 기억하기', 'Remember my email'),
+                        style: const TextStyle(
+                            fontSize: 13, color: AppColors.inkSoft),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

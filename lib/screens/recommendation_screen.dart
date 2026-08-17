@@ -9,7 +9,6 @@ import '../services/fridge_store.dart';
 import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
-import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
@@ -52,8 +51,12 @@ const _defaultFilter = (
 /// 상단 요리종류 퀵필터는 재료 등록 화면과 동일한 카카오톡 스타일 캡슐 칩으로 통일했다.
 class RecommendationScreen extends StatefulWidget {
   final Set<String> fridgeIngredientNames;
+  /// true면 상위 카테고리 화면(세그먼트 탭)에 본문만 끼워 넣는 모드 — 자체 Scaffold/AppBar/
+  /// 하단 탭바 없이 검색+필터+목록만 반환한다.
+  final bool embed;
 
-  const RecommendationScreen({super.key, required this.fridgeIngredientNames});
+  const RecommendationScreen(
+      {super.key, required this.fridgeIngredientNames, this.embed = false});
 
   @override
   State<RecommendationScreen> createState() => _RecommendationScreenState();
@@ -62,8 +65,33 @@ class RecommendationScreen extends StatefulWidget {
 class _RecommendationScreenState extends State<RecommendationScreen> {
   RecommendationFilter _filter = _defaultFilter;
   bool _showQuickRecipes = false;
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
 
   static const _fallbackCount = 5;
+  static const _maxSuggestions = 6;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  /// 검색창에 입력한 글자가 포함된 레시피 이름을 자동완성 칩으로 추천한다.
+  /// 이미 입력값과 완전히 같은 이름 하나만 있으면(칩을 눌러 확정한 상태) 칩을 숨긴다.
+  List<String> get _titleSuggestions {
+    final query = _searchQuery.trim();
+    if (query.isEmpty) return const [];
+    final lowerQuery = query.toLowerCase();
+    final matches = recipeCatalog
+        .map((r) => tr(r.title, r.titleEn))
+        .where((title) =>
+            title.contains(query) || title.toLowerCase().contains(lowerQuery))
+        .toSet()
+        .toList();
+    if (matches.length == 1 && matches.first == query) return const [];
+    return matches.take(_maxSuggestions).toList();
+  }
 
   /// 재료 이름 -> 유통기한까지 남은 일수. FridgeStore를 직접 조회하므로 별도 파라미터 전달 없이
   /// "곧 상할 재료를 쓰는 레시피"를 위로 끌어올리는 데 쓴다.
@@ -101,6 +129,14 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
         return false;
       if (_filter.cuisine != '전체' && r.cuisineType != _filter.cuisine)
         return false;
+      final query = _searchQuery.trim();
+      if (query.isNotEmpty) {
+        final lowerQuery = query.toLowerCase();
+        final title = tr(r.title, r.titleEn);
+        if (!title.contains(query) && !title.toLowerCase().contains(lowerQuery)) {
+          return false;
+        }
+      }
       return true;
     }).toList();
 
@@ -164,8 +200,165 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     if (result != null) setState(() => _filter = result);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  /// AppBar에 있던 필터 버튼 — "레시피 N개" 줄 오른쪽 끝으로 옮겼다.
+  /// 길게 누르면 뭘 고를 수 있는 버튼인지 안내하는 Tooltip이 뜬다.
+  Widget _buildFilterButton() {
+    final activeCount = _activeFilterCount;
+    return Tooltip(
+      message: tr('인분·조리시간·난이도별 맞춤 추천!',
+          'Customize by servings, cook time, and difficulty!'),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          InkWell(
+            onTap: _openFilterSheet,
+            borderRadius: BorderRadius.circular(18),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: activeCount > 0 ? AppColors.ink : AppColors.paperDeep,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: activeCount > 0 ? AppColors.ink : AppColors.line,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.tune,
+                    size: 16,
+                    color: activeCount > 0 ? AppColors.paper : AppColors.ink,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    tr('맞춤 필터', 'Custom Filter'),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: activeCount > 0 ? AppColors.paper : AppColors.ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (activeCount > 0)
+            Positioned(
+              right: -2,
+              top: -2,
+              child: Container(
+                width: 16,
+                height: 16,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                    color: Color(0xFFBE123C), shape: BoxShape.circle),
+                child: Text(
+                  '$activeCount',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// 필터시트에서 고른 조건(냉장고재료만/조리시간/난이도/인분)을 칩으로 보여주고,
+  /// 칩의 X를 누르면 그 조건 하나만 기본값으로 되돌린다. 요리종류는 위쪽 캡슐 행에
+  /// 이미 늘 보이고 있어서 여기 중복으로 넣지 않는다.
+  Widget _buildActiveFilterChips() {
+    final chips = <(String, VoidCallback)>[
+      if (_filter.onlyFullMatch)
+        (
+          tr('냉장고 재료만', 'In-fridge only'),
+          () => setState(() => _filter = (
+                onlyFullMatch: false,
+                cookTime: _filter.cookTime,
+                difficulty: _filter.difficulty,
+                cuisine: _filter.cuisine,
+                servings: _filter.servings,
+              )),
+        ),
+      if (_filter.cookTime != '전체')
+        (
+          trTag(_filter.cookTime),
+          () => setState(() => _filter = (
+                onlyFullMatch: _filter.onlyFullMatch,
+                cookTime: '전체',
+                difficulty: _filter.difficulty,
+                cuisine: _filter.cuisine,
+                servings: _filter.servings,
+              )),
+        ),
+      if (_filter.difficulty != '전체')
+        (
+          trTag(_filter.difficulty),
+          () => setState(() => _filter = (
+                onlyFullMatch: _filter.onlyFullMatch,
+                cookTime: _filter.cookTime,
+                difficulty: '전체',
+                cuisine: _filter.cuisine,
+                servings: _filter.servings,
+              )),
+        ),
+      if (_filter.servings != 1)
+        (
+          trServings(_filter.servings),
+          () => setState(() => _filter = (
+                onlyFullMatch: _filter.onlyFullMatch,
+                cookTime: _filter.cookTime,
+                difficulty: _filter.difficulty,
+                cuisine: _filter.cuisine,
+                servings: 1,
+              )),
+        ),
+    ];
+    if (chips.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Wrap(
+        alignment: WrapAlignment.end,
+        spacing: 6,
+        runSpacing: 6,
+        children: chips
+            .map((c) => Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.ink,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(c.$1,
+                          style: const TextStyle(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white)),
+                      const SizedBox(width: 4),
+                      GestureDetector(
+                        onTap: c.$2,
+                        child: const Icon(Icons.close,
+                            size: 13, color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                ))
+            .toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     final result = _computeRecipes();
     final recommended = result.recommended;
     final unmatched = result.unmatched;
@@ -177,112 +370,64 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
       ...unmatched,
     ];
 
-    return ListenableBuilder(
-      listenable: LocaleStore.instance,
-      builder: (context, _) => Scaffold(
-        backgroundColor: AppColors.paper,
-        appBar: AppBar(
-          leading: const LabeledBackButton(),
-          leadingWidth: 96,
-          backgroundColor: AppColors.paper,
-          elevation: 0,
-          toolbarHeight: 76,
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset('assets/icon/icon_recipe.png',
-                    width: 40, height: 40, fit: BoxFit.cover),
-              ),
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(tr('레시피 추천', 'Recipe Picks'),
-                    overflow: TextOverflow.ellipsis),
-              ),
-            ],
-          ),
-          titleSpacing: 0,
-          actions: [
-            const Padding(
-                padding: EdgeInsets.only(right: 8), child: LanguageToggle()),
-            const Padding(
-                padding: EdgeInsets.only(right: 8), child: ChefTierBadge()),
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  InkWell(
-                    onTap: _openFilterSheet,
-                    borderRadius: BorderRadius.circular(18),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: _activeFilterCount > 0
-                            ? AppColors.ink
-                            : AppColors.paperDeep,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: _activeFilterCount > 0
-                              ? AppColors.ink
-                              : AppColors.line,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.tune,
-                            size: 16,
-                            color: _activeFilterCount > 0
-                                ? AppColors.paper
-                                : AppColors.ink,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            tr('필터', 'Filter'),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: _activeFilterCount > 0
-                                  ? AppColors.paper
-                                  : AppColors.ink,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (_activeFilterCount > 0)
-                    Positioned(
-                      right: -2,
-                      top: -2,
-                      child: Container(
-                        width: 16,
-                        height: 16,
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                            color: Color(0xFFBE123C), shape: BoxShape.circle),
-                        child: Text(
-                          '$_activeFilterCount',
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        body: Column(
+    return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+              child: TextField(
+                controller: _searchController,
+                style: const TextStyle(color: AppColors.ink),
+                decoration: InputDecoration(
+                  hintText: tr('레시피 이름으로 검색', 'Search by recipe name'),
+                  prefixIcon:
+                      const Icon(Icons.search, color: AppColors.inkSoft),
+                  suffixIcon: _searchQuery.isEmpty
+                      ? null
+                      : IconButton(
+                          icon: const Icon(Icons.close,
+                              size: 18, color: AppColors.inkSoft),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _searchQuery = '');
+                          },
+                        ),
+                ),
+                onChanged: (value) => setState(() => _searchQuery = value),
+              ),
+            ),
+            if (_titleSuggestions.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: _titleSuggestions
+                      .map((title) => GestureDetector(
+                            onTap: () {
+                              _searchController.text = title;
+                              _searchController.selection = TextSelection.collapsed(
+                                  offset: title.length);
+                              setState(() => _searchQuery = title);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: AppColors.paperDeep,
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(color: AppColors.line),
+                              ),
+                              child: Text(title,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.ink,
+                                      fontWeight: FontWeight.w600)),
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ),
             Container(
               decoration: const BoxDecoration(
                 border:
@@ -317,12 +462,47 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
             ] else ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: Text(
-                  tr('레시피 $totalCount개', '$totalCount recipes'),
-                  style:
-                      const TextStyle(fontSize: 12, color: AppColors.inkSoft),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      tr('레시피 $totalCount개', '$totalCount recipes'),
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.inkSoft),
+                    ),
+                    _buildFilterButton(),
+                  ],
                 ),
               ),
+              // 롱프레스 Tooltip은 발견하기 어려워서, 한 번도 안 써본 상태(활성 필터 0개)일
+              // 땐 같은 안내 문구를 항상 보이는 캡션으로도 띄운다 — "맞춤 필터" 버튼 바로
+              // 아래(오른쪽 정렬)에 붙여서 둘이 한 세트로 보이게 하고, 눈에 잘 띄도록 틸
+              // 포인트 색 배지로 표시한다. 필터를 쓰기 시작하면 이 자리가 실제 선택된
+              // 조건 칩(_buildActiveFilterChips)으로 자연스럽게 바뀐다.
+              if (_activeFilterCount == 0)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.tealPrimary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        tr('💡 인분·조리시간·난이도별 맞춤 추천!',
+                            '💡 Customize by servings, cook time, and difficulty!'),
+                        style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.tealPrimary),
+                      ),
+                    ),
+                  ),
+                ),
+              _buildActiveFilterChips(),
               if (isFallback)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -371,8 +551,10 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                         ),
                       )
                     : ListView.builder(
+                        // 하단 플로팅 내비 바에 마지막 카드가 가려지지 않도록 여백을 넉넉히 둔다
+                        // (ranking_screen.dart과 동일한 120 기준).
                         padding: const EdgeInsets.fromLTRB(
-                            AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
+                            AppSpacing.md, 0, AppSpacing.md, 120),
                         itemCount: items.length,
                         itemBuilder: (context, index) {
                           final item = items[index];
@@ -407,13 +589,51 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
               ),
             ],
           ],
-        ),
-        extendBody: true,
-        bottomNavigationBar: MainBottomNav(
-          currentIndex: 1,
-          fridgeIngredientNames: widget.fridgeIngredientNames,
-        ),
-      ),
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) {
+        if (widget.embed) return _buildBody(context);
+        return Scaffold(
+          backgroundColor: AppColors.paper,
+          appBar: AppBar(
+            leading: const LabeledBackButton(),
+            leadingWidth: 96,
+            backgroundColor: AppColors.paper,
+            elevation: 0,
+            toolbarHeight: 76,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset('assets/icon/icon_recipe.png',
+                      width: 58, height: 58, fit: BoxFit.cover),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(tr('레시피 추천', 'Recipe Picks'),
+                      overflow: TextOverflow.ellipsis),
+                ),
+              ],
+            ),
+            actions: const [
+              Padding(
+                  padding: EdgeInsets.only(right: 16), child: LanguageToggle()),
+            ],
+          ),
+          body: _buildBody(context),
+          extendBody: true,
+          bottomNavigationBar: MainBottomNav(
+            currentIndex: 2,
+            fridgeIngredientNames: widget.fridgeIngredientNames,
+          ),
+        );
+      },
     );
   }
 }
@@ -500,7 +720,9 @@ class _QuickRecipeBadge extends StatelessWidget {
           ),
         ),
         child: Text(
-          '⚡ 5분 초간단',
+          tr('⚡ 5분 초간단', '⚡ 5min Easy'),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w800,
@@ -537,10 +759,12 @@ class _QuickRecipeGrid extends StatelessWidget {
           );
         }
         return GridView.builder(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          // 하단 플로팅 내비 바에 마지막 줄이 가려지지 않도록 여백을 넉넉히 둔다.
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md, AppSpacing.md, AppSpacing.md, 120),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 1,
+            childAspectRatio: 0.82,
             crossAxisSpacing: AppSpacing.sm,
             mainAxisSpacing: AppSpacing.sm,
           ),
@@ -861,13 +1085,27 @@ class _RecipeCard extends StatelessWidget {
                                   border: Border.all(
                                       color: const Color(0xFFFECDD3)),
                                 ),
-                                child: Text(
-                                  '${tr('부족한 재료', 'Missing')}: ${missing.map(trIngredientName).join(', ')}',
-                                  style: const TextStyle(
-                                      fontSize: 11.5,
-                                      color: Color(0xFFBE123C),
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.4),
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: '${tr('부족한 재료', 'Missing')}: ',
+                                        style: const TextStyle(
+                                            fontSize: 11.5,
+                                            color: Color(0xFF991B1B),
+                                            fontWeight: FontWeight.w800,
+                                            height: 1.4),
+                                      ),
+                                      TextSpan(
+                                        text: missing.map(trIngredientName).join(', '),
+                                        style: const TextStyle(
+                                            fontSize: 11.5,
+                                            color: Color(0xFF334155),
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.4),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

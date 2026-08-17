@@ -48,19 +48,23 @@ class FridgeStore extends ChangeNotifier {
     try {
       final rows = await _client
           .from('user_ingredients')
-          .select('id, quantity, unit, expiry_date, ingredients(name, category)')
+          .select(
+              'id, quantity, unit, expiry_date, storage_location, storage_category, ingredients(name, category)')
           .eq('user_id', uid)
           .eq('status', 'active')
           .order('added_at');
       _items = (rows as List).map<FridgeItem>((row) {
         final ingredient = row['ingredients'] as Map<String, dynamic>;
+        final category = ingredient['category'] as String? ?? '기타';
         return FridgeItem(
           id: row['id'] as String,
           name: ingredient['name'] as String,
           quantity: (row['quantity'] as num).toDouble(),
           unit: row['unit'] as String? ?? '',
           expiryDate: row['expiry_date'] == null ? null : DateTime.parse(row['expiry_date'] as String),
-          category: ingredient['category'] as String? ?? '기타',
+          category: category,
+          storageLocation: StorageLocationLabel.fromDbValue(row['storage_location'] as String?),
+          storageCategory: row['storage_category'] as String? ?? defaultStorageCategory(category),
         );
       }).toList();
       _error = null;
@@ -114,30 +118,45 @@ class FridgeStore extends ChangeNotifier {
   /// 재료 id + daysBefore 조합으로 결정적인 예약 알림 id를 만든다 (scheduleExpirationNotification/cancelNotification 공용)
   static int expiryScheduleId(String itemId, int daysBefore) => '${itemId}_$daysBefore'.hashCode;
 
-  /// 재료 등록 화면에서 담아온 항목들을 user_ingredients에 추가하고 목록을 새로고침한다
-  Future<void> addItems(List<FridgeItem> newItems) async {
+  /// 재료 등록 화면에서 담아온 항목들을 user_ingredients에 추가하고 목록을 새로고침한다.
+  /// 반환값은 실제로 다 저장됐는지 여부 — 호출부는 이걸 확인하고 성공/실패 UI를 갈라야 한다.
+  Future<bool> addItems(List<FridgeItem> newItems) async {
     final uid = _client.auth.currentUser?.id;
-    if (uid == null) return;
+    if (uid == null) {
+      _error = tr('로그인이 필요해요', 'Please log in first');
+      notifyListeners();
+      return false;
+    }
+    var ok = true;
     try {
       for (final item in newItems) {
-        final ingredientRow =
+        var ingredientRow =
             await _client.from('ingredients').select('id').eq('name', item.name).maybeSingle();
-        if (ingredientRow == null) continue; // 카탈로그에 없는 재료는 스킵 (검색 탭은 항상 카탈로그 기반)
+        // 직접입력 등으로 카탈로그에 없는 재료면 새 마스터 행을 만든다(ingredients insert 정책 필요).
+        ingredientRow ??= await _client
+            .from('ingredients')
+            .insert({'name': item.name, 'category': item.category, 'unit_default': item.unit})
+            .select('id')
+            .single();
         await _client.from('user_ingredients').insert({
           'user_id': uid,
           'ingredient_id': ingredientRow['id'],
           'quantity': item.quantity,
           'unit': item.unit,
           'expiry_date': item.expiryDate?.toIso8601String().substring(0, 10),
+          'storage_location': item.storageLocation.dbValue,
+          'storage_category': item.storageCategory,
           'added_via': 'manual',
         });
       }
       _error = null;
     } catch (e) {
       _error = _describeError(e);
+      ok = false;
       notifyListeners();
     }
     await loadItems();
+    return ok;
   }
 
   /// 냉장고 목록에서 재료 하나를 삭제한다 (스와이프 삭제 등에서 호출)

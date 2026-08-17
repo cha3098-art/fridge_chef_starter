@@ -15,7 +15,6 @@ import '../theme/app_theme.dart';
 import '../utils/image_compressor.dart';
 import '../widgets/ai_image_guide_banner.dart';
 import '../widgets/chef_badge.dart';
-import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
@@ -33,17 +32,32 @@ String _timeAgoLabel(DateTime dateTime) {
   return tr('${diff.inDays}일 전', '${diff.inDays}d ago');
 }
 
-/// "게시판" — 뽐내기 게시판 / 챌린지 게시판 두 하위 게시판을 오가며 글을 쓰고 좋아요를 누른다.
-/// 좋아요 10개당 작성자에게 +1점이 지급된다.
+/// "게시판" — 일반 게시판(구 뽐내기 게시판) / 챌린지 게시판 두 하위 게시판을 오가며
+/// 글을 쓰고 좋아요를 누른다. 좋아요 10개당 작성자에게 +1점이 지급된다.
+/// 소통공간 허브에서는 일반 게시판으로, 푸드대결 허브에서는 챌린지 게시판으로 각각
+/// initialCategory를 지정해 바로 진입한다.
 class BoardScreen extends StatefulWidget {
-  const BoardScreen({super.key});
+  final BoardCategory initialCategory;
+  /// true면 상위 카테고리 화면(세그먼트 탭)에 내용만 끼워 넣는 모드 — 자체 Scaffold/AppBar/
+  /// 하단 탭바 없이 본문+글쓰기 버튼만 반환한다.
+  final bool embed;
+  /// true면 [initialCategory]로 고정하고 내부 뽐내기/챌린지 토글을 숨긴다 — 상위 세그먼트
+  /// 탭이 이미 카테고리를 결정한 상태(embed 모드)에서 이중 선택 UI를 막기 위해 쓴다.
+  final bool lockCategory;
+
+  const BoardScreen({
+    super.key,
+    this.initialCategory = BoardCategory.showoff,
+    this.embed = false,
+    this.lockCategory = false,
+  });
 
   @override
   State<BoardScreen> createState() => _BoardScreenState();
 }
 
 class _BoardScreenState extends State<BoardScreen> {
-  BoardCategory _category = BoardCategory.showoff;
+  late BoardCategory _category = widget.initialCategory;
 
   @override
   void initState() {
@@ -102,6 +116,91 @@ class _BoardScreenState extends State<BoardScreen> {
     }
   }
 
+  Widget _buildBody(BuildContext context, List<BoardPost>? posts) {
+    return Column(
+      children: [
+        if (!widget.lockCategory)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _CategoryButton(
+                    label: BoardCategory.showoff.label,
+                    selected: _category == BoardCategory.showoff,
+                    onTap: () =>
+                        setState(() => _category = BoardCategory.showoff),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _CategoryButton(
+                    label: BoardCategory.challenge.label,
+                    selected: _category == BoardCategory.challenge,
+                    iconAsset: 'assets/icon/icon_challenge_rival.png',
+                    onTap: () =>
+                        setState(() => _category = BoardCategory.challenge),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        Expanded(
+          child: posts == null
+              ? const Center(child: CircularProgressIndicator())
+              : posts.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _category == BoardCategory.challenge
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.asset(
+                                      'assets/icon/icon_challenge_rival.png',
+                                      width: 84,
+                                      height: 84,
+                                      fit: BoxFit.cover),
+                                )
+                              : const FridgeMascot(size: 84),
+                          const SizedBox(height: AppSpacing.md),
+                          Text(tr('아직 글이 없어요', 'No posts yet'),
+                              style: const TextStyle(color: AppColors.inkSoft)),
+                        ],
+                      ),
+                    )
+                  : Container(
+                      color: Colors.white,
+                      child: ListView.separated(
+                        // 하단 플로팅 내비 바 + FAB에 마지막 글이 가려지지 않도록 여백을 넉넉히 둔다.
+                        padding: const EdgeInsets.only(bottom: 140),
+                        itemCount: posts.length,
+                        separatorBuilder: (_, __) =>
+                            const Divider(color: Color(0xFFE2E8F0), height: 1),
+                        itemBuilder: (context, index) =>
+                            _PostCard(post: posts[index]),
+                      ),
+                    ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFab() {
+    return FloatingActionButton.extended(
+      backgroundColor: AppColors.green,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      highlightElevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      onPressed: _openCreatePost,
+      icon: const Icon(Icons.edit_outlined),
+      label: Text(tr('글쓰기', 'Write'),
+          style: const TextStyle(fontWeight: FontWeight.w700)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -110,6 +209,20 @@ class _BoardScreenState extends State<BoardScreen> {
         final posts = BoardStore.instance.isLoaded
             ? BoardStore.instance.postsFor(_category)
             : null;
+
+        if (widget.embed) {
+          return Stack(
+            children: [
+              _buildBody(context, posts),
+              Positioned(
+                right: 20,
+                bottom: 95 + MediaQuery.of(context).padding.bottom,
+                child: _buildFab(),
+              ),
+            ],
+          );
+        }
+
         return Scaffold(
           backgroundColor: AppColors.paper,
           appBar: AppBar(
@@ -119,7 +232,6 @@ class _BoardScreenState extends State<BoardScreen> {
             elevation: 0,
             scrolledUnderElevation: 0,
             toolbarHeight: 76,
-            titleSpacing: 0,
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -136,9 +248,7 @@ class _BoardScreenState extends State<BoardScreen> {
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
-                    _category == BoardCategory.challenge
-                        ? tr('챌린지 게시판', 'Challenge Board')
-                        : tr('게시판', 'Board'),
+                    _category.label,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         fontWeight: FontWeight.w800,
@@ -150,94 +260,20 @@ class _BoardScreenState extends State<BoardScreen> {
             ),
             actions: const [
               Padding(
-                  padding: EdgeInsets.only(right: 8), child: LanguageToggle()),
-              Padding(
-                  padding: EdgeInsets.only(right: 12), child: ChefTierBadge()),
+                  padding: EdgeInsets.only(right: 16), child: LanguageToggle()),
             ],
           ),
-          body: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _CategoryButton(
-                        label: BoardCategory.showoff.label,
-                        selected: _category == BoardCategory.showoff,
-                        onTap: () =>
-                            setState(() => _category = BoardCategory.showoff),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _CategoryButton(
-                        label: BoardCategory.challenge.label,
-                        selected: _category == BoardCategory.challenge,
-                        iconAsset: 'assets/icon/icon_challenge_rival.png',
-                        onTap: () =>
-                            setState(() => _category = BoardCategory.challenge),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: posts == null
-                    ? const Center(
-                        child:
-                            CircularProgressIndicator(color: AppColors.green))
-                    : posts.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _category == BoardCategory.challenge
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: Image.asset(
-                                            'assets/icon/icon_challenge_rival.png',
-                                            width: 84,
-                                            height: 84,
-                                            fit: BoxFit.cover),
-                                      )
-                                    : const FridgeMascot(size: 84),
-                                const SizedBox(height: AppSpacing.md),
-                                Text(tr('아직 글이 없어요', 'No posts yet'),
-                                    style: const TextStyle(
-                                        color: AppColors.inkSoft)),
-                              ],
-                            ),
-                          )
-                        : Container(
-                            color: Colors.white,
-                            child: ListView.separated(
-                              padding: const EdgeInsets.only(bottom: 96),
-                              itemCount: posts.length,
-                              separatorBuilder: (_, __) => const Divider(
-                                  color: Color(0xFFE2E8F0), height: 1),
-                              itemBuilder: (context, index) =>
-                                  _PostCard(post: posts[index]),
-                            ),
-                          ),
-              ),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            backgroundColor: AppColors.green,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            highlightElevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            onPressed: _openCreatePost,
-            icon: const Icon(Icons.edit_outlined),
-            label: Text(tr('글쓰기', 'Write'),
-                style: const TextStyle(fontWeight: FontWeight.w700)),
+          body: _buildBody(context, posts),
+          floatingActionButton: Padding(
+            padding: EdgeInsets.only(
+                bottom: 95 + MediaQuery.of(context).padding.bottom),
+            child: _buildFab(),
           ),
           extendBody: true,
-          bottomNavigationBar: const MainBottomNav(currentIndex: 4),
+          // 챌린지 게시판은 푸드대결(3) 허브 소속, 일반 게시판은 소통공간(4) 허브 소속이라
+          // 현재 카테고리에 따라 하단 탭 강조 위치가 달라진다.
+          bottomNavigationBar: MainBottomNav(
+              currentIndex: _category == BoardCategory.challenge ? 3 : 4),
         );
       },
     );
@@ -637,7 +673,8 @@ class _CreatePostSheetState extends State<_CreatePostSheet> {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           20, 20, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
-      child: Column(
+      child: SingleChildScrollView(
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -760,6 +797,7 @@ class _CreatePostSheetState extends State<_CreatePostSheet> {
             ),
           ),
         ],
+        ),
       ),
     );
   }
@@ -1158,7 +1196,7 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                         ],
                       ),
                     ),
-                    // 명예의 전당 안내 — 뽐내기 게시판 글에만 해당(챌린지 게시판은 별개 랭킹 체계)
+                    // 명예의 전당 안내 — 일반 게시판 글에만 해당(챌린지 게시판은 별개 랭킹 체계)
                     if (post.category == BoardCategory.showoff) ...[
                       const SizedBox(height: 14),
                       Container(

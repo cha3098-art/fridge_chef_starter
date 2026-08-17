@@ -7,18 +7,24 @@ import '../l10n/tr.dart';
 import '../models/battle.dart';
 import '../models/battle_list_item.dart';
 import '../services/battle_store.dart';
+import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../utils/battle_countdown.dart';
-import '../widgets/battle_split_banner.dart';
+import '../widgets/battle_banner_image.dart';
 import '../widgets/fridge_mascot.dart';
 import '../widgets/labeled_back_button.dart';
-import '../widgets/main_return_button.dart';
+import '../widgets/language_toggle.dart';
+import '../widgets/main_bottom_nav.dart';
+import '../widgets/segmented_tab_bar.dart';
 import 'battle_detail_screen.dart';
 import 'quick_match_screen.dart';
 
 /// 내 배틀 목록 + 진행 중인 모든 배틀(참여/투표) + 새 배틀 만들기 + 빠른 매칭.
 class BattleScreen extends StatefulWidget {
-  const BattleScreen({super.key});
+  /// true면 상위 카테고리 화면(세그먼트 탭)에 본문만 끼워 넣는 모드.
+  final bool embed;
+
+  const BattleScreen({super.key, this.embed = false});
 
   @override
   State<BattleScreen> createState() => _BattleScreenState();
@@ -101,8 +107,8 @@ class _BattleScreenState extends State<BattleScreen>
           content: Text(tr('배틀을 만들고 초대 링크를 복사했어요',
               'Battle created and invite link copied'))),
     );
-    await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => BattleDetailScreen(battleId: battle.id)));
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => BattleDetailScreen(battleId: battle.id)));
     _load();
   }
 
@@ -145,127 +151,159 @@ class _BattleScreenState extends State<BattleScreen>
     }
   }
 
+  // 2차 서브 탭(내 배틀|전체 배틀) — 상단 1차 세그먼트 탭(SegmentedTabBar, 딥 틸)과
+  // 시각적으로 명확히 구분되는 알약 테두리 버튼 스타일(PillToggle)을 쓴다.
+  Widget _buildInnerTabBar() {
+    return AnimatedBuilder(
+      animation: _tabController,
+      builder: (context, _) => PillToggle(
+        labels: [tr('내 배틀', 'My Battles'), tr('전체 배틀', 'All Battles')],
+        index: _tabController.index,
+        onChanged: (i) => _tabController.animateTo(i),
+        outlined: true,
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return RefreshIndicator(
+      onRefresh: _load,
+      child: !_loaded
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+              ? _buildError()
+              : TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildList(
+                      items: _myItems,
+                      emptyTitle: tr('아직 참여 중인 배틀이 없어요', 'No battles yet'),
+                      emptySubtitle: tr('상대를 초대하거나 빠른 매칭으로 대결을 시작해보세요!',
+                          'Invite someone or use Quick Match to start!'),
+                    ),
+                    _buildList(
+                      items: _openItems,
+                      emptyTitle: tr(
+                          '진행 중인 배틀이 없어요', 'No battles happening right now'),
+                      emptySubtitle: tr('새 배틀을 만들어서 첫 대결을 시작해보세요!',
+                          'Create the first battle and get things started!'),
+                    ),
+                  ],
+                ),
+    );
+  }
+
+  Widget _buildFab() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        FloatingActionButton.extended(
+          heroTag: 'quickMatch',
+          elevation: 0,
+          backgroundColor: AppColors.card,
+          foregroundColor: AppColors.ink,
+          onPressed: () async {
+            await Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const QuickMatchScreen()));
+            _load();
+          },
+          icon: const Icon(Icons.bolt_outlined, size: 20),
+          label: Text(tr('빠른 매칭', 'Quick Match'),
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.3)),
+        ),
+        const SizedBox(height: 12),
+        FloatingActionButton.extended(
+          heroTag: 'createBattle',
+          elevation: 0,
+          backgroundColor: AppColors.green,
+          foregroundColor: Colors.white,
+          onPressed: _openCreateSheet,
+          icon: const Icon(Icons.add, size: 20),
+          label: Text(tr('새 배틀 만들기', 'New Battle'),
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.3)),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.paper,
-      appBar: AppBar(
-        leading: const LabeledBackButton(),
-        leadingWidth: 96,
-        backgroundColor: AppColors.paper,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        toolbarHeight: 76,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset('assets/icon/icon_challenge_rival.png',
-                  width: 58, height: 58, fit: BoxFit.cover),
-            ),
-            const SizedBox(width: 8),
-            Text(tr('요리 배틀', 'Cooking Battle'),
-                style: const TextStyle(
-                    fontWeight: FontWeight.w800, letterSpacing: -0.3)),
-          ],
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: AppColors.paperDeep,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.cardBorder),
-              ),
-              child: TabBar(
-                controller: _tabController,
-                labelColor: Colors.white,
-                unselectedLabelColor: AppColors.inkSoft,
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                indicator: BoxDecoration(
-                  color: AppColors.green,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                labelStyle: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 13),
-                unselectedLabelStyle: const TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 13),
-                tabs: [
-                  Tab(text: tr('내 배틀', 'My Battles')),
-                  Tab(text: tr('전체 배틀', 'All Battles')),
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) {
+        if (widget.embed) {
+          return Stack(
+            children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                    child: _buildInnerTabBar(),
+                  ),
+                  Expanded(child: _buildContent()),
                 ],
               ),
+              Positioned(
+                right: 20,
+                bottom: 95 + MediaQuery.of(context).padding.bottom,
+                child: _buildFab(),
+              ),
+            ],
+          );
+        }
+        return Scaffold(
+          backgroundColor: AppColors.paper,
+          appBar: AppBar(
+            leading: const LabeledBackButton(),
+            leadingWidth: 96,
+            backgroundColor: AppColors.paper,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            toolbarHeight: 76,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset('assets/icon/icon_challenge_rival.png',
+                      width: 58, height: 58, fit: BoxFit.cover),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(tr('요리 배틀', 'Cooking Battle'),
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.3,
+                          color: AppColors.ink)),
+                ),
+              ],
+            ),
+            actions: const [
+              Padding(
+                  padding: EdgeInsets.only(right: 16), child: LanguageToggle()),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(60),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: _buildInnerTabBar(),
+              ),
             ),
           ),
-        ),
-      ),
-      body: RefreshIndicator(
-        onRefresh: _load,
-        child: !_loaded
-            ? const Center(
-                child: CircularProgressIndicator(color: AppColors.green))
-            : _errorMessage != null
-                ? _buildError()
-                : TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildList(
-                        items: _myItems,
-                        emptyTitle:
-                            tr('아직 참여 중인 배틀이 없어요', 'No battles yet'),
-                        emptySubtitle: tr('상대를 초대하거나 빠른 매칭으로 대결을 시작해보세요!',
-                            'Invite someone or use Quick Match to start!'),
-                      ),
-                      _buildList(
-                        items: _openItems,
-                        emptyTitle: tr(
-                            '진행 중인 배틀이 없어요', 'No battles happening right now'),
-                        emptySubtitle: tr('새 배틀을 만들어서 첫 대결을 시작해보세요!',
-                            'Create the first battle and get things started!'),
-                      ),
-                    ],
-                  ),
-      ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const MainReturnButton(),
-          const SizedBox(height: 12),
-          FloatingActionButton.extended(
-            heroTag: 'quickMatch',
-            elevation: 0,
-            backgroundColor: AppColors.card,
-            foregroundColor: AppColors.ink,
-            onPressed: () async {
-              await Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const QuickMatchScreen()));
-              _load();
-            },
-            icon: const Icon(Icons.bolt_outlined, size: 20),
-            label: Text(tr('빠른 매칭', 'Quick Match'),
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, letterSpacing: -0.3)),
+          body: _buildContent(),
+          floatingActionButton: Padding(
+            padding: EdgeInsets.only(
+                bottom: 95 + MediaQuery.of(context).padding.bottom),
+            child: _buildFab(),
           ),
-          const SizedBox(height: 12),
-          FloatingActionButton.extended(
-            heroTag: 'createBattle',
-            elevation: 0,
-            backgroundColor: AppColors.green,
-            foregroundColor: Colors.white,
-            onPressed: _openCreateSheet,
-            icon: const Icon(Icons.add, size: 20),
-            label: Text(tr('새 배틀 만들기', 'New Battle'),
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, letterSpacing: -0.3)),
-          ),
-        ],
-      ),
+          extendBody: true,
+          bottomNavigationBar: const MainBottomNav(currentIndex: 3),
+        );
+      },
     );
   }
 
@@ -279,7 +317,8 @@ class _BattleScreenState extends State<BattleScreen>
             children: [
               const FridgeMascot(size: 84),
               const SizedBox(height: AppSpacing.md),
-              Text(_errorMessage!, style: const TextStyle(color: AppColors.red)),
+              Text(_errorMessage!,
+                  style: const TextStyle(color: AppColors.red)),
               const SizedBox(height: 16),
               OutlinedButton(
                 onPressed: _load,
@@ -307,12 +346,14 @@ class _BattleScreenState extends State<BattleScreen>
               children: [
                 const FridgeMascot(size: 84),
                 const SizedBox(height: AppSpacing.md),
-                Text(emptyTitle, style: const TextStyle(color: AppColors.inkSoft)),
+                Text(emptyTitle,
+                    style: const TextStyle(color: AppColors.inkSoft)),
                 const SizedBox(height: 6),
                 Text(
                   emptySubtitle,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.inkSoft, fontSize: 12),
+                  style:
+                      const TextStyle(color: AppColors.inkSoft, fontSize: 12),
                 ),
               ],
             ),
@@ -330,9 +371,11 @@ class _BattleScreenState extends State<BattleScreen>
         return _BattleCard(
           item: item,
           myUid: _myUid,
+          bannerIndex: index,
           onTap: () async {
             await Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => BattleDetailScreen(battleId: item.battle.id)));
+                builder: (_) => BattleDetailScreen(
+                    battleId: item.battle.id, bannerIndex: index)));
             _load();
           },
           onVote: (participantId) => _vote(item, participantId),
@@ -349,6 +392,7 @@ class _BattleScreenState extends State<BattleScreen>
 class _BattleCard extends StatelessWidget {
   final BattleListItem item;
   final String? myUid;
+  final int bannerIndex;
   final VoidCallback onTap;
   final ValueChanged<String> onVote;
   final VoidCallback onCopyInvite;
@@ -357,6 +401,7 @@ class _BattleCard extends StatelessWidget {
   const _BattleCard({
     required this.item,
     required this.myUid,
+    required this.bannerIndex,
     required this.onTap,
     required this.onVote,
     required this.onCopyInvite,
@@ -368,8 +413,9 @@ class _BattleCard extends StatelessWidget {
   String? get _countdownText {
     final battle = item.battle;
     if (battle.status == BattleStatus.waitingOpponent) {
-      final remaining =
-          battle.createdAt.add(const Duration(days: 1)).difference(DateTime.now());
+      final remaining = battle.createdAt
+          .add(const Duration(days: 1))
+          .difference(DateTime.now());
       if (remaining.isNegative) return null;
       return tr('매칭 마감 ${formatBattleCountdown(remaining)}',
           'Match closes: ${formatBattleCountdown(remaining)}');
@@ -386,16 +432,17 @@ class _BattleCard extends StatelessWidget {
   }
 
   (String, Color) get _statusTag => switch (item.battle.status) {
-        BattleStatus.waitingOpponent =>
-          (tr('매칭 전', 'Finding match'), AppColors.inkSoft),
-        BattleStatus.submitted =>
-          (tr('매칭 중 · 투표 가능', 'In progress · Votable'), AppColors.carrot),
-        BattleStatus.voting =>
-          (tr('투표 중', 'Voting'), AppColors.gold),
-        BattleStatus.completed =>
-          (tr('매칭 종료', 'Ended'), AppColors.green),
-        BattleStatus.cancelled =>
-          (tr('취소', 'Cancelled'), AppColors.red),
+        BattleStatus.waitingOpponent => (
+            tr('매칭 전', 'Finding match'),
+            AppColors.inkSoft
+          ),
+        BattleStatus.submitted => (
+            tr('매칭 중 · 투표 가능', 'In progress · Votable'),
+            AppColors.carrot
+          ),
+        BattleStatus.voting => (tr('투표 중', 'Voting'), AppColors.gold),
+        BattleStatus.completed => (tr('매칭 종료', 'Ended'), AppColors.green),
+        BattleStatus.cancelled => (tr('취소', 'Cancelled'), AppColors.red),
       };
 
   @override
@@ -445,7 +492,7 @@ class _BattleCard extends StatelessWidget {
       onTap: showJoin ? onJoin : onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(20),
@@ -460,15 +507,15 @@ class _BattleCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 썸네일 중심 배틀 카드 — 두 참가자의 마스코트를 대각선으로 슬래시 컷해서
-            // 붙이고 가운데 ⚔️ VS 배지를 겹쳐서, 한눈에 "요리 대결"임을 알 수 있게 한다.
-            BattleSplitBanner(
-              hostUserId: battle.hostUserId,
-              hostGender: item.hostGender,
-              challengerUserId: item.challengerUserId,
-              challengerGender: item.challengerGender,
-            ),
-            const SizedBox(height: 12),
+            // 배틀 순서(리스트 인덱스)에 따라 5종 VS 배너 이미지를 1→5→1...로 순환 적용.
+            // 카드 자체가 clipBehavior로 20 라운드를 잡아주므로 이미지엔 별도 라운드/여백을
+            // 주지 않고 카드 상단에 꽉 채운다("여백 제거" 요청).
+            BattleBannerImage(index: bannerIndex, borderRadius: 0),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
             // Title + status badge
             Row(
               children: [
@@ -621,13 +668,16 @@ class _BattleCard extends StatelessWidget {
               children: [
                 Text(
                   _timeAgo(battle.createdAt),
-                  style: const TextStyle(
-                      fontSize: 11, color: AppColors.inkSoft),
+                  style:
+                      const TextStyle(fontSize: 11, color: AppColors.inkSoft),
                 ),
                 const SizedBox(width: 4),
                 const Icon(Icons.chevron_right,
                     color: AppColors.inkSoft, size: 16),
               ],
+            ),
+                ],
+              ),
             ),
           ],
         ),
@@ -638,8 +688,10 @@ class _BattleCard extends StatelessWidget {
   String _timeAgo(DateTime dt) {
     final diff = DateTime.now().difference(dt);
     if (diff.inMinutes < 1) return tr('방금 전', 'just now');
-    if (diff.inHours < 1) return tr('${diff.inMinutes}분 전', '${diff.inMinutes}m ago');
-    if (diff.inDays < 1) return tr('${diff.inHours}시간 전', '${diff.inHours}h ago');
+    if (diff.inHours < 1)
+      return tr('${diff.inMinutes}분 전', '${diff.inMinutes}m ago');
+    if (diff.inDays < 1)
+      return tr('${diff.inHours}시간 전', '${diff.inHours}h ago');
     return tr('${diff.inDays}일 전', '${diff.inDays}d ago');
   }
 }
@@ -691,8 +743,7 @@ class _NicknameChip extends StatelessWidget {
                     : AppColors.ink,
             decoration: isTappable ? TextDecoration.underline : null,
             decorationColor: AppColors.green,
-            fontStyle:
-                isPlaceholder ? FontStyle.italic : FontStyle.normal,
+            fontStyle: isPlaceholder ? FontStyle.italic : FontStyle.normal,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -886,9 +937,7 @@ class _CreateBattleSheetState extends State<_CreateBattleSheet> {
                 elevation: 0,
               ),
               onPressed: _confirm,
-              child: Text(
-                  tr('배틀 만들고 초대 링크 생성',
-                      'Create battle & invite link'),
+              child: Text(tr('배틀 만들고 초대 링크 생성', 'Create battle & invite link'),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 14)),
             ),

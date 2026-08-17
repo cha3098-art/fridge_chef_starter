@@ -38,7 +38,10 @@ BoxDecoration _cardDeco({double radius = 16}) {
 
 /// "마이" 탭 — 누적 포인트, 등급, 주간 미션, 포인트 받는 방법을 보여준다
 class MyScreen extends StatefulWidget {
-  const MyScreen({super.key});
+  /// true면 상위 카테고리 화면(세그먼트 탭)에 본문만 끼워 넣는 모드.
+  final bool embed;
+
+  const MyScreen({super.key, this.embed = false});
 
   @override
   State<MyScreen> createState() => _MyScreenState();
@@ -52,48 +55,8 @@ class _MyScreenState extends State<MyScreen> {
     ChefPointsStore.instance.loadEvents();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.paper,
-      appBar: AppBar(
-        leading: const LabeledBackButton(),
-        leadingWidth: 96,
-        backgroundColor: AppColors.paper,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        toolbarHeight: 76,
-        titleSpacing: 0,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset('assets/icon/icon_my.png',
-                  width: 58, height: 58, fit: BoxFit.cover),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              tr('마이', 'My'),
-              style: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.3,
-                  color: AppColors.ink),
-            ),
-          ],
-        ),
-        actions: [
-          if (ProfileStore.instance.currentProfile != null)
-            IconButton(
-              icon: const Icon(Icons.logout, color: AppColors.inkSoft),
-              tooltip: tr('로그아웃', 'Sign out'),
-              onPressed: () => _confirmSignOut(context),
-            ),
-          const Padding(
-              padding: EdgeInsets.only(right: 12), child: LanguageToggle()),
-        ],
-      ),
-      body: ListenableBuilder(
+  Widget _buildBody(BuildContext context) {
+    return ListenableBuilder(
         listenable: Listenable.merge([
           ChefPointsStore.instance,
           ProfileStore.instance,
@@ -103,8 +66,10 @@ class _MyScreenState extends State<MyScreen> {
           final store = ChefPointsStore.instance;
           final profile = ProfileStore.instance.currentProfile;
           return ListView(
+            // 하단 플로팅 내비 바에 로그아웃 버튼 등 마지막 항목이 가려지지 않도록
+            // 여백을 넉넉히 둔다 (ranking_screen.dart과 동일한 120 기준).
             padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md, AppSpacing.sm, AppSpacing.md, 96),
+                AppSpacing.md, AppSpacing.sm, AppSpacing.md, 120),
             children: [
               _ProfileHeader(profile: profile),
               const SizedBox(height: AppSpacing.md),
@@ -184,63 +149,54 @@ class _MyScreenState extends State<MyScreen> {
                         .toList(),
                   ),
                 ),
-              if (profile != null) ...[
-                const SizedBox(height: 28),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: OutlinedButton.icon(
-                    onPressed: () => _confirmSignOut(context),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.red,
-                      side: const BorderSide(color: AppColors.red),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    icon: const Icon(Icons.logout, size: 18),
-                    label: Text(tr('로그아웃', 'Sign out'),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14)),
-                  ),
-                ),
-              ],
             ],
           );
         },
-      ),
-      extendBody: true,
-      bottomNavigationBar: const MainBottomNav(currentIndex: 2),
-    );
+      );
   }
 
-  Future<void> _confirmSignOut(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(tr('로그아웃 할까요?', 'Sign out?')),
-        content: Text(tr('다시 로그인하면 정보는 그대로 남아있어요.',
-            "You'll keep all your data — just sign back in anytime.")),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: Text(tr('취소', 'Cancel')),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: Text(tr('로그아웃', 'Sign out'),
-                style: const TextStyle(color: AppColors.red)),
-          ),
+  @override
+  Widget build(BuildContext context) {
+    if (widget.embed) return _buildBody(context);
+    return Scaffold(
+      backgroundColor: AppColors.paper,
+      appBar: AppBar(
+        leading: const LabeledBackButton(),
+        leadingWidth: 96,
+        backgroundColor: AppColors.paper,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        toolbarHeight: 76,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset('assets/icon/icon_my.png',
+                  width: 58, height: 58, fit: BoxFit.cover),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                tr('내정보', 'My'),
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.3,
+                    color: AppColors.ink),
+              ),
+            ),
+          ],
+        ),
+        actions: const [
+          Padding(
+              padding: EdgeInsets.only(right: 16), child: LanguageToggle()),
         ],
       ),
+      body: _buildBody(context),
+      extendBody: true,
+      bottomNavigationBar: const MainBottomNav(currentIndex: 5),
     );
-    if (confirmed == true) {
-      await AuthService.instance.signOut();
-      if (!context.mounted) return;
-      // 마이 화면까지 쌓인 push 스택을 걷어내서 AuthGate가 다시 그려주는
-      // 로그인 화면(루트 라우트)이 바로 보이게 한다 — 안 그러면 로그아웃 후에도
-      // 지금 화면에 그대로 남아 있다가 뒤로가기를 눌러야만 로그인 화면이 나타난다.
-      Navigator.of(context).popUntil((route) => route.isFirst);
-    }
   }
 
   static String? _nextGeneralTierLabel(int points) {
@@ -248,6 +204,36 @@ class _MyScreenState extends State<MyScreen> {
     if (points < 40) return trTag('중급요리사');
     if (points < 50) return trTag('Food Master');
     return null;
+  }
+}
+
+Future<void> _confirmSignOut(BuildContext context) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: Text(tr('로그아웃 할까요?', 'Sign out?')),
+      content: Text(tr('다시 로그인하면 정보는 그대로 남아있어요.',
+          "You'll keep all your data — just sign back in anytime.")),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: Text(tr('취소', 'Cancel')),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: Text(tr('로그아웃', 'Sign out'),
+              style: const TextStyle(color: AppColors.red)),
+        ),
+      ],
+    ),
+  );
+  if (confirmed == true) {
+    await AuthService.instance.signOut();
+    if (!context.mounted) return;
+    // 마이 화면까지 쌓인 push 스택을 걷어내서 AuthGate가 다시 그려주는
+    // 로그인 화면(루트 라우트)이 바로 보이게 한다 — 안 그러면 로그아웃 후에도
+    // 지금 화면에 그대로 남아 있다가 뒤로가기를 눌러야만 로그인 화면이 나타난다.
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }
 
@@ -327,7 +313,7 @@ class _ProfileHeader extends StatelessWidget {
                 Text(p.nickname,
                     style: const TextStyle(
                         fontWeight: FontWeight.w800,
-                        fontSize: 19,
+                        fontSize: 16,
                         color: AppColors.ink)),
                 const SizedBox(height: 2),
                 Text('@${p.username}',
@@ -343,6 +329,11 @@ class _ProfileHeader extends StatelessWidget {
               isKFoodMaster: ChefPointsStore.instance.isKFoodMaster,
               labelColor: AppColors.ink,
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: AppColors.inkSoft),
+            tooltip: tr('로그아웃', 'Sign out'),
+            onPressed: () => _confirmSignOut(context),
           ),
         ],
       ),
@@ -364,12 +355,12 @@ class _MenuButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 18),
+        padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: _cardDeco(),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.green, size: 26),
-            const SizedBox(height: 8),
+            Icon(icon, color: AppColors.ink, size: 24),
+            const SizedBox(height: 6),
             Text(
               label,
               style: const TextStyle(
@@ -430,7 +421,7 @@ class _TierCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(icon, style: const TextStyle(fontSize: 26)),
+              Text(icon, style: const TextStyle(fontSize: 22)),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -438,7 +429,7 @@ class _TierCard extends StatelessWidget {
                   style: const TextStyle(
                       color: AppColors.ink,
                       fontWeight: FontWeight.w800,
-                      fontSize: 18,
+                      fontSize: 15,
                       letterSpacing: -0.2),
                 ),
               ),
@@ -452,7 +443,7 @@ class _TierCard extends StatelessWidget {
                 child: Text(
                   tr('$points점', '$points pts'),
                   style: TextStyle(
-                      color: accent, fontWeight: FontWeight.w800, fontSize: 14),
+                      color: accent, fontWeight: FontWeight.w800, fontSize: 12),
                 ),
               ),
             ],
@@ -687,14 +678,14 @@ class _PointEventRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-                color: AppColors.greenSoft,
-                borderRadius: BorderRadius.circular(999)),
+                color: AppColors.paperDeep,
+                borderRadius: BorderRadius.circular(10)),
             child: Text(
               '+${event.amount}',
               style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.green),
+                  color: AppColors.ink),
             ),
           ),
         ],

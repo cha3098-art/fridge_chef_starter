@@ -9,6 +9,7 @@ import '../services/voice_chef_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
 import '../widgets/step_visual.dart';
+import 'cooking_help_screen.dart';
 
 /// 핸즈프리 "요리 시작 모드" — 조리 중 화면을 만지지 않아도 음성으로 스텝 이동/타이머를
 /// 설정할 수 있는 풀스크린 모드. Recipe(정식 레시피)와 QuickRecipe(초간단 레시피) 양쪽에서
@@ -73,6 +74,11 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
     if (_stepIndex < widget.steps.length - 1) {
       setState(() => _stepIndex++);
       _readCurrentStepIfEnabled();
+    } else {
+      // 다음 단계 버튼은 마지막 스텝에서 비활성화(onTap null)되므로 여기 도달하는
+      // 경우는 음성 명령("다음"/"next")뿐이다 — 화면을 안 보고 있을 수 있으니
+      // 조용히 무시하지 않고 마지막 단계라고 소리로 알려준다.
+      _tts.speak(tr('마지막 단계예요.', 'This is the last step.'));
     }
   }
 
@@ -126,22 +132,40 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
     );
   }
 
+  bool _warnIfMicUnavailable() {
+    if (_voice.unavailableReason == null) return false;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_voice.unavailableReason!),
+        backgroundColor: AppColors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    return true;
+  }
+
+  /// 마이크 탭: 한 번 듣고 자동으로 꺼지는 단발 모드. 이미 듣고 있으면(연속 모드 포함) 끈다.
   Future<void> _toggleMic() async {
-    if (_voice.unavailableReason != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_voice.unavailableReason!),
-          backgroundColor: AppColors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
+    if (_warnIfMicUnavailable()) return;
     if (_voice.isListening) {
       await _voice.stopListening();
     } else {
       await _voice.startListening(_handleVoiceCommand);
     }
+  }
+
+  /// 마이크 길게 누르기: 스텝이 넘어갈 때마다 다시 누를 필요 없이 계속 듣는 연속 모드로 전환한다.
+  Future<void> _startContinuousMic() async {
+    if (_warnIfMicUnavailable()) return;
+    if (_voice.isListening && _voice.isContinuousMode) return;
+    if (_voice.isListening) await _voice.stopListening();
+    await _voice.startListening(_handleVoiceCommand, continuous: true);
+  }
+
+  Future<void> _openHelp() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const CookingHelpScreen()),
+    );
   }
 
   Future<void> _openTimerPicker() async {
@@ -275,6 +299,8 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
                     ),
                   ),
                 ),
+                _HelpPill(onTap: _openHelp),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -287,8 +313,10 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
                     const SizedBox(width: 28),
                     _MicWaveform(
                       isListening: _voice.isListening,
+                      isContinuous: _voice.isContinuousMode,
                       unavailable: _voice.unavailableReason != null,
                       onTap: _toggleMic,
+                      onLongPress: _startContinuousMic,
                     ),
                   ],
                 ),
@@ -388,15 +416,20 @@ class _GlassStepPanel extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
-            padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.82),
               borderRadius: BorderRadius.circular(28),
               border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+            // 영문판처럼 스텝 설명이 길어 카드 높이(Expanded로 제한된 화면 여백)를
+            // 넘어서는 경우, 강제로 넘치지(overflow) 않고 카드 안에서 스크롤되도록 한다.
+            // SingleChildScrollView는 부모가 준 최대 높이 안에서 내용 크기에 맞춰
+            // 줄어들므로(shrink) 텍스트가 짧을 땐 기존과 동일하게 보인다.
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
                 StepVisual(
                   imageAsset: imageAsset,
                   recipePhotoUrl: recipePhotoUrl,
@@ -425,7 +458,8 @@ class _GlassStepPanel extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -480,6 +514,45 @@ class _TimerRing extends StatelessWidget {
                 color: Colors.white, fontWeight: FontWeight.w800, fontSize: 22),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 읽기 버튼과 마이크 버튼 사이 위쪽 가운데에 놓이는 작은 "사용설명" 알약 버튼.
+/// 탭하면 CookingHelpScreen으로 이동해 두 버튼(읽기/마이크)과 음성 명령 사용법을 보여준다.
+class _HelpPill extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _HelpPill({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.14),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.help_outline_rounded, color: Colors.white, size: 15),
+            const SizedBox(width: 5),
+            Text(
+              tr('사용설명', 'Guide'),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+                letterSpacing: 0.1,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -579,13 +652,17 @@ class _ReadAloudButtonState extends State<_ReadAloudButton>
 /// 음성 수신 중임을 알리는 마이크 인디케이터 + 파동(Waveform) 애니메이션
 class _MicWaveform extends StatefulWidget {
   final bool isListening;
+  final bool isContinuous;
   final bool unavailable;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
   const _MicWaveform({
     required this.isListening,
+    required this.isContinuous,
     required this.unavailable,
     required this.onTap,
+    required this.onLongPress,
   });
 
   @override
@@ -610,6 +687,20 @@ class _MicWaveformState extends State<_MicWaveform>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        SizedBox(
+          height: 18,
+          child: widget.isContinuous && widget.isListening
+              ? Text(
+                  tr('연속 듣기 중...', 'Listening continuously...'),
+                  style: const TextStyle(
+                    color: AppColors.green,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                  ),
+                )
+              : null,
+        ),
+        const SizedBox(height: 10),
         AnimatedBuilder(
           animation: _controller,
           builder: (context, _) => Row(
@@ -645,6 +736,7 @@ class _MicWaveformState extends State<_MicWaveform>
         const SizedBox(height: 12),
         GestureDetector(
           onTap: widget.onTap,
+          onLongPress: widget.onLongPress,
           child: Container(
             width: 64,
             height: 64,
@@ -654,7 +746,12 @@ class _MicWaveformState extends State<_MicWaveform>
               color: widget.isListening
                   ? AppColors.green
                   : Colors.white.withValues(alpha: 0.16),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+              border: Border.all(
+                color: widget.isContinuous && widget.isListening
+                    ? AppColors.carrot
+                    : Colors.white.withValues(alpha: 0.4),
+                width: widget.isContinuous && widget.isListening ? 2.5 : 1,
+              ),
               boxShadow: widget.isListening
                   ? [
                       BoxShadow(

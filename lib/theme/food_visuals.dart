@@ -1,4 +1,23 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
+/// 위키미디어 thumb URL의 요청 해상도를 실제 표시 크기(물리 픽셀)에 맞게 낮춘다.
+/// 카탈로그에 박아둔 원본은 보통 960px인데, 74px짜리 목록 썸네일에 그걸 그대로
+/// 받으면 대역폭도, 디코드 비용도 낭비된다. Wikimedia의 thumb 서버는 URL의
+/// "NNNpx-" 부분만 바꾸면 그 폭으로 즉석에서 리사이즈해서 내려준다.
+/// 이 패턴이 아닌 URL(향후 다른 CDN 등)은 원본 그대로 반환한다.
+String resizedThumbUrl(String url, double physicalSize) {
+  final match = RegExp(r'/(\d+)px-').firstMatch(url);
+  if (match == null) return url;
+  final target = physicalSize.clamp(100, 960).round();
+  return url.replaceFirst(match.group(0)!, '/${target}px-');
+}
+
+/// `CachedNetworkImage`의 `memCacheWidth/Height`용 안전 변환 — 부모가 폭/높이를
+/// `double.infinity`로 채워주는 흔한 패턴(RecipePhoto가 목록 카드에서 이렇게 쓰인다)을
+/// 그대로 `.round()`하면 "Unsupported operation: Infinity or NaN toInt" 런타임 크래시가
+/// 난다. 유한한 값일 때만 디코드 크기 힌트를 주고, 아니면 힌트를 생략한다(원본 그대로 디코드).
+int? _safeCacheDim(double value) => value.isFinite ? value.round() : null;
 
 /// 실제 사진을 불러오기 전/실패했을 때 쓰는 플레이스홀더용 색상/이모지 매핑.
 /// 어린아이 그림처럼 보이지 않도록 채도를 낮춘 톤 온 톤 그라데이션을 쓴다.
@@ -278,14 +297,19 @@ class IngredientPhoto extends StatelessWidget {
           BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 4, offset: const Offset(0, 2)),
         ],
       ),
-      child: Image.network(
-        photoUrl,
+      child: CachedNetworkImage(
+        imageUrl: resizedThumbUrl(
+            photoUrl, size * MediaQuery.of(context).devicePixelRatio),
         width: size,
         height: size,
         fit: BoxFit.cover,
-        loadingBuilder: (context, child, progress) =>
-            progress == null ? child : IngredientAvatar(name: name, category: category, size: size),
-        errorBuilder: (context, error, stack) => IngredientAvatar(name: name, category: category, size: size),
+        memCacheWidth:
+            _safeCacheDim(size * MediaQuery.of(context).devicePixelRatio),
+        fadeInDuration: const Duration(milliseconds: 200),
+        placeholder: (context, url) =>
+            IngredientAvatar(name: name, category: category, size: size),
+        errorWidget: (context, url, error) =>
+            IngredientAvatar(name: name, category: category, size: size),
       ),
     );
   }
@@ -332,15 +356,19 @@ class RecipePhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dpr = MediaQuery.of(context).devicePixelRatio;
     return ClipRRect(
       borderRadius: borderRadius,
-      child: Image.network(
-        photoUrl,
+      child: CachedNetworkImage(
+        imageUrl: resizedThumbUrl(photoUrl, width * dpr),
         width: width,
         height: height,
         fit: BoxFit.cover,
-        loadingBuilder: (context, child, progress) => progress == null ? child : _placeholder(),
-        errorBuilder: (context, error, stack) => _placeholder(),
+        memCacheWidth: _safeCacheDim(width * dpr),
+        memCacheHeight: _safeCacheDim(height * dpr),
+        fadeInDuration: const Duration(milliseconds: 200),
+        placeholder: (context, url) => _placeholder(),
+        errorWidget: (context, url, error) => _placeholder(),
       ),
     );
   }

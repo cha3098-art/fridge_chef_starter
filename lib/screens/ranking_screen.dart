@@ -16,6 +16,7 @@ import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
 import '../widgets/mascot_image_fallback.dart';
+import '../widgets/segmented_tab_bar.dart';
 import 'board_screen.dart';
 import 'profile_view_sheet.dart';
 
@@ -79,7 +80,10 @@ BoxDecoration _cardDeco(
 /// "랭킹" — 가입한 전체 사용자를 누적 포인트가 높은 순서로 보여준다.
 /// 상단 1~3위는 명예의 전당(포디움), 내 순위는 하단 스티키 바로 항상 고정 노출.
 class RankingScreen extends StatefulWidget {
-  const RankingScreen({super.key});
+  /// true면 상위 카테고리 화면(세그먼트 탭)에 본문만 끼워 넣는 모드.
+  final bool embed;
+
+  const RankingScreen({super.key, this.embed = false});
 
   @override
   State<RankingScreen> createState() => _RankingScreenState();
@@ -114,78 +118,73 @@ class _RankingScreenState extends State<RankingScreen> {
     return rows;
   }
 
+  Widget _buildBody(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
+          child: PillToggle(
+            labels: [tr('전체 랭킹', 'Overall'), tr('명예의 전당', 'Hall of Fame')],
+            index: _showHallOfFame ? 1 : 0,
+            onChanged: (i) => setState(() => _showHallOfFame = i == 1),
+          ),
+        ),
+        Expanded(
+          child: _showHallOfFame
+              ? const _HallOfFameView()
+              : _buildOverallRanking(),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: Listenable.merge([LocaleStore.instance, BoardStore.instance]),
-      builder: (context, _) => Scaffold(
-        backgroundColor: AppColors.paper,
-        appBar: AppBar(
-          leading: const LabeledBackButton(),
-          leadingWidth: 96,
+      builder: (context, _) {
+        if (widget.embed) return _buildBody(context);
+        return Scaffold(
           backgroundColor: AppColors.paper,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          toolbarHeight: 76,
-          titleSpacing: 0,
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset('assets/icon/icon_ranking.png',
-                    width: 58, height: 58, fit: BoxFit.cover),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                tr('랭킹', 'Ranking'),
-                style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.3,
-                    color: AppColors.ink),
-              ),
+          appBar: AppBar(
+            leading: const LabeledBackButton(),
+            leadingWidth: 96,
+            backgroundColor: AppColors.paper,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            toolbarHeight: 76,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset('assets/icon/icon_ranking.png',
+                      width: 58, height: 58, fit: BoxFit.cover),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    tr('랭킹 순위', 'Ranking'),
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.3,
+                        color: AppColors.ink),
+                  ),
+                ),
+              ],
+            ),
+            actions: const [
+              Padding(
+                  padding: EdgeInsets.only(right: 16), child: LanguageToggle()),
             ],
           ),
-          actions: const [
-            Padding(
-                padding: EdgeInsets.only(right: 12), child: LanguageToggle()),
-          ],
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _RankTabButton(
-                      label: tr('전체 랭킹', 'Overall'),
-                      selected: !_showHallOfFame,
-                      onTap: () => setState(() => _showHallOfFame = false),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _RankTabButton(
-                      label: tr('명예의 전당', 'Hall of Fame'),
-                      selected: _showHallOfFame,
-                      onTap: () => setState(() => _showHallOfFame = true),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: _showHallOfFame
-                  ? const _HallOfFameView()
-                  : _buildOverallRanking(),
-            ),
-          ],
-        ),
-        extendBody: true,
-        bottomNavigationBar: const MainBottomNav(currentIndex: 3),
-      ),
+          body: _buildBody(context),
+          extendBody: true,
+          bottomNavigationBar: const MainBottomNav(currentIndex: 5),
+        );
+      },
     );
   }
 
@@ -195,7 +194,7 @@ class _RankingScreenState extends State<RankingScreen> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
-              child: CircularProgressIndicator(color: AppColors.green));
+              child: CircularProgressIndicator());
         }
         final rows = snapshot.data!;
         if (rows.isEmpty) {
@@ -623,42 +622,6 @@ class _PodiumSpot extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// "전체 랭킹" / "명예의 전당" 전환 필(pill) 버튼 — board_screen.dart의 _CategoryButton과 동일한 톤
-class _RankTabButton extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  const _RankTabButton(
-      {required this.label, required this.selected, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 11),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: selected ? AppColors.ink : AppColors.paperDeep,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-              color: selected ? AppColors.ink : AppColors.cardBorder),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.1,
-            color: selected ? Colors.white : AppColors.inkSoft,
-          ),
-        ),
       ),
     );
   }

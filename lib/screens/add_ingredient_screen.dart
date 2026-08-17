@@ -8,7 +8,9 @@ import '../l10n/recipe_i18n.dart';
 import '../l10n/tr.dart';
 import '../models/fridge_item.dart';
 import '../models/fridge_photo_analysis.dart';
+import '../services/chef_points_store.dart';
 import '../services/fridge_photo_recognition_service.dart';
+import '../services/fridge_store.dart';
 import '../services/locale_store.dart';
 import '../services/ocr_parser_service.dart';
 import '../theme/app_theme.dart';
@@ -28,8 +30,13 @@ import '../widgets/main_return_button.dart';
 /// — 선택된 탭만 진한 배경/흰 글씨로 강하게 도드라진다.
 class AddIngredientScreen extends StatefulWidget {
   final int initialTabIndex;
+  /// true면 상위 카테고리 화면(세그먼트 탭)에 본문만 끼워 넣는 모드 — 자체 Scaffold/AppBar/
+  /// MainReturnButton 없이 내부 캡슐탭+본문만 반환하고, "담기"는 Navigator.pop 대신
+  /// FridgeStore에 바로 반영한 뒤 같은 화면에 머문다.
+  final bool embed;
 
-  const AddIngredientScreen({super.key, this.initialTabIndex = 0});
+  const AddIngredientScreen(
+      {super.key, this.initialTabIndex = 0, this.embed = false});
 
   @override
   State<AddIngredientScreen> createState() => _AddIngredientScreenState();
@@ -42,78 +49,212 @@ class _AddIngredientScreenState extends State<AddIngredientScreen> {
 
   void _removeFromCart(int index) => setState(() => _cart.removeAt(index));
 
+  Future<void> _confirmCart() async {
+    if (!widget.embed) {
+      Navigator.pop(context, _cart);
+      return;
+    }
+    final count = _cart.length;
+    final ok = await FridgeStore.instance.addItems(List.of(_cart));
+    if (!mounted) return;
+    if (!ok) {
+      // 실패하면 장바구니를 비우지 않는다 — 사용자가 다시 "냉장고에 담기"를 눌러 재시도할 수 있게.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(FridgeStore.instance.error ??
+              tr('냉장고에 담지 못했어요. 다시 시도해주세요', 'Could not add to your fridge. Please try again')),
+          backgroundColor: AppColors.red,
+        ),
+      );
+      return;
+    }
+    ChefPointsStore.instance.recordFirstIngredientIfNeeded();
+    setState(() => _cart.clear());
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(tr('$count개 재료를 냉장고에 담았어요', 'Added $count items to your fridge'))),
+    );
+  }
+
+  Widget _buildTabBarView() {
+    return TabBarView(
+      children: [
+        _SearchTab(cart: _cart, onAdd: _addToCart, onRemove: _removeFromCart),
+        _DirectInputTab(onAdd: _addToCart),
+        _PhotoRecognitionTab(
+          icon: Icons.camera_alt_outlined,
+          title: tr('사진으로 재료 인식', 'Recognize ingredients from a photo'),
+          description: tr(
+            '재료를 가까이서 찍으면\nAI가 자동으로 인식해서 등록해줘요.',
+            'Take a close-up photo of an ingredient\nand AI will recognize it automatically.',
+          ),
+          buttonLabel: tr('사진 촬영하기', 'Take a photo'),
+          onAdd: _addToCart,
+        ),
+        _ReceiptScanTab(onAdd: _addToCart),
+        _PhotoRecognitionTab(
+          icon: Icons.kitchen_outlined,
+          title: tr('냉장고 통째로 촬영하기', 'Photograph the whole fridge'),
+          description: tr(
+            '냉장고 문을 연 채로 한 장 찍으면\nAI가 안에 있는 재료를 한 번에 찾아드려요.',
+            'Take one photo with the fridge door open\nand AI will find everything inside at once.',
+          ),
+          buttonLabel: tr('냉장고 촬영하기', 'Take a photo'),
+          onAdd: _addToCart,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCartBar() {
+    // embed 모드에선 이 바가 Scaffold의 bottomNavigationBar가 아니라 카테고리 화면의
+    // MainBottomNav(65) 위에 얹히는 일반 형제 위젯이라, SafeArea만으론 그 65px을 못
+    // 피한다 — extendBody로 본문이 그 뒤까지 꽉 차 있어서 안 챙기면 냉장고 담기 버튼이
+    // 하단 탭바와 겹쳐 보인다.
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(16, 8, 16, 16 + (widget.embed ? 65 : 0)),
+        child: SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: ElevatedButton(
+            onPressed: _confirmCart,
+            child: Text(tr('냉장고에 담기 · ${_cart.length}개',
+                'Add to fridge · ${_cart.length}')),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static const _tabs = [
+    '검색',
+    '직접입력',
+    '사진인식',
+    '영수증스캔',
+    '냉장고 전체촬영',
+  ];
+  static const _tabsEn = [
+    'Search',
+    'Manual',
+    'Photo scan',
+    'Receipt scan',
+    'Whole fridge',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: LocaleStore.instance,
       builder: (context, _) => DefaultTabController(
-        length: 4,
+        length: 5,
         initialIndex: widget.initialTabIndex,
-        child: Scaffold(
-          backgroundColor: AppColors.paper,
-          floatingActionButton: const MainReturnButton(),
-          appBar: AppBar(
-            leading: const LabeledBackButton(),
-            leadingWidth: 96,
-            backgroundColor: AppColors.paper,
-            elevation: 0,
-            title: Text(tr('재료 등록', 'Add Ingredients')),
-            actions: const [
-              Padding(
-                  padding: EdgeInsets.only(right: 12), child: LanguageToggle()),
-            ],
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(55),
-              child: _CapsuleTabBar(
-                tabs: [
-                  tr('검색', 'Search'),
-                  tr('사진인식', 'Photo scan'),
-                  tr('영수증스캔', 'Receipt scan'),
-                  tr('냉장고 전체촬영', 'Whole fridge'),
+        child: widget.embed
+            ? Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: _CapsuleTabBar(
+                      tabs: [for (var i = 0; i < _tabs.length; i++) tr(_tabs[i], _tabsEn[i])],
+                    ),
+                  ),
+                  Expanded(child: _buildTabBarView()),
+                  if (_cart.isNotEmpty) _buildCartBar(),
                 ],
-              ),
-            ),
-          ),
-          body: TabBarView(
-            children: [
-              _SearchTab(
-                  cart: _cart, onAdd: _addToCart, onRemove: _removeFromCart),
-              _PhotoRecognitionTab(
-                icon: Icons.camera_alt_outlined,
-                title: tr('사진으로 재료 인식', 'Recognize ingredients from a photo'),
-                description: tr(
-                  '재료를 가까이서 찍으면\nAI가 자동으로 인식해서 등록해줘요.',
-                  'Take a close-up photo of an ingredient\nand AI will recognize it automatically.',
+              )
+            : Scaffold(
+                backgroundColor: AppColors.paper,
+                floatingActionButton: Padding(
+                  padding: EdgeInsets.only(
+                      bottom: 95 + MediaQuery.of(context).padding.bottom),
+                  child: const MainReturnButton(),
                 ),
-                buttonLabel: tr('사진 촬영하기', 'Take a photo'),
-                onAdd: _addToCart,
-              ),
-              _ReceiptScanTab(onAdd: _addToCart),
-              _PhotoRecognitionTab(
-                icon: Icons.kitchen_outlined,
-                title: tr('냉장고 통째로 촬영하기', 'Photograph the whole fridge'),
-                description: tr(
-                  '냉장고 문을 연 채로 한 장 찍으면\nAI가 안에 있는 재료를 한 번에 찾아드려요.',
-                  'Take one photo with the fridge door open\nand AI will find everything inside at once.',
-                ),
-                buttonLabel: tr('냉장고 촬영하기', 'Take a photo'),
-                onAdd: _addToCart,
-              ),
-            ],
-          ),
-          bottomNavigationBar: _cart.isEmpty
-              ? null
-              : SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context, _cart),
-                      child: Text(tr('냉장고에 담기 · ${_cart.length}개',
-                          'Add to fridge · ${_cart.length}')),
+                appBar: AppBar(
+                  leading: const LabeledBackButton(),
+                  leadingWidth: 96,
+                  backgroundColor: AppColors.paper,
+                  elevation: 0,
+                  toolbarHeight: 76,
+                  title: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.asset('assets/icon/icon_additem.png',
+                            width: 58, height: 58, fit: BoxFit.cover),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(tr('재료 등록', 'Add Ingredients'),
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.3,
+                                color: AppColors.ink)),
+                      ),
+                    ],
+                  ),
+                  actions: const [
+                    Padding(
+                        padding: EdgeInsets.only(right: 12),
+                        child: LanguageToggle()),
+                  ],
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(55),
+                    child: _CapsuleTabBar(
+                      tabs: [for (var i = 0; i < _tabs.length; i++) tr(_tabs[i], _tabsEn[i])],
                     ),
                   ),
                 ),
-        ),
+                body: _buildTabBarView(),
+                bottomNavigationBar: _cart.isEmpty ? null : _buildCartBar(),
+              ),
+      ),
+    );
+  }
+}
+
+/// 사진인식/영수증스캔 탭에서 "일치하는 재료를 찾지 못했어요" 안내와 함께 보여주는
+/// 바로가기 버튼 — 탭마다 검색 탭을 직접 눌러 찾아가야 하는 번거로움을 없애고
+/// DefaultTabController로 바로 "검색"(0번) 탭으로 이동시킨다.
+class _GoToSearchTabButton extends StatelessWidget {
+  const _GoToSearchTabButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: () => DefaultTabController.of(context).animateTo(0),
+      icon: const Icon(Icons.search, size: 18),
+      label: Text(tr('검색 탭으로 이동', 'Go to Search tab')),
+    );
+  }
+}
+
+/// 사진인식/영수증스캔 탭 하단에 항상 보이는 안내 — 가공식품/냉동식품 등 카탈로그에 없어
+/// AI가 인식하지 못하는 품목이 있을 때, "직접입력"(1번) 탭으로 바로 넘어갈 수 있게 한다.
+class _ManualEntryHint extends StatelessWidget {
+  const _ManualEntryHint();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        children: [
+          Text(
+            tr('원하는 재료가 인식되지 않나요? 직접 타이핑해서 등록할 수 있어요.',
+                "Can't find the ingredient you want? You can type it in manually."),
+            style: const TextStyle(
+                fontSize: 12, color: AppColors.inkSoft, height: 1.4),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => DefaultTabController.of(context).animateTo(1),
+            icon: const Icon(Icons.edit_outlined, size: 18),
+            label: Text(tr('직접 입력하러 가기', 'Go to manual entry')),
+          ),
+        ],
       ),
     );
   }
@@ -275,7 +416,7 @@ class _SearchTabState extends State<_SearchTab> {
                   ),
                 )
               : ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 130),
                   itemCount: _filtered.length,
                   separatorBuilder: (_, __) =>
                       const Divider(height: 1, color: AppColors.line),
@@ -345,6 +486,8 @@ class _QuantitySheetState extends State<_QuantitySheet> {
   late final TextEditingController _qtyController;
   late final TextEditingController _unitController;
   DateTime? _expiryDate;
+  StorageLocation _storageLocation = StorageLocation.fridge;
+  late String _storageCategory;
 
   @override
   void initState() {
@@ -356,6 +499,7 @@ class _QuantitySheetState extends State<_QuantitySheet> {
     _expiryDate = shelfLife != null
         ? DateTime.now().add(Duration(days: shelfLife))
         : null;
+    _storageCategory = defaultStorageCategory(widget.entry.category);
   }
 
   @override
@@ -387,6 +531,8 @@ class _QuantitySheetState extends State<_QuantitySheet> {
         unit: unit.isEmpty ? widget.entry.unitDefault : unit,
         expiryDate: _expiryDate,
         category: widget.entry.category,
+        storageLocation: _storageLocation,
+        storageCategory: _storageCategory,
       ),
     );
   }
@@ -396,7 +542,8 @@ class _QuantitySheetState extends State<_QuantitySheet> {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           20, 20, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
-      child: Column(
+      child: SingleChildScrollView(
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -450,6 +597,16 @@ class _QuantitySheetState extends State<_QuantitySheet> {
             style: const TextStyle(
                 fontSize: 11.5, color: AppColors.inkSoft, height: 1.4),
           ),
+          const SizedBox(height: 16),
+          _StorageLocationToggle(
+            value: _storageLocation,
+            onChanged: (v) => setState(() => _storageLocation = v),
+          ),
+          const SizedBox(height: 12),
+          _StorageCategoryPicker(
+            value: _storageCategory,
+            onChanged: (v) => setState(() => _storageCategory = v),
+          ),
           const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
@@ -457,6 +614,7 @@ class _QuantitySheetState extends State<_QuantitySheet> {
                 onPressed: _confirm, child: Text(tr('담기', 'Add'))),
           ),
         ],
+        ),
       ),
     );
   }
@@ -598,6 +756,7 @@ class _ReceiptScanTabState extends State<_ReceiptScanTab> {
                 onPressed: _openPhotoSourceSheet,
                 child: Text(tr('영수증 촬영하기', 'Scan receipt')),
               ),
+              const _ManualEntryHint(),
             ],
           ),
         ),
@@ -605,7 +764,7 @@ class _ReceiptScanTabState extends State<_ReceiptScanTab> {
     }
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 130),
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
@@ -624,12 +783,18 @@ class _ReceiptScanTabState extends State<_ReceiptScanTab> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
-                child: Text(
-                  tr('일치하는 재료를 찾지 못했어요. 검색 탭에서 직접 등록해주세요.',
-                      "Couldn't find matching items. Please add them manually in the Search tab."),
-                  style: const TextStyle(
-                      fontSize: 13, color: AppColors.inkSoft, height: 1.5),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  children: [
+                    Text(
+                      tr('일치하는 재료를 찾지 못했어요. 검색 탭에서 직접 등록해주세요.',
+                          "Couldn't find matching items. Please add them manually in the Search tab."),
+                      style: const TextStyle(
+                          fontSize: 13, color: AppColors.inkSoft, height: 1.5),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    const _GoToSearchTabButton(),
+                  ],
                 ),
               ),
             )
@@ -686,6 +851,7 @@ class _ReceiptScanTabState extends State<_ReceiptScanTab> {
             child: Text(tr('영수증 다시 찍기', 'Retake photo')),
           ),
         ],
+        const _ManualEntryHint(),
       ],
     );
   }
@@ -853,6 +1019,7 @@ class _PhotoRecognitionTabState extends State<_PhotoRecognitionTab> {
                 onPressed: _openPhotoSourceSheet,
                 child: Text(widget.buttonLabel),
               ),
+              const _ManualEntryHint(),
             ],
           ),
         ),
@@ -868,7 +1035,7 @@ class _PhotoRecognitionTabState extends State<_PhotoRecognitionTab> {
             .toList();
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 130),
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
@@ -905,12 +1072,18 @@ class _PhotoRecognitionTabState extends State<_PhotoRecognitionTab> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
-                child: Text(
-                  tr('일치하는 재료를 찾지 못했어요. 검색 탭에서 직접 등록해주세요.',
-                      "Couldn't find matching items. Please add them manually in the Search tab."),
-                  style: const TextStyle(
-                      fontSize: 13, color: AppColors.inkSoft, height: 1.5),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  children: [
+                    Text(
+                      tr('일치하는 재료를 찾지 못했어요. 검색 탭에서 직접 등록해주세요.',
+                          "Couldn't find matching items. Please add them manually in the Search tab."),
+                      style: const TextStyle(
+                          fontSize: 13, color: AppColors.inkSoft, height: 1.5),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    const _GoToSearchTabButton(),
+                  ],
                 ),
               ),
             )
@@ -984,7 +1157,368 @@ class _PhotoRecognitionTabState extends State<_PhotoRecognitionTab> {
             child: Text(tr('다시 찍기', 'Retake photo')),
           ),
         ],
+        const _ManualEntryHint(),
       ],
+    );
+  }
+}
+
+/// 냉장고/냉동고 저장 위치를 고르는 2분할 세그먼트 버튼 — 검색 탭 수량 시트, 직접입력 탭이 공유한다.
+class _StorageLocationToggle extends StatelessWidget {
+  final StorageLocation value;
+  final ValueChanged<StorageLocation> onChanged;
+
+  const _StorageLocationToggle({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return InputDecorator(
+      decoration: InputDecoration(labelText: tr('저장 위치', 'Storage location')),
+      child: Row(
+        children: StorageLocation.values.map((loc) {
+          final selected = loc == value;
+          return Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                  right: loc == StorageLocation.values.first ? 8 : 0),
+              child: GestureDetector(
+                onTap: () => onChanged(loc),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: selected ? AppColors.ink : AppColors.paperDeep,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                        color: selected ? AppColors.ink : AppColors.cardBorder),
+                  ),
+                  child: Text(
+                    loc.label,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: selected ? Colors.white : AppColors.inkSoft,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+/// 세부 분류(육류/유제품/야채/생선/밑반찬/소스/기타) 칩 선택 — 검색 탭 수량 시트, 직접입력 탭이 공유한다.
+class _StorageCategoryPicker extends StatelessWidget {
+  final String value;
+  final ValueChanged<String> onChanged;
+
+  const _StorageCategoryPicker({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return InputDecorator(
+      decoration: InputDecoration(labelText: tr('세부 분류', 'Category')),
+      child: Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        children: storageCategories.map((c) {
+          final selected = c == value;
+          return ChoiceChip(
+            label: Text(trTag(c)),
+            selected: selected,
+            onSelected: (_) => onChanged(c),
+            selectedColor: AppColors.ink,
+            backgroundColor: AppColors.paperDeep,
+            labelStyle: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: selected ? Colors.white : AppColors.inkSoft,
+            ),
+            side: BorderSide(color: selected ? AppColors.ink : AppColors.cardBorder),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+/// "직접입력" 탭 — 재료 카탈로그에 없는 항목(예: 특이 재료, 밑반찬, 소스류)을 이름/카테고리/
+/// 저장위치/수량/유통기한까지 직접 입력해서 등록한다. FridgeStore.addItems가 카탈로그에 없는
+/// 이름을 만나면 ingredients 마스터에 새 행을 자동 생성하므로, 여기서는 폼만 채우면 된다.
+class _DirectInputTab extends StatefulWidget {
+  final ValueChanged<FridgeItem> onAdd;
+
+  const _DirectInputTab({required this.onAdd});
+
+  @override
+  State<_DirectInputTab> createState() => _DirectInputTabState();
+}
+
+/// 직접입력 폼 한 세트(재료명/수량/단위/유통기한/저장위치/세부분류)의 상태.
+/// "+ 항목 추가"를 누를 때마다 하나씩 생겨서, 여러 재료를 한 화면에서 동시에 입력할 수 있게 한다.
+/// 화면엔 세부분류(storageCategory, 야채/생선 등) 하나만 노출하고, ingredients 마스터 행에
+/// 넣을 카탈로그 category('채소'/'수산' 등)는 catalogCategoryForStorage로 내부에서만 역매핑한다
+/// — 카탈로그 category를 사용자가 직접 고르게 하면 같은 화면에 "채소"와 "야채"가 동시에
+/// 보여서 헷갈린다는 피드백이 있었다.
+class _DirectInputRowData {
+  final nameController = TextEditingController();
+  final qtyController = TextEditingController(text: '1');
+  final unitController = TextEditingController(text: '개');
+  StorageLocation storageLocation = StorageLocation.fridge;
+  String storageCategory = '기타';
+  DateTime? expiryDate;
+
+  void dispose() {
+    nameController.dispose();
+    qtyController.dispose();
+    unitController.dispose();
+  }
+}
+
+class _DirectInputTabState extends State<_DirectInputTab> {
+  final List<_DirectInputRowData> _rows = [_DirectInputRowData()];
+
+  @override
+  void dispose() {
+    for (final row in _rows) {
+      row.dispose();
+    }
+    super.dispose();
+  }
+
+  Future<void> _pickDate(_DirectInputRowData row) async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: row.expiryDate ?? now,
+      firstDate: now.subtract(const Duration(days: 1)),
+      lastDate: now.add(const Duration(days: 365)),
+    );
+    if (picked != null) setState(() => row.expiryDate = picked);
+  }
+
+  void _addRow() => setState(() => _rows.add(_DirectInputRowData()));
+
+  void _removeRow(int index) {
+    setState(() {
+      _rows[index].dispose();
+      _rows.removeAt(index);
+    });
+  }
+
+  void _submitAll() {
+    final itemsToAdd = <FridgeItem>[];
+    final skippedRows = <int>[];
+    for (var i = 0; i < _rows.length; i++) {
+      final row = _rows[i];
+      final name = row.nameController.text.trim();
+      if (name.isEmpty) {
+        skippedRows.add(i);
+        continue;
+      }
+      final qty = double.tryParse(row.qtyController.text) ?? 1;
+      final unit = row.unitController.text.trim();
+      itemsToAdd.add(FridgeItem(
+        name: name,
+        quantity: qty,
+        unit: unit.isEmpty ? '개' : unit,
+        expiryDate: row.expiryDate,
+        category: catalogCategoryForStorage(row.storageCategory),
+        storageLocation: row.storageLocation,
+        storageCategory: row.storageCategory,
+      ));
+    }
+    if (itemsToAdd.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('재료 이름을 입력해주세요', 'Please enter a name'))),
+      );
+      return;
+    }
+    for (final item in itemsToAdd) {
+      widget.onAdd(item);
+    }
+    final count = itemsToAdd.length;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text(tr('$count개 재료를 담았어요', 'Added $count items'))),
+    );
+    setState(() {
+      for (final row in _rows) {
+        row.dispose();
+      }
+      _rows
+        ..clear()
+        ..add(_DirectInputRowData());
+    });
+  }
+
+  Widget _buildRow(int index) {
+    final row = _rows[index];
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.cardBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                tr('재료 ${index + 1}', 'Item ${index + 1}'),
+                style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.inkSoft),
+              ),
+              if (_rows.length > 1)
+                GestureDetector(
+                  onTap: () => _removeRow(index),
+                  child: const Icon(Icons.close,
+                      size: 20, color: AppColors.inkSoft),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: row.nameController,
+            style: const TextStyle(color: AppColors.ink),
+            decoration:
+                InputDecoration(labelText: tr('재료 이름', 'Ingredient name')),
+            onChanged: (_) => setState(() {}),
+          ),
+          _NameSuggestionChips(
+            query: row.nameController.text.trim(),
+            onPick: (entry) {
+              setState(() {
+                row.nameController.text = entry.name;
+                row.storageCategory = defaultStorageCategory(entry.category);
+              });
+            },
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: row.qtyController,
+                  style: const TextStyle(color: AppColors.ink),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(labelText: tr('수량', 'Quantity')),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TextField(
+                  controller: row.unitController,
+                  style: const TextStyle(color: AppColors.ink),
+                  decoration: InputDecoration(labelText: tr('단위', 'Unit')),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          InkWell(
+            onTap: () => _pickDate(row),
+            child: InputDecorator(
+              decoration:
+                  InputDecoration(labelText: tr('유통기한', 'Expiry date')),
+              child: Text(
+                row.expiryDate == null
+                    ? tr('설정 안 함', 'Not set')
+                    : '${row.expiryDate!.year}.${row.expiryDate!.month.toString().padLeft(2, '0')}.${row.expiryDate!.day.toString().padLeft(2, '0')}',
+                style: const TextStyle(color: AppColors.ink),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          _StorageLocationToggle(
+            value: row.storageLocation,
+            onChanged: (v) => setState(() => row.storageLocation = v),
+          ),
+          const SizedBox(height: 12),
+          _StorageCategoryPicker(
+            value: row.storageCategory,
+            onChanged: (v) => setState(() => row.storageCategory = v),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.md, AppSpacing.md, 130),
+      children: [
+        for (var i = 0; i < _rows.length; i++) _buildRow(i),
+        OutlinedButton.icon(
+          onPressed: _addRow,
+          icon: const Icon(Icons.add, size: 18),
+          label: Text(tr('항목 추가', 'Add item')),
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _submitAll,
+            child: Text(tr(
+                '${_rows.length}개 항목 한 번에 담기', 'Add ${_rows.length} items at once')),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// 직접입력 "재료 이름" 필드 아래에 뜨는 카탈로그 매칭 자동완성 칩 — 검색 탭처럼
+/// 타이핑 중인 이름으로 ingredientCatalog를 필터링해 최대 6개까지 보여주고, 탭하면
+/// 이름을 채워주는 동시에 그 재료의 실제 세부분류로 자동 설정해준다.
+class _NameSuggestionChips extends StatelessWidget {
+  final String query;
+  final ValueChanged<IngredientCatalogEntry> onPick;
+
+  const _NameSuggestionChips({required this.query, required this.onPick});
+
+  @override
+  Widget build(BuildContext context) {
+    if (query.isEmpty) return const SizedBox.shrink();
+    final matches = ingredientCatalog
+        .where((e) => e.name.contains(query))
+        .take(6)
+        .toList();
+    // 정확히 일치하는 재료 하나뿐이면 이미 다 골랐다는 뜻이라 칩을 숨긴다.
+    if (matches.isEmpty ||
+        (matches.length == 1 && matches.first.name == query)) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        children: matches
+            .map((entry) => ActionChip(
+                  label: Text(trIngredientName(entry.name)),
+                  labelStyle: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.ink),
+                  backgroundColor: AppColors.paperDeep,
+                  side: const BorderSide(color: AppColors.cardBorder),
+                  onPressed: () => onPick(entry),
+                ))
+            .toList(),
+      ),
     );
   }
 }

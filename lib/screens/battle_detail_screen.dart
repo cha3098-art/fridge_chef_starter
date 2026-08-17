@@ -15,7 +15,7 @@ import '../theme/app_theme.dart';
 import '../theme/battle_avatars.dart';
 import '../utils/battle_countdown.dart';
 import '../utils/image_compressor.dart';
-import '../widgets/battle_split_banner.dart';
+import '../widgets/battle_banner_image.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/main_return_button.dart';
 import '../widgets/fridge_mascot.dart';
@@ -25,7 +25,11 @@ import '../widgets/mascot_image_fallback.dart';
 /// 참가/사진 제출/투표/승자 확정까지 이 한 화면에서 상태에 따라 다르게 보여준다.
 class BattleDetailScreen extends StatefulWidget {
   final String battleId;
-  const BattleDetailScreen({super.key, required this.battleId});
+  /// 목록에서 넘어올 때의 리스트 인덱스 — 카드에 쓰인 것과 같은 VS 배너 이미지를
+  /// 상세 화면에서도 그대로 보여주기 위함. null이면(딥링크 등 목록 없이 진입) battleId를
+  /// 해시해서 안정적으로 하나를 고른다.
+  final int? bannerIndex;
+  const BattleDetailScreen({super.key, required this.battleId, this.bannerIndex});
 
   @override
   State<BattleDetailScreen> createState() => _BattleDetailScreenState();
@@ -44,6 +48,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   RealtimeChannel? _votesChannel;
 
   String? get _myUid => Supabase.instance.client.auth.currentUser?.id;
+  int get _bannerIndex => widget.bannerIndex ?? widget.battleId.hashCode.abs();
 
   @override
   void initState() {
@@ -389,7 +394,11 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
     final battle = _battle;
     return Scaffold(
       backgroundColor: AppColors.paper,
-      floatingActionButton: const MainReturnButton(),
+      floatingActionButton: Padding(
+        padding:
+            EdgeInsets.only(bottom: 95 + MediaQuery.of(context).padding.bottom),
+        child: const MainReturnButton(),
+      ),
       appBar: AppBar(
         leading: const LabeledBackButton(),
         leadingWidth: 96,
@@ -407,8 +416,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
         ],
       ),
       body: !_loaded
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.green))
+          ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
               ? Center(
                   child: Column(
@@ -440,77 +448,87 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                   : RefreshIndicator(
                       onRefresh: _load,
                       child: ListView(
-                        padding: const EdgeInsets.all(AppSpacing.md),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: AppSpacing.md),
                         children: [
                           if (battle.status != BattleStatus.cancelled) ...[
-                            BattleSplitBanner(
-                              hostUserId: battle.hostUserId,
-                              hostGender: _genders[battle.hostUserId],
-                              challengerUserId: _opponentParticipant?.userId,
-                              challengerGender: _opponentParticipant == null
-                                  ? null
-                                  : _genders[_opponentParticipant!.userId],
-                              height: 160,
-                            ),
+                            // 배틀 사진(VS 배너)은 좌우 여백 없이 화면 폭에 꽉 차게 배치한다.
+                            BattleBannerImage(index: _bannerIndex, height: 165),
                             const SizedBox(height: AppSpacing.md),
                           ],
-                          _StatusBanner(battle: battle),
-                          if (battle.status == BattleStatus.submitted ||
-                              battle.status == BattleStatus.voting ||
-                              battle.status == BattleStatus.completed) ...[
-                            const SizedBox(height: AppSpacing.md),
-                            _TugOfWarBar(
-                              hostVotes: _voteCounts[_hostParticipant?.id] ?? 0,
-                              challengerVotes:
-                                  _voteCounts[_opponentParticipant?.id] ?? 0,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.md),
+                            child: Column(
+                              children: [
+                                _StatusBanner(battle: battle),
+                                if (battle.status == BattleStatus.submitted ||
+                                    battle.status == BattleStatus.voting ||
+                                    battle.status ==
+                                        BattleStatus.completed) ...[
+                                  const SizedBox(height: AppSpacing.md),
+                                  _TugOfWarBar(
+                                    hostVotes:
+                                        _voteCounts[_hostParticipant?.id] ?? 0,
+                                    challengerVotes: _voteCounts[
+                                            _opponentParticipant?.id] ??
+                                        0,
+                                  ),
+                                ],
+                                const SizedBox(height: AppSpacing.md),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                        child: _buildParticipantCard(
+                                            _hostParticipant,
+                                            isHostSlot: true)),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                        child: _buildParticipantCard(
+                                            _opponentParticipant,
+                                            isHostSlot: false)),
+                                  ],
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                if (_opponentParticipant == null &&
+                                    !_isHost &&
+                                    _myParticipant == null)
+                                  _actionButton(
+                                    label: tr('배틀 참가하기', 'Join battle'),
+                                    onPressed: _busy ? null : _join,
+                                  ),
+                                if (_myParticipant != null &&
+                                    !_myParticipant!.hasSubmitted &&
+                                    battle.status != BattleStatus.completed &&
+                                    battle.status != BattleStatus.cancelled)
+                                  _actionButton(
+                                    label: tr(
+                                        '완성 사진 제출하기', 'Submit finished photo'),
+                                    onPressed: _busy ? null : _submitPhoto,
+                                  ),
+                                if (_isHost &&
+                                    battle.status == BattleStatus.voting)
+                                  _actionButton(
+                                    label: tr('투표 마감하고 승자 확정',
+                                        'Close voting & pick winner'),
+                                    onPressed: _busy ? null : _finalize,
+                                  ),
+                                if (_myParticipant != null &&
+                                    (battle.status ==
+                                            BattleStatus.waitingOpponent ||
+                                        battle.status ==
+                                            BattleStatus.submitted))
+                                  _actionButton(
+                                    label: _opponentParticipant == null
+                                        ? tr('초대 취소', 'Cancel invite')
+                                        : tr('배틀 포기', 'Give up'),
+                                    onPressed: _busy ? null : _cancel,
+                                    isDestructive: true,
+                                  ),
+                              ],
                             ),
-                          ],
-                          const SizedBox(height: AppSpacing.md),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                  child: _buildParticipantCard(_hostParticipant,
-                                      isHostSlot: true)),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                  child: _buildParticipantCard(
-                                      _opponentParticipant,
-                                      isHostSlot: false)),
-                            ],
                           ),
-                          const SizedBox(height: AppSpacing.md),
-                          if (_opponentParticipant == null &&
-                              !_isHost &&
-                              _myParticipant == null)
-                            _actionButton(
-                              label: tr('배틀 참가하기', 'Join battle'),
-                              onPressed: _busy ? null : _join,
-                            ),
-                          if (_myParticipant != null &&
-                              !_myParticipant!.hasSubmitted &&
-                              battle.status != BattleStatus.completed &&
-                              battle.status != BattleStatus.cancelled)
-                            _actionButton(
-                              label: tr('완성 사진 제출하기', 'Submit finished photo'),
-                              onPressed: _busy ? null : _submitPhoto,
-                            ),
-                          if (_isHost && battle.status == BattleStatus.voting)
-                            _actionButton(
-                              label: tr('투표 마감하고 승자 확정',
-                                  'Close voting & pick winner'),
-                              onPressed: _busy ? null : _finalize,
-                            ),
-                          if (_myParticipant != null &&
-                              (battle.status == BattleStatus.waitingOpponent ||
-                                  battle.status == BattleStatus.submitted))
-                            _actionButton(
-                              label: _opponentParticipant == null
-                                  ? tr('초대 취소', 'Cancel invite')
-                                  : tr('배틀 포기', 'Give up'),
-                              onPressed: _busy ? null : _cancel,
-                              isDestructive: true,
-                            ),
                         ],
                       ),
                     ),
@@ -567,7 +585,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
       {required bool isHostSlot}) {
     final battle = _battle!;
     final roleLabel = isHostSlot ? tr('호스트', 'Host') : tr('상대', 'Opponent');
-    final sideColor = isHostSlot ? AppColors.green : AppColors.carrot;
+    final sideColor = isHostSlot ? AppColors.tealPrimary : AppColors.carrot;
     if (participant == null) {
       return Container(
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -612,11 +630,13 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: AppColors.card,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         border: isWinner ? Border.all(color: AppColors.gold, width: 2) : null,
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -659,7 +679,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                               color: AppColors.paperDeep,
                               alignment: Alignment.center,
                               child: const CircularProgressIndicator(
-                                  color: AppColors.green, strokeWidth: 2.5),
+                                  strokeWidth: 2.5),
                             );
                           },
                           errorBuilder: (context, error, stack) =>
@@ -994,7 +1014,7 @@ class _TugOfWarBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _VoteSideLabel(
-                  pct: hostPct, count: hostVotes, color: AppColors.green),
+                  pct: hostPct, count: hostVotes, color: AppColors.tealPrimary),
               Text(tr('🗳️ 실시간 득표', '🗳️ Live Votes'),
                   style: const TextStyle(
                       fontSize: 11,
@@ -1029,7 +1049,7 @@ class _TugOfWarBar extends StatelessWidget {
                             duration: const Duration(milliseconds: 450),
                             curve: Curves.easeOutCubic,
                             width: w * hostRatio,
-                            color: AppColors.green,
+                            color: AppColors.tealPrimary,
                           ),
                         ),
                         Positioned(
@@ -1160,7 +1180,7 @@ class _StatusBanner extends StatelessWidget {
       _ => '',
     };
 
-    // 위쪽에 이미 대형 스플릿 배너(BattleSplitBanner)가 대결 구도를 보여주므로,
+    // 위쪽에 이미 VS 배너 이미지(BattleBannerImage)가 대결 구도를 보여주므로,
     // 여기는 순수 화이트 배경 위에 안내 문구 + 타이머 캡슐만 컴팩트하게 정리한다
     // — 탁한 파스텔 카드 배경은 쓰지 않는다.
     return Container(

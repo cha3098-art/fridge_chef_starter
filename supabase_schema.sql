@@ -6,6 +6,18 @@
 
 create extension if not exists "uuid-ossp";
 
+-- ============================================================
+-- ⚠️ 마이그레이션: 냉장고관리(저장위치) 기능 추가 — 2026-08-07
+-- 이미 운영 중인 프로젝트라면 위 CREATE TABLE 전체를 다시 실행하지 말고,
+-- 아래 5줄만 Supabase 대시보드 → SQL Editor에서 실행하세요.
+-- ============================================================
+-- alter table public.user_ingredients add column if not exists storage_location text
+--   check (storage_location in ('fridge','freezer')) default 'fridge';
+-- alter table public.user_ingredients add column if not exists storage_category text;
+-- create policy "로그인한 사용자면 새 재료 등록 가능" on public.ingredients
+--   for insert with check (auth.uid() is not null);
+-- ============================================================
+
 -- 1. users (Supabase Auth의 auth.users와 1:1 연결되는 프로필 테이블)
 create table public.users (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -46,6 +58,8 @@ create table public.user_ingredients (
   quantity numeric not null default 0,
   unit text,
   expiry_date date,
+  storage_location text check (storage_location in ('fridge','freezer')) default 'fridge',
+  storage_category text,
   added_via text check (added_via in ('manual','photo_recognition','receipt_ocr')) default 'manual',
   status text check (status in ('active','consumed','expired')) default 'active',
   added_at timestamptz not null default now(),
@@ -432,6 +446,8 @@ alter table public.recipe_ingredients enable row level security;
 alter table public.recipe_steps enable row level security;
 
 create policy "전체 공개 조회" on public.ingredients for select using (true);
+create policy "로그인한 사용자면 새 재료 등록 가능" on public.ingredients
+  for insert with check (auth.uid() is not null);
 create policy "전체 공개 조회" on public.recipes for select using (true);
 create policy "전체 공개 조회" on public.recipe_ingredients for select using (true);
 create policy "전체 공개 조회" on public.recipe_steps for select using (true);

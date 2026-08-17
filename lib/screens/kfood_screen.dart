@@ -6,7 +6,6 @@ import '../models/recipe.dart';
 import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
-import '../widgets/chef_tier_badge.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
@@ -16,8 +15,11 @@ import 'recipe_detail_screen.dart';
 /// 레시피를 눌러 들어가는 상세 화면(recipe_detail_screen.dart)은 별도 라우트다.
 class KFoodScreen extends StatefulWidget {
   final Set<String> fridgeIngredientNames;
+  /// true면 상위 카테고리 화면(세그먼트 탭)에 본문만 끼워 넣는 모드.
+  final bool embed;
 
-  const KFoodScreen({super.key, required this.fridgeIngredientNames});
+  const KFoodScreen(
+      {super.key, required this.fridgeIngredientNames, this.embed = false});
 
   @override
   State<KFoodScreen> createState() => _KFoodScreenState();
@@ -47,51 +49,12 @@ class _KFoodScreenState extends State<KFoodScreen>
 
   Set<String> get fridgeIngredientNames => widget.fridgeIngredientNames;
 
-  @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: LocaleStore.instance,
-      builder: (context, _) => Scaffold(
-        backgroundColor: AppColors.paper,
-        appBar: AppBar(
-          leading: const LabeledBackButton(),
-          leadingWidth: 96,
-          backgroundColor: AppColors.paper,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          toolbarHeight: 76,
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset('assets/icon/icon_challenge.png',
-                    width: 58, height: 58, fit: BoxFit.cover),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  tr('K-Food 만들기', 'Make K-Food'),
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.3,
-                      color: AppColors.ink),
-                ),
-              ),
-            ],
-          ),
-          titleSpacing: 0,
-          actions: const [
-            Padding(
-                padding: EdgeInsets.only(right: 8), child: LanguageToggle()),
-            Padding(
-                padding: EdgeInsets.only(right: 12), child: ChefTierBadge()),
-          ],
-        ),
-        body: ListView(
+  Widget _buildBody(BuildContext context) {
+    return ListView(
+          // 하단 플로팅 내비 바에 마지막 카드가 가려지지 않도록 여백을 넉넉히 둔다
+          // (ranking_screen.dart과 동일한 120 기준).
           padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md, AppSpacing.sm, AppSpacing.md, 96),
+              AppSpacing.md, AppSpacing.sm, AppSpacing.md, 120),
           children: [
             Container(
               width: double.infinity,
@@ -241,13 +204,58 @@ class _KFoodScreenState extends State<KFoodScreen>
               },
             ),
           ],
-        ),
-        extendBody: true,
-        bottomNavigationBar: MainBottomNav(
-          currentIndex: 5,
-          fridgeIngredientNames: fridgeIngredientNames,
-        ),
-      ),
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: LocaleStore.instance,
+      builder: (context, _) {
+        if (widget.embed) return _buildBody(context);
+        return Scaffold(
+          backgroundColor: AppColors.paper,
+          appBar: AppBar(
+            leading: const LabeledBackButton(),
+            leadingWidth: 96,
+            backgroundColor: AppColors.paper,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            toolbarHeight: 76,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset('assets/icon/icon_challenge.png',
+                      width: 58, height: 58, fit: BoxFit.cover),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    tr('K-Food 만들기', 'Make K-Food'),
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.3,
+                        color: AppColors.ink),
+                  ),
+                ),
+              ],
+            ),
+            actions: const [
+              Padding(
+                  padding: EdgeInsets.only(right: 16), child: LanguageToggle()),
+            ],
+          ),
+          body: _buildBody(context),
+          extendBody: true,
+          bottomNavigationBar: MainBottomNav(
+            currentIndex: 2,
+            fridgeIngredientNames: fridgeIngredientNames,
+          ),
+        );
+      },
     );
   }
 }

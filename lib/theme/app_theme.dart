@@ -1,5 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../models/fridge_item.dart';
 
 /// 배달의민족/요기요 스타일의 트렌디 푸드테크 톤 — 쨍한 원색 대신 차분한 민트 포인트와
 /// 넓은 화이트 스페이스, 얇은 테두리선으로 구분하는 디자인 토큰
@@ -29,6 +32,35 @@ class AppColors {
 
   // 그라데이션 배너류는 자체 색으로 배경과 구분되므로 그림자를 걷어내 플랫하게 유지한다
   static const cardShadow = <BoxShadow>[];
+
+  // ── 냉장고관리/요리하기/푸드대결/소통공간/마이페이지 세그먼트 탭 전용 팔레트 ──
+  // 1차 세그먼트 탭(상단, 예: 냉장고관리|재료등록) 활성 색 — 딥 틸. 기존 화면 전역의
+  // green(민트 포인트)/ink(거의 검정)와는 별개로, 이 탭들만 브랜드 포인트를 명확히 준다.
+  static const tealPrimary = Color(0xFF0F766E);
+  static const segmentTrack = Color(0xFFF1F5F9);
+  static const borderLine = Color(0xFFE2E8F0);
+  // 2차 세그먼트 탭(예: 내 배틀|전체 배틀) 활성 색 — 1차와 시각적으로 구분되는 다크 슬레이트.
+  static const pillActive = Color(0xFF1E293B);
+  static const pillBorder = Color(0xFFCBD5E1);
+  static const textSub = Color(0xFF64748B);
+
+  // 냉장고 D-Day 3단계 — 여유(8일+)/주의(4~7일)/임박(3일 이내·만료)를 명확히 구분한다.
+  static const ddaySafe = Color(0xFF0F766E);
+  static const ddayWarn = Color(0xFFD97706);
+  static const ddayUrgent = Color(0xFFDC2626);
+}
+
+/// 냉장고 재료 D-Day 배지의 배경/텍스트 색을 한 곳에서 관리한다 — 재료 목록(냉장고관리)과
+/// 메인 대시보드의 "임박 재료" 카드가 이 로직을 각자 들고 있던 걸 통합한 것.
+extension DdayLevelColors on DdayLevel {
+  Color get _base => switch (this) {
+        DdayLevel.ok => AppColors.ddaySafe,
+        DdayLevel.warn => AppColors.ddayWarn,
+        DdayLevel.bad => AppColors.ddayUrgent,
+      };
+
+  Color get ddayBg => _base.withValues(alpha: 0.12);
+  Color get ddayText => _base;
 }
 
 /// main_dashboard_screen.dart 전용 다크 네이비 팔레트 — 이 화면만 영상 속 다크 대시보드
@@ -173,6 +205,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
         ),
       ),
+      scrollbarTheme: _scrollbarTheme(AppColors.inkSoft),
       useMaterial3: true,
     );
   }
@@ -277,7 +310,39 @@ class AppTheme {
       ),
       dividerColor: DashColors.line,
       iconTheme: const IconThemeData(color: DashColors.inkSoft),
+      scrollbarTheme: _scrollbarTheme(DashColors.inkSoft),
       useMaterial3: true,
+    );
+  }
+}
+
+/// 슬레이트 그레이 톤의 슬림한 스크롤바 — 모노톤 UI에 맞춰 라이트/다크 테마 공용으로 쓴다.
+ScrollbarThemeData _scrollbarTheme(Color thumbBase) {
+  return ScrollbarThemeData(
+    thumbColor: WidgetStateProperty.all(thumbBase.withValues(alpha: 0.4)),
+    trackColor: WidgetStateProperty.all(Colors.transparent),
+    trackBorderColor: WidgetStateProperty.all(Colors.transparent),
+    thickness: WidgetStateProperty.all(5),
+    radius: const Radius.circular(8),
+    thumbVisibility: WidgetStateProperty.all(false),
+    interactive: true,
+  );
+}
+
+/// 앱 전체 스크롤 가능한 화면(ListView/GridView/SingleChildScrollView 등)에 공통으로
+/// 슬림한 스크롤바를 자동 적용한다 — 화면마다 개별적으로 Scrollbar로 감쌀 필요 없이
+/// MaterialApp(scrollBehavior: AppScrollBehavior())로 한 번만 지정하면 된다.
+/// 컨텐츠가 화면을 넘지 않으면(스크롤이 발생하지 않으면) Scrollbar 자체가 아무것도
+/// 그리지 않으므로 "스크롤 생길 때만 표시" 조건은 별도 처리 없이 자동으로 만족된다.
+class AppScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => PointerDeviceKind.values.toSet();
+
+  @override
+  Widget buildScrollbar(BuildContext context, Widget child, ScrollableDetails details) {
+    return Scrollbar(
+      controller: details.controller,
+      child: child,
     );
   }
 }

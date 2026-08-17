@@ -6,7 +6,6 @@ import '../services/fridge_store.dart';
 import '../services/locale_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
-import '../widgets/chef_tier_badge.dart';
 import '../widgets/ingredient_swap_sheet.dart';
 import '../widgets/labeled_back_button.dart';
 import '../widgets/language_toggle.dart';
@@ -136,16 +135,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               ),
               actions: const [
                 Padding(
-                    padding: EdgeInsets.only(right: 8),
-                    child: LanguageToggle()),
-                Padding(
                     padding: EdgeInsets.only(right: 12),
-                    child: ChefTierBadge()),
+                    child: LanguageToggle()),
               ],
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   tr(recipe.title, recipe.titleEn),
                   style: const TextStyle(
+                    color: Colors.white,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
                     shadows: [Shadow(color: Colors.black38, blurRadius: 6)],
@@ -296,9 +293,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text(
-                  '🍳 요리 시작 (음성 모드)',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+                child: Text(
+                  tr('🍳 요리 시작 (음성 모드)', '🍳 Start Cooking (Voice Mode)'),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
                 ),
               ),
             ),

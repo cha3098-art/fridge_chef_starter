@@ -4,7 +4,7 @@ enum BoardCategory { showoff, challenge }
 
 extension BoardCategoryLabel on BoardCategory {
   String get label => this == BoardCategory.showoff
-      ? tr('뽐내기 게시판', 'Showoff Board')
+      ? tr('일반 게시판', 'General Board')
       : tr('챌린지 게시판', 'Challenge Board');
 }
 

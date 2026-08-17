@@ -16,7 +16,6 @@ import '../services/locale_store.dart';
 import '../services/profile_store.dart';
 import '../theme/app_theme.dart';
 import '../theme/food_visuals.dart';
-import '../widgets/chef_tier_badge.dart';
 import '../widgets/fridge_mascot.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/main_bottom_nav.dart';
@@ -27,7 +26,10 @@ import '../models/battle_list_item.dart';
 import '../services/battle_store.dart';
 import 'battle_screen.dart';
 import 'board_screen.dart';
-import 'kfood_screen.dart';
+import 'category_battle_screen.dart';
+import 'category_community_screen.dart';
+import 'category_cooking_screen.dart';
+import 'category_fridge_screen.dart';
 import 'my_screen.dart';
 import 'ranking_screen.dart';
 import 'recipe_detail_screen.dart';
@@ -53,10 +55,10 @@ class MainDashboardScreen extends StatefulWidget {
 class _MainDashboardScreenState extends State<MainDashboardScreen>
     with SingleTickerProviderStateMixin {
   final PageController _bannerController = PageController();
-  final GlobalKey _expiryKey = GlobalKey();
   late Future<_DashboardExtras> _extrasFuture;
   int _currentBannerPage = 0;
   Timer? _rollingTimer;
+  bool _showAllFridgeItems = false;
 
   // _buildRollingBanner()에 정의된 배너 개수와 항상 일치해야 한다.
   static const _bannerCount = 3;
@@ -226,7 +228,8 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
         color: Colors.transparent,
         child: InkWell(
           // 영수증 스캔 탭(재료 추가 화면)으로 바로 이동 — "눌러서 써보기" 안내와 일치.
-          onTap: () => _openAddIngredient(tab: 2),
+          // 탭 순서: 0검색/1직접입력/2사진인식/3영수증스캔/4냉장고전체촬영.
+          onTap: () => _openAddIngredient(tab: 3),
           borderRadius: BorderRadius.circular(16),
           child: Container(
             margin: const EdgeInsets.only(bottom: 14),
@@ -324,14 +327,6 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
     }
   }
 
-  void _scrollToExpiry() {
-    final context = _expiryKey.currentContext;
-    if (context != null) {
-      Scrollable.ensureVisible(context,
-          duration: const Duration(milliseconds: 400), curve: Curves.easeOut);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -365,14 +360,14 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (_showTooltip) _buildSmartTooltip(),
-                            Text(tr('My Menu', 'My Menu'),
+                            Text(tr('바로가기', 'Quick Menu'),
                                 style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.ink)),
                             const SizedBox(height: 12),
-                            _buildMyMenuGrid(names),
-                            const SizedBox(height: 24),
+                            _buildCategoryCards(),
+                            const SizedBox(height: 16),
                             _buildRollingBanner(),
                             if (_activeBattles.isNotEmpty) ...[
                               const SizedBox(height: 12),
@@ -381,14 +376,16 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                             const SizedBox(height: 24),
                             _buildEventPromoCard(names),
                             const SizedBox(height: 24),
-                            _buildExpiryCard(atRisk),
+                            _buildExpiryCard(atRisk, names),
                             const SizedBox(height: 24),
                             _buildFridgeListCard(items),
                             const SizedBox(height: 24),
                             _buildRankingCard(),
                             const SizedBox(height: 24),
                             _buildCommunityFeed(),
-                            const SizedBox(height: 100),
+                            // 하단 플로팅 내비 바에 가려지지 않도록 여백을 넉넉히 둔다
+                            // (ranking_screen.dart과 동일한 120 기준).
+                            const SizedBox(height: 120),
                           ],
                         ),
                       ),
@@ -396,16 +393,16 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                   ],
                 ),
                 Positioned(
-                  right: 16,
-                  bottom: 16,
+                  right: 20,
+                  bottom: 95 + MediaQuery.of(context).padding.bottom,
                   child: _buildFloatingPromoBadge(names),
                 ),
               ],
             ),
           ),
           extendBody: true,
-          bottomNavigationBar: MainBottomNav(
-              currentIndex: 0, fridgeIngredientNames: names, dark: false),
+          bottomNavigationBar:
+              MainBottomNav(currentIndex: 0, fridgeIngredientNames: names),
         );
       },
     );
@@ -446,21 +443,13 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                   ],
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        tr('$nickname 님', nickname),
-                        style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.ink),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const ChefTierBadge(),
-                  ],
+                Text(
+                  tr('$nickname 님', nickname),
+                  style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.ink),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -503,119 +492,93 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
     );
   }
 
-  Widget _buildMyMenuGrid(Set<String> names) {
-    final menuItems = <({String iconAsset, String label, VoidCallback onTap})>[
+  /// 대분류 4장을 2x2 컴팩트 그리드로 배치한다 — 예전엔 카드가 화면을 거의 다 채울 만큼
+  /// 컸는데("불필요하게 크다"는 피드백으로) 카드 높이를 110px 고정으로 축소해, 하단 배너/
+  /// 알림 카드가 스크롤 없이 바로 시야에 들어오게 했다. 각 카드는 해당 대분류 화면
+  /// (세그먼트 탭으로 하위 콘텐츠를 즉시 전환하는 단일 화면)으로 바로 이동한다 —
+  /// 중간 게이트웨이 선택 화면은 거치지 않는다.
+  /// 카드를 통짜 이미지 버튼으로 쓰면 좁은 높이에 맞춰 이미지를 억지로 크롭/왜곡해야 해서
+  /// ("화면 비율 훼손" 피드백), 대신 정사각형 이미지 요소(글자 없는 아이콘 아트, cover 핏으로
+  /// 원본 비율 유지)와 앱 타이포그래피로 그리는 제목 텍스트를 좌우로 배치하는 카드로 바꿨다.
+  Widget _buildCategoryCards() {
+    final cards = <({String iconAsset, String koTitle, String enTitle, Widget screen})>[
       (
-        iconAsset: 'assets/icon/menu_receipt.png',
-        label: tr('영수증 등록', 'Receipt'),
-        onTap: () => _openAddIngredient(tab: 2),
+        iconAsset: 'assets/icon/icon_hub_fridge_glyph.png',
+        koTitle: '냉장고관리',
+        enTitle: 'Fridge',
+        screen: const CategoryFridgeScreen(),
       ),
       (
-        iconAsset: 'assets/icon/menu_additem.png',
-        label: tr('재료 추가', 'Add item'),
-        onTap: () => _openAddIngredient(tab: 0),
+        iconAsset: 'assets/icon/icon_hub_cook_glyph.png',
+        koTitle: '요리하기',
+        enTitle: 'Cook',
+        screen: const CategoryCookingScreen(),
       ),
       (
-        iconAsset: 'assets/icon/menu_airecipe.png',
-        label: tr('AI 추천', 'AI Recipes'),
-        onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) =>
-                      RecommendationScreen(fridgeIngredientNames: names)),
-            ),
+        iconAsset: 'assets/icon/icon_hub_battle_glyph.png',
+        koTitle: '푸드대결',
+        enTitle: 'Battle',
+        screen: const CategoryBattleScreen(),
       ),
       (
-        iconAsset: 'assets/icon/menu_invite.png',
-        label: tr('SNS공유', 'Share'),
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => ShareScreen(fridgeIngredientNames: names))),
-      ),
-      (
-        iconAsset: 'assets/icon/menu_kfood.png',
-        label: tr('K-Food', 'K-Food'),
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => KFoodScreen(fridgeIngredientNames: names))),
-      ),
-      (
-        iconAsset: 'assets/icon/menu_expiring.png',
-        label: tr('임박 재료', 'Expiring'),
-        onTap: _scrollToExpiry,
-      ),
-      (
-        iconAsset: 'assets/icon/menu_battle.png',
-        label: tr('배틀', 'Battle'),
-        onTap: () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const BattleScreen())),
-      ),
-      (
-        iconAsset: 'assets/icon/menu_board.png',
-        label: tr('소통 광장', 'Board'),
-        onTap: () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const BoardScreen())),
+        iconAsset: 'assets/icon/icon_hub_community_glyph.png',
+        koTitle: '소통공간',
+        enTitle: 'Community',
+        screen: const CategoryCommunityScreen(),
       ),
     ];
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.cardBorder, width: 1.2),
-        boxShadow: cardDropShadow(),
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        mainAxisExtent: 110,
       ),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          mainAxisSpacing: 20,
-          crossAxisSpacing: 14,
-          childAspectRatio: 0.7,
-        ),
-        itemCount: menuItems.length,
-        itemBuilder: (context, index) {
-          final item = menuItems[index];
-          return GestureDetector(
-            onTap: item.onTap,
-            behavior: HitTestBehavior.opaque,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      itemCount: cards.length,
+      itemBuilder: (context, index) {
+        final card = cards[index];
+        return GestureDetector(
+          onTap: () => Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => card.screen)),
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2)),
+              ],
+            ),
+            child: Row(
               children: [
-                Container(
-                  width: 58,
-                  height: 58,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.line, width: 1.2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF0F172A).withValues(alpha: 0.06),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(item.iconAsset, fit: BoxFit.cover),
-                  ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(card.iconAsset,
+                      width: 64, height: 64, fit: BoxFit.cover),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  item.label,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.ink,
-                    letterSpacing: -0.3,
-                  ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(tr(card.koTitle, card.enTitle),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.ink,
+                          letterSpacing: -0.2)),
                 ),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -676,6 +639,8 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(banner.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -778,12 +743,17 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                    tr('오늘 만들기 좋은 K-Food 🇰🇷', 'A K-Food pick for today 🇰🇷'),
-                    style: const TextStyle(
-                        color: AppColors.ink,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800)),
+                Expanded(
+                  child: Text(
+                      tr('오늘 만들기 좋은 K-Food 🇰🇷', 'A K-Food pick for today 🇰🇷'),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          color: AppColors.ink,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800)),
+                ),
+                const SizedBox(width: 8),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -892,9 +862,8 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
     );
   }
 
-  Widget _buildExpiryCard(List<FridgeItem> atRisk) {
-    return Container(
-      key: _expiryKey,
+  Widget _buildExpiryCard(List<FridgeItem> atRisk, Set<String> names) {
+    final card = Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.card,
@@ -970,6 +939,17 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
         ],
       ),
     );
+    if (atRisk.isEmpty) return card;
+    // 임박 재료가 있을 때만 탭 가능하게 해서, 그 재료들로 만들 수 있는 레시피
+    // 추천 화면으로 바로 이동한다 — RecommendationScreen은 이미 유통기한 임박
+    // 재료를 쓰는 레시피에 expiryUrgencyScore 가산점을 줘서 맨 위로 올려준다.
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (_) => RecommendationScreen(fridgeIngredientNames: names)),
+      ),
+      child: card,
+    );
   }
 
   Widget _buildFridgeListCard(List<FridgeItem> items) {
@@ -1014,7 +994,9 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: items.length > 5 ? 5 : items.length,
+              itemCount: _showAllFridgeItems || items.length <= 5
+                  ? items.length
+                  : 5,
               separatorBuilder: (_, __) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final item = items[index];
@@ -1041,10 +1023,21 @@ class _MainDashboardScreenState extends State<MainDashboardScreen>
           if (items.length > 5) ...[
             const SizedBox(height: 12),
             Center(
-              child: Text(
-                  tr('${items.length - 5}개 더보기', '${items.length - 5} more'),
-                  style:
-                      const TextStyle(color: AppColors.inkSoft, fontSize: 12)),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () =>
+                    setState(() => _showAllFridgeItems = !_showAllFridgeItems),
+                child: Text(
+                    _showAllFridgeItems
+                        ? tr('접기', 'Show less')
+                        : tr('${items.length - 5}개 더보기',
+                            '${items.length - 5} more'),
+                    style: const TextStyle(
+                        color: AppColors.inkSoft,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        decoration: TextDecoration.underline)),
+              ),
             ),
           ],
         ],
@@ -1231,28 +1224,6 @@ class _DashboardFridgeRow extends StatelessWidget {
   final FridgeItem item;
   const _DashboardFridgeRow({required this.item});
 
-  Color _ddayBg() {
-    switch (item.ddayLevel) {
-      case DdayLevel.ok:
-        return AppColors.greenSoft;
-      case DdayLevel.warn:
-        return AppColors.goldSoft;
-      case DdayLevel.bad:
-        return AppColors.redSoft;
-    }
-  }
-
-  Color _ddayText() {
-    switch (item.ddayLevel) {
-      case DdayLevel.ok:
-        return AppColors.green;
-      case DdayLevel.warn:
-        return AppColors.gold;
-      case DdayLevel.bad:
-        return AppColors.red;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1282,12 +1253,13 @@ class _DashboardFridgeRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-                color: _ddayBg(), borderRadius: BorderRadius.circular(8)),
+                color: item.ddayLevel.ddayBg,
+                borderRadius: BorderRadius.circular(8)),
             child: Text(item.ddayLabel,
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: _ddayText())),
+                    color: item.ddayLevel.ddayText)),
           ),
         ],
       ),
